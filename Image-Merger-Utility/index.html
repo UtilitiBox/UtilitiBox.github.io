@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penggabung Gambar (Image Merger)</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* Custom scrollbar for aesthetic */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8; 
+        }
+
+        .dark ::-webkit-scrollbar-track { background: #374151; }
+        .dark ::-webkit-scrollbar-thumb { background: #4b5563; }
+        .dark ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+
+        .dropzone-active {
+            border-color: #3b82f6 !important; /* blue-500 */
+            background-color: #eff6ff !important; /* blue-50 */
+        }
+        .dark .dropzone-active {
+            background-color: rgba(59, 130, 246, 0.1) !important;
+        }
+
+        /* Sortable list styling */
+        .sortable-item {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .sortable-item.dragging {
+            opacity: 0.5;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Canvas preview background */
+        .canvas-bg {
+            background-image: 
+                linear-gradient(45deg, #e5e7eb 25%, transparent 25%), 
+                linear-gradient(-45deg, #e5e7eb 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #e5e7eb 75%), 
+                linear-gradient(-45deg, transparent 75%, #e5e7eb 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+        }
+        .dark .canvas-bg {
+            background-image: 
+                linear-gradient(45deg, #374151 25%, transparent 25%), 
+                linear-gradient(-45deg, #374151 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #374151 75%), 
+                linear-gradient(-45deg, transparent 75%, #374151 75%);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 min-h-screen p-4 md:p-8 transition-colors duration-300">
+
+    <div class="max-w-6xl mx-auto space-y-6">
+        
+        <!-- Header -->
+        <header class="text-center mb-8 relative">
+            <div class="absolute right-0 top-0">
+                <button id="themeToggle" class="p-2 rounded-xl bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors focus:outline-none" title="Ganti Tema">
+                    <!-- Sun icon -->
+                    <svg id="themeToggleLightIcon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+                    <!-- Moon icon -->
+                    <svg id="themeToggleDarkIcon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                </button>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">Penggabung Gambar</h1>
+            <p class="text-gray-500 dark:text-gray-400 text-sm md:text-base">Gabungkan beberapa gambar menjadi satu secara vertikal, horizontal, atau grid langsung dari browser Anda.</p>
+        </header>
+
+        <!-- Notification Toast -->
+        <div id="toast" class="hidden fixed top-5 left-1/2 transform -translate-x-1/2 z-50 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg font-medium transition-opacity duration-300">
+            Pesan error disini
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Left Column: Controls & Upload -->
+            <div class="lg:col-span-1 space-y-6">
+                
+                <!-- Settings Panel -->
+                <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 transition-colors">
+                    <h2 class="text-lg font-semibold mb-4 border-b dark:border-gray-700 pb-2 text-gray-900 dark:text-white">Pengaturan</h2>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tata Letak (Layout)</label>
+                            <select id="layoutSelect" class="w-full border-gray-300 dark:border-gray-600 rounded-lg p-2 bg-gray-50 dark:bg-gray-700 dark:text-white border focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors">
+                                <option value="vertical">Vertikal (Atas ke Bawah)</option>
+                                <option value="horizontal">Horizontal (Kiri ke Kanan)</option>
+                                <option value="grid">Grid (2 Kolom)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Jarak antar gambar (px)</label>
+                            <input type="number" id="spacingInput" value="0" min="0" class="w-full border-gray-300 dark:border-gray-600 rounded-lg p-2 bg-gray-50 dark:bg-gray-700 dark:text-white border focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors">
+                        </div>
+
+                        <div class="flex items-center">
+                            <input type="checkbox" id="autoResizeCheck" checked class="w-4 h-4 text-blue-600 bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500">
+                            <label for="autoResizeCheck" class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Auto-Resize (Samakan Proporsi)
+                            </label>
+                        </div>
+                        <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">Jika aktif, gambar akan disesuaikan ukurannya mengikuti gambar pertama.</p>
+                    </div>
+                </div>
+
+                <!-- Upload Area -->
+                <div id="dropzone" class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-8 text-center bg-white dark:bg-gray-800 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    <svg class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Klik atau Drag & Drop gambar ke sini</p>
+                    <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">Mendukung JPG, PNG, WEBP</p>
+                    <input type="file" id="fileInput" multiple accept="image/*" class="hidden">
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="space-y-3">
+                    <button id="mergeBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-xl transition shadow-sm flex justify-center items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                        Gabungkan Gambar
+                    </button>
+                    <button id="downloadBtn" disabled class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-xl transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        Download Hasil
+                    </button>
+                    <button id="clearBtn" class="w-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 font-medium py-2 px-4 rounded-xl transition-colors text-sm">
+                        Hapus Semua
+                    </button>
+                </div>
+            </div>
+
+            <!-- Middle & Right Columns: Image List & Preview -->
+            <div class="lg:col-span-2 space-y-6">
+                
+                <!-- Image List (Sortable) -->
+                <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 transition-colors min-h-[150px]">
+                    <div class="flex justify-between items-center mb-4 border-b dark:border-gray-700 pb-2">
+                        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Daftar Gambar (<span id="imgCount">0</span>)</h2>
+                        <span class="text-xs text-gray-400 dark:text-gray-500">Drag/Gunakan panah untuk mengubah urutan</span>
+                    </div>
+                    
+                    <div id="imageList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                        <!-- Thumbnail items will be injected here -->
+                        <div id="emptyState" class="col-span-full py-8 text-center text-gray-400 dark:text-gray-500">
+                            Belum ada gambar yang dipilih.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preview Area -->
+                <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 transition-colors">
+                    <h2 class="text-lg font-semibold mb-4 border-b dark:border-gray-700 pb-2 text-gray-900 dark:text-white">Pratinjau Hasil</h2>
+                    <div class="w-full overflow-auto rounded-lg border border-gray-200 dark:border-gray-700 canvas-bg flex justify-center items-center min-h-[300px] max-h-[600px] p-4 relative transition-colors" id="canvasContainer">
+                        <span id="canvasPlaceholder" class="text-gray-400 dark:text-gray-500 font-medium text-center">Klik "Gabungkan Gambar" untuk melihat hasil</span>
+                        <canvas id="resultCanvas" class="hidden max-w-full shadow-md"></canvas>
+                        
+                        <!-- Loading Overlay -->
+                        <div id="loadingOverlay" class="hidden absolute inset-0 bg-white/80 dark:bg-gray-900/80 flex flex-col items-center justify-center rounded-lg z-10 backdrop-blur-sm transition-colors">
+                            <svg class="animate-spin h-8 w-8 text-blue-600 dark:text-blue-400 mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span class="text-sm font-medium text-gray-700">Memproses...</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State Management
+        let imagesData = [];
+        let draggedItemIndex = null;
+
+        // DOM Elements
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('fileInput');
+        const imageList = document.getElementById('imageList');
+        const emptyState = document.getElementById('emptyState');
+        const imgCount = document.getElementById('imgCount');
+        const mergeBtn = document.getElementById('mergeBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const resultCanvas = document.getElementById('resultCanvas');
+        const ctx = resultCanvas.getContext('2d');
+        const canvasPlaceholder = document.getElementById('canvasPlaceholder');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const toast = document.getElementById('toast');
+
+        // Settings Elements
+        const layoutSelect = document.getElementById('layoutSelect');
+        const spacingInput = document.getElementById('spacingInput');
+        const autoResizeCheck = document.getElementById('autoResizeCheck');
+
+        // --- Theme Toggle Logic ---
+        const themeToggleBtn = document.getElementById('themeToggle');
+        const themeToggleDarkIcon = document.getElementById('themeToggleDarkIcon');
+        const themeToggleLightIcon = document.getElementById('themeToggleLightIcon');
+
+        // Check stored theme or system preference
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            themeToggleLightIcon.classList.remove('hidden');
+        } else {
+            themeToggleDarkIcon.classList.remove('hidden');
+        }
+
+        themeToggleBtn.addEventListener('click', function() {
+            themeToggleDarkIcon.classList.toggle('hidden');
+            themeToggleLightIcon.classList.toggle('hidden');
+
+            if (localStorage.getItem('color-theme')) {
+                if (localStorage.getItem('color-theme') === 'light') {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('color-theme', 'dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('color-theme', 'light');
+                }
+            } else {
+                if (document.documentElement.classList.contains('dark')) {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('color-theme', 'light');
+                } else {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('color-theme', 'dark');
+                }
+            }
+        });
+
+        // --- Utility Functions ---
+
+        function showToast(message) {
+            toast.textContent = message;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+
+        // --- File Upload Handling ---
+
+        dropzone.addEventListener('click', () => fileInput.click());
+
+        dropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropzone.classList.add('dropzone-active');
+        });
+
+        dropzone.addEventListener('dragleave', () => {
+            dropzone.classList.remove('dropzone-active');
+        });
+
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropzone.classList.remove('dropzone-active');
+            if (e.dataTransfer.files.length > 0) {
+                handleFiles(e.dataTransfer.files);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFiles(e.target.files);
+            }
+            // Reset input so the same file can be selected again if deleted
+            fileInput.value = '';
+        });
+
+        function handleFiles(files) {
+            Array.from(files).forEach(file => {
+                if (!file.type.startsWith('image/')) {
+                    showToast('Format file tidak didukung: ' + file.name);
+                    return;
+                }
+                
+                const url = URL.createObjectURL(file);
+                const id = 'img_' + Date.now() + Math.floor(Math.random() * 1000);
+                
+                imagesData.push({
+                    id: id,
+                    file: file,
+                    url: url,
+                    name: file.name
+                });
+            });
+            renderImageList();
+        }
+
+        // --- Image List & Reordering ---
+
+        function renderImageList() {
+            // Clear current list except empty state
+            imageList.innerHTML = '';
+            
+            imgCount.textContent = imagesData.length;
+
+            if (imagesData.length === 0) {
+                imageList.appendChild(emptyState);
+                emptyState.classList.remove('hidden');
+                downloadBtn.disabled = true;
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            imagesData.forEach((data, index) => {
+                const item = document.createElement('div');
+                item.className = 'sortable-item relative bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-2 flex items-center gap-3 cursor-move shadow-sm group hover:border-blue-300 dark:hover:border-blue-500 transition-colors';
+                item.draggable = true;
+                item.dataset.index = index;
+
+                // Create thumbnail
+                const img = document.createElement('img');
+                img.src = data.url;
+                img.className = 'w-16 h-16 object-cover rounded-lg bg-gray-100 dark:bg-gray-700 flex-shrink-0';
+                
+                // Name and controls
+                const info = document.createElement('div');
+                info.className = 'flex-1 min-w-0 flex flex-col justify-center';
+                
+                const name = document.createElement('p');
+                name.className = 'text-sm font-medium text-gray-700 dark:text-gray-200 truncate';
+                name.textContent = data.name;
+                
+                // Mobile reorder buttons (Up/Down)
+                const controls = document.createElement('div');
+                controls.className = 'flex gap-1 mt-1';
+                
+                if (index > 0) {
+                    const upBtn = document.createElement('button');
+                    upBtn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>`;
+                    upBtn.className = 'p-1 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded text-gray-600 dark:text-gray-300 transition-colors';
+                    upBtn.onclick = (e) => { e.stopPropagation(); moveItem(index, -1); };
+                    controls.appendChild(upBtn);
+                }
+                
+                if (index < imagesData.length - 1) {
+                    const downBtn = document.createElement('button');
+                    downBtn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>`;
+                    downBtn.className = 'p-1 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded text-gray-600 dark:text-gray-300 transition-colors';
+                    downBtn.onclick = (e) => { e.stopPropagation(); moveItem(index, 1); };
+                    controls.appendChild(downBtn);
+                }
+
+                info.appendChild(name);
+                info.appendChild(controls);
+
+                // Delete button
+                const delBtn = document.createElement('button');
+                delBtn.className = 'p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors flex-shrink-0';
+                delBtn.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>`;
+                delBtn.onclick = () => deleteImage(index);
+
+                item.appendChild(img);
+                item.appendChild(info);
+                item.appendChild(delBtn);
+
+                // Drag & Drop Events
+                item.addEventListener('dragstart', handleDragStart);
+                item.addEventListener('dragover', handleDragOver);
+                item.addEventListener('drop', handleDrop);
+                item.addEventListener('dragend', handleDragEnd);
+
+                imageList.appendChild(item);
+            });
+        }
+
+        // Drag & Drop Logic for List
+        function handleDragStart(e) {
+            draggedItemIndex = parseInt(this.dataset.index);
+            setTimeout(() => this.classList.add('dragging'), 0);
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            const draggingItem = document.querySelector('.dragging');
+            if(!draggingItem) return;
+            
+            const siblings = [...imageList.querySelectorAll('.sortable-item:not(.dragging)')];
+            let nextSibling = siblings.find(sibling => {
+                const rect = sibling.getBoundingClientRect();
+                const offset = e.clientY - rect.top - rect.height / 2;
+                return offset < 0;
+            });
+            
+            imageList.insertBefore(draggingItem, nextSibling);
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            if (draggedItemIndex === null) return;
+            
+            // Re-calculate indices based on current DOM order
+            const currentItems = Array.from(imageList.querySelectorAll('.sortable-item'));
+            const newOrder = currentItems.map(item => parseInt(item.dataset.index));
+            
+            // Reorder array
+            const newImagesData = newOrder.map(oldIndex => imagesData[oldIndex]);
+            imagesData = newImagesData;
+            
+            renderImageList();
+        }
+
+        function handleDragEnd() {
+            this.classList.remove('dragging');
+            draggedItemIndex = null;
+        }
+
+        // Mobile Button Movement Logic
+        function moveItem(index, direction) {
+            const newIndex = index + direction;
+            if (newIndex < 0 || newIndex >= imagesData.length) return;
+            
+            // Swap items
+            const temp = imagesData[index];
+            imagesData[index] = imagesData[newIndex];
+            imagesData[newIndex] = temp;
+            
+            renderImageList();
+        }
+
+        function deleteImage(index) {
+            // Revoke URL to free memory
+            URL.revokeObjectURL(imagesData[index].url);
+            imagesData.splice(index, 1);
+            renderImageList();
+            
+            // Hide canvas if empty
+            if(imagesData.length === 0){
+                resultCanvas.classList.add('hidden');
+                canvasPlaceholder.classList.remove('hidden');
+            }
+        }
+
+        clearBtn.addEventListener('click', () => {
+            imagesData.forEach(data => URL.revokeObjectURL(data.url));
+            imagesData = [];
+            renderImageList();
+            resultCanvas.classList.add('hidden');
+            canvasPlaceholder.classList.remove('hidden');
+            downloadBtn.disabled = true;
+        });
+
+        // --- Merging Logic (Canvas) ---
+
+        // Helper to load image object
+        function loadImage(url) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => resolve(img);
+                img.onerror = () => reject(new Error('Gagal memuat gambar'));
+                img.src = url;
+            });
+        }
+
+        mergeBtn.addEventListener('click', async () => {
+            if (imagesData.length === 0) {
+                showToast('Pilih minimal satu gambar terlebih dahulu!');
+                return;
+            }
+
+            loadingOverlay.classList.remove('hidden');
+
+            try {
+                // Settings
+                const layout = layoutSelect.value;
+                const spacing = parseInt(spacingInput.value) || 0;
+                const autoResize = autoResizeCheck.checked;
+
+                // Load all HTMLImageElements
+                const loadedImages = await Promise.all(imagesData.map(data => loadImage(data.url)));
+
+                let canvasWidth = 0;
+                let canvasHeight = 0;
+                let drawOperations = []; // Array of {img, x, y, width, height}
+
+                if (layout === 'vertical') {
+                    // Vertical Stack
+                    const baseWidth = autoResize ? loadedImages[0].width : 0;
+                    
+                    let currentY = 0;
+                    let maxWidth = 0;
+
+                    loadedImages.forEach((img, index) => {
+                        let targetWidth = img.width;
+                        let targetHeight = img.height;
+
+                        if (autoResize) {
+                            targetWidth = baseWidth;
+                            targetHeight = img.height * (baseWidth / img.width);
+                        }
+
+                        drawOperations.push({ img, x: 0, y: currentY, w: targetWidth, h: targetHeight });
+                        
+                        maxWidth = Math.max(maxWidth, targetWidth);
+                        currentY += targetHeight + (index < loadedImages.length - 1 ? spacing : 0);
+                    });
+
+                    canvasWidth = maxWidth;
+                    canvasHeight = currentY;
+
+                } else if (layout === 'horizontal') {
+                    // Horizontal Stack
+                    const baseHeight = autoResize ? loadedImages[0].height : 0;
+                    
+                    let currentX = 0;
+                    let maxHeight = 0;
+
+                    loadedImages.forEach((img, index) => {
+                        let targetWidth = img.width;
+                        let targetHeight = img.height;
+
+                        if (autoResize) {
+                            targetHeight = baseHeight;
+                            targetWidth = img.width * (baseHeight / img.height);
+                        }
+
+                        drawOperations.push({ img, x: currentX, y: 0, w: targetWidth, h: targetHeight });
+                        
+                        maxHeight = Math.max(maxHeight, targetHeight);
+                        currentX += targetWidth + (index < loadedImages.length - 1 ? spacing : 0);
+                    });
+
+                    canvasWidth = currentX;
+                    canvasHeight = maxHeight;
+
+                } else if (layout === 'grid') {
+                    // 2-Column Grid
+                    const cols = 2;
+                    let baseWidth = loadedImages[0].width;
+                    
+                    if (!autoResize) {
+                        // If no auto resize, find the max width to keep grid uniform, 
+                        // but auto-resize is usually better for grid.
+                        baseWidth = Math.max(...loadedImages.map(img => img.width));
+                    }
+
+                    canvasWidth = (baseWidth * cols) + spacing; // Only 1 spacing gap between 2 cols
+                    
+                    let currentX = 0;
+                    let currentY = 0;
+                    let rowHeight = 0;
+
+                    loadedImages.forEach((img, index) => {
+                        let targetWidth = baseWidth;
+                        let targetHeight = img.height * (baseWidth / img.width); // maintain aspect ratio
+
+                        drawOperations.push({ img, x: currentX, y: currentY, w: targetWidth, h: targetHeight });
+                        
+                        rowHeight = Math.max(rowHeight, targetHeight);
+
+                        // Move to next column/row
+                        if ((index + 1) % cols === 0) {
+                            // Move to next row
+                            currentX = 0;
+                            currentY += rowHeight + spacing;
+                            rowHeight = 0; // reset for next row
+                        } else {
+                            // Move right
+                            currentX += targetWidth + spacing;
+                        }
+                    });
+
+                    // Add last row height if it didn't complete a full column pair
+                    if (loadedImages.length % cols !== 0) {
+                        currentY += rowHeight;
+                    } else if(loadedImages.length > 0) {
+                       // Remove extra spacing added by the last full row loop
+                       currentY -= spacing;
+                    }
+
+                    canvasHeight = currentY;
+                }
+
+                // Setup Canvas size
+                resultCanvas.width = canvasWidth;
+                resultCanvas.height = canvasHeight;
+                
+                // Clear canvas (transparent background)
+                ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+                // Optional: Fill with white background? Let's keep it transparent for PNG
+                // ctx.fillStyle = 'white';
+                // ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+                // Draw all images
+                drawOperations.forEach(op => {
+                    ctx.drawImage(op.img, op.x, op.y, op.w, op.h);
+                });
+
+                // Show Canvas
+                canvasPlaceholder.classList.add('hidden');
+                resultCanvas.classList.remove('hidden');
+                downloadBtn.disabled = false;
+
+            } catch (error) {
+                console.error(error);
+                showToast('Terjadi kesalahan saat menggabungkan gambar.');
+            } finally {
+                loadingOverlay.classList.add('hidden');
+            }
+        });
+
+        // --- Download Logic ---
+        downloadBtn.addEventListener('click', () => {
+            if (imagesData.length === 0) return;
+            
+            // Get data URL as PNG (preserves transparency)
+            const dataUrl = resultCanvas.toDataURL('image/png');
+            
+            // Create temporary anchor to trigger download
+            const link = document.createElement('a');
+            link.download = `merged_image_${new Date().getTime()}.png`;
+            link.href = dataUrl;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+
+    </script>
+</body>
+</html>
