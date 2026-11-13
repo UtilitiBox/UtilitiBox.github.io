@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UtilitiBox - Kumpulan Alat Web Klien</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    animation: {
+                        'blob': 'blob 7s infinite',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #475569; 
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 min-h-screen transition-colors duration-300 relative overflow-x-hidden">
+
+    <!-- Background Decorative Blobs -->
+    <div class="fixed inset-0 w-full h-full pointer-events-none z-0 overflow-hidden">
+        <div class="absolute top-0 -left-4 w-72 h-72 bg-blue-300 dark:bg-blue-900 rounded-full mix-blend-multiply dark:mix-blend-color filter blur-3xl opacity-30 animate-blob"></div>
+        <div class="absolute top-0 -right-4 w-72 h-72 bg-purple-300 dark:bg-purple-900 rounded-full mix-blend-multiply dark:mix-blend-color filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+        <div class="absolute -bottom-8 left-20 w-72 h-72 bg-emerald-300 dark:bg-emerald-900 rounded-full mix-blend-multiply dark:mix-blend-color filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+    </div>
+
+    <div class="relative z-10 flex flex-col min-h-screen">
+        
+        <!-- Navigation / Header -->
+        <nav class="w-full max-w-6xl mx-auto px-6 py-6 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-600/30">
+                    <i class="fa-solid fa-box-open text-xl"></i>
+                </div>
+                <span class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Utiliti<span class="text-blue-600 dark:text-blue-400">Box</span></span>
+            </div>
+            
+            <button id="themeToggle" class="p-2.5 rounded-full bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500" title="Ganti Tema">
+                <i id="themeToggleLightIcon" class="fa-solid fa-sun hidden text-lg w-5 h-5 flex items-center justify-center"></i>
+                <i id="themeToggleDarkIcon" class="fa-solid fa-moon hidden text-lg w-5 h-5 flex items-center justify-center"></i>
+            </button>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="flex-grow w-full max-w-6xl mx-auto px-6 py-12 md:py-20 flex flex-col items-center">
+            
+            <!-- Hero Section -->
+            <div class="text-center max-w-3xl mb-16">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-sm font-semibold mb-6 border border-blue-100 dark:border-blue-800/50">
+                    <span class="relative flex h-2 w-2">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                    </span>
+                    100% Client-Side Processing
+                </div>
+                <h1 class="text-4xl md:text-6xl font-extrabold text-slate-900 dark:text-white mb-6 leading-tight tracking-tight">
+                    Kumpulan Alat Web <br class="hidden md:block" />
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">Cepat & Privasi Terjaga</span>
+                </h1>
+                <p class="text-lg text-slate-600 dark:text-slate-400 leading-relaxed max-w-2xl mx-auto">
+                    Koleksi utilitas harian yang memproses semua data langsung di perangkat Anda (browser). Tanpa server, tanpa jejak tertinggal, privasi Anda terjamin sepenuhnya.
+                </p>
+            </div>
+
+            <!-- Grid Layout for Tools -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 w-full">
+                
+                <!-- Card 1: Password Generator -->
+                <a href="https://utilitibox.github.io/pass-generator/" class="group flex flex-col bg-white dark:bg-slate-800 rounded-3xl p-8 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-2xl hover:shadow-blue-500/10 dark:hover:shadow-blue-900/20 hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-4 group-hover:translate-x-0 duration-300">
+                        <i class="fa-solid fa-arrow-right text-slate-400 dark:text-slate-500"></i>
+                    </div>
+                    <div class="w-14 h-14 rounded-2xl bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center text-2xl mb-6 shadow-inner">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-3">Password Generator</h2>
+                    <p class="text-slate-600 dark:text-slate-400 leading-relaxed flex-grow">
+                        Buat kata sandi acak yang kuat dan aman dengan berbagai kustomisasi panjang dan karakter untuk melindungi akun Anda.
+                    </p>
+                </a>
+
+                <!-- Card 2: Metadata Remover -->
+                <a href="https://utilitibox.github.io/metadata-remover/" class="group flex flex-col bg-white dark:bg-slate-800 rounded-3xl p-8 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-2xl hover:shadow-red-500/10 dark:hover:shadow-red-900/20 hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-4 group-hover:translate-x-0 duration-300">
+                        <i class="fa-solid fa-arrow-right text-slate-400 dark:text-slate-500"></i>
+                    </div>
+                    <div class="w-14 h-14 rounded-2xl bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400 flex items-center justify-center text-2xl mb-6 shadow-inner">
+                        <i class="fa-solid fa-eraser"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-3">Metadata Remover</h2>
+                    <p class="text-slate-600 dark:text-slate-400 leading-relaxed flex-grow">
+                        Lindungi privasi foto Anda dengan menghapus data EXIF seperti lokasi GPS dan tipe kamera sebelum diunggah ke internet.
+                    </p>
+                </a>
+
+                <!-- Card 3: Copy-Paste Metadata -->
+                <a href="https://utilitibox.github.io/Copypaste-matadata/" class="group flex flex-col bg-white dark:bg-slate-800 rounded-3xl p-8 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-2xl hover:shadow-purple-500/10 dark:hover:shadow-purple-900/20 hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-4 group-hover:translate-x-0 duration-300">
+                        <i class="fa-solid fa-arrow-right text-slate-400 dark:text-slate-500"></i>
+                    </div>
+                    <div class="w-14 h-14 rounded-2xl bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 flex items-center justify-center text-2xl mb-6 shadow-inner">
+                        <i class="fa-solid fa-clipboard"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-3">Copy-Paste Metadata</h2>
+                    <p class="text-slate-600 dark:text-slate-400 leading-relaxed flex-grow">
+                        Kloning atau salin seluruh informasi metadata dari satu file media dan tempelkan ke file lain dengan satu kali klik.
+                    </p>
+                </a>
+
+                <!-- Card 4: Image Merger -->
+                <a href="https://utilitibox.github.io/Image-Merger-Utility/" class="group flex flex-col bg-white dark:bg-slate-800 rounded-3xl p-8 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-2xl hover:shadow-emerald-500/10 dark:hover:shadow-emerald-900/20 hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-4 group-hover:translate-x-0 duration-300">
+                        <i class="fa-solid fa-arrow-right text-slate-400 dark:text-slate-500"></i>
+                    </div>
+                    <div class="w-14 h-14 rounded-2xl bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-2xl mb-6 shadow-inner">
+                        <i class="fa-solid fa-layer-group"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-3">Image Merger</h2>
+                    <p class="text-slate-600 dark:text-slate-400 leading-relaxed flex-grow">
+                        Gabungkan banyak gambar sekaligus secara vertikal, horizontal, atau bentuk grid kotak tanpa batas memori server.
+                    </p>
+                </a>
+
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="w-full max-w-6xl mx-auto px-6 py-8 border-t border-slate-200 dark:border-slate-800 text-center flex flex-col md:flex-row justify-between items-center gap-4">
+            <p class="text-slate-500 dark:text-slate-400 text-sm">
+                &copy; <script>document.write(new Date().getFullYear())</script> UtilitiBox. Hak Cipta Dilindungi.
+            </p>
+            <div class="flex gap-4">
+                <a href="#" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
+                    <i class="fa-brands fa-github text-xl"></i>
+                </a>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Script for Dark Mode Toggle -->
+    <script>
+        const themeToggleBtn = document.getElementById('themeToggle');
+        const themeToggleDarkIcon = document.getElementById('themeToggleDarkIcon');
+        const themeToggleLightIcon = document.getElementById('themeToggleLightIcon');
+
+        // Initial check for theme
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            themeToggleLightIcon.classList.remove('hidden');
+        } else {
+            document.documentElement.classList.remove('dark');
+            themeToggleDarkIcon.classList.remove('hidden');
+        }
+
+        themeToggleBtn.addEventListener('click', function() {
+            // Toggle icons
+            themeToggleDarkIcon.classList.toggle('hidden');
+            themeToggleLightIcon.classList.toggle('hidden');
+
+            // If set via local storage previously
+            if (localStorage.getItem('color-theme')) {
+                if (localStorage.getItem('color-theme') === 'light') {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('color-theme', 'dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('color-theme', 'light');
+                }
+            } else {
+                // If not set via local storage previously
+                if (document.documentElement.classList.contains('dark')) {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('color-theme', 'light');
+                } else {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('color-theme', 'dark');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
