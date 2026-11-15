@@ -1,0 +1,1641 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>File Hash Generator - UtilitiBox</title>
+  <meta name="description" content="Hitung dan verifikasi integritas file (SHA-256, SHA-384, SHA-512, SHA-1) secara lokal di browser tanpa unggah ke server." />
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-alt: #f1f5f9;
+      --border: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --text: #0f172a;
+      --text-muted: #475569;
+      --text-subtle: #64748b;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-soft: rgba(37, 99, 235, 0.1);
+      --success: #16a34a;
+      --success-bg: rgba(22, 163, 74, 0.12);
+      --success-border: rgba(22, 163, 74, 0.35);
+      --danger: #dc2626;
+      --danger-bg: rgba(220, 38, 38, 0.12);
+      --danger-border: rgba(220, 38, 38, 0.35);
+      --warn: #d97706;
+      --warn-bg: rgba(217, 119, 6, 0.12);
+      --warn-border: rgba(217, 119, 6, 0.35);
+      --shadow: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+      --radius: 12px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    [data-theme="dark"] {
+      --bg: #0b1120;
+      --surface: #111827;
+      --surface-alt: #1e293b;
+      --border: #1f2937;
+      --border-strong: #334155;
+      --text: #f1f5f9;
+      --text-muted: #cbd5e1;
+      --text-subtle: #94a3b8;
+      --primary: #3b82f6;
+      --primary-hover: #60a5fa;
+      --primary-soft: rgba(59, 130, 246, 0.14);
+      --success: #22c55e;
+      --success-bg: rgba(34, 197, 94, 0.14);
+      --success-border: rgba(34, 197, 94, 0.4);
+      --danger: #ef4444;
+      --danger-bg: rgba(239, 68, 68, 0.14);
+      --danger-border: rgba(239, 68, 68, 0.4);
+      --warn: #f59e0b;
+      --warn-bg: rgba(245, 158, 11, 0.14);
+      --warn-border: rgba(245, 158, 11, 0.4);
+      --shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--sans);
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px 16px 48px;
+      flex: 1;
+    }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .brand-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .breadcrumb {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      color: var(--text-subtle);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .breadcrumb:hover {
+      color: var(--primary);
+    }
+
+    .title-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    h1 {
+      font-size: 1.45rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .badge-private {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: var(--success-bg);
+      color: var(--success);
+      border: 1px solid var(--success-border);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+      border: 1px solid var(--border-strong);
+      background: var(--surface);
+      color: var(--text);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      padding: 7px 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    button:hover:not(:disabled) {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    button.btn-primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+
+    button.btn-primary:hover:not(:disabled) {
+      background: var(--primary-hover);
+      border-color: var(--primary-hover);
+      color: #ffffff;
+    }
+
+    button.btn-danger {
+      border-color: var(--danger-border);
+      color: var(--danger);
+      background: var(--danger-bg);
+    }
+
+    button.btn-danger:hover:not(:disabled) {
+      background: var(--danger);
+      color: #ffffff;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .dropzone {
+      border: 2px dashed var(--border-strong);
+      border-radius: 10px;
+      padding: 34px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      background: var(--surface-alt);
+    }
+
+    .dropzone:hover,
+    .dropzone.drag-over {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+    }
+
+    .dropzone-icon {
+      width: 40px;
+      height: 40px;
+      margin: 0 auto 12px;
+      color: var(--primary);
+    }
+
+    .dropzone-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .dropzone-sub {
+      font-size: 0.84rem;
+      color: var(--text-subtle);
+    }
+
+    .file-meta {
+      display: none;
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: 10px;
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .file-meta.visible {
+      display: flex;
+    }
+
+    .file-meta-top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .file-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .file-name {
+      font-weight: 600;
+      font-size: 0.95rem;
+      word-break: break-all;
+    }
+
+    .file-details {
+      font-size: 0.8rem;
+      color: var(--text-subtle);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .engine-pill {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    .progress-wrap {
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .progress-wrap.visible {
+      display: flex;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 8px;
+      background: var(--border);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--primary);
+      transition: width 0.1s linear;
+    }
+
+    .progress-stats {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      color: var(--text-subtle);
+      font-family: var(--mono);
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .toolbar-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .segmented {
+      display: inline-flex;
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .segmented button {
+      border: none;
+      border-radius: 0;
+      padding: 6px 10px;
+      font-size: 0.8rem;
+      background: transparent;
+      color: var(--text-muted);
+    }
+
+    .segmented button.active {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .hash-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .hash-item {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      background: var(--surface-alt);
+      transition: border-color 0.2s ease, background-color 0.2s ease;
+    }
+
+    .hash-item.matched {
+      border-color: var(--success);
+      background: var(--success-bg);
+    }
+
+    .hash-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .algo-label-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .algo-name {
+      font-weight: 700;
+      font-size: 0.88rem;
+      letter-spacing: 0.02em;
+    }
+
+    .algo-bits {
+      font-size: 0.74rem;
+      color: var(--text-subtle);
+      font-family: var(--mono);
+    }
+
+    .tag-rec {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 6px;
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    .tag-legacy {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 6px;
+      background: var(--warn-bg);
+      color: var(--warn);
+      border: 1px solid var(--warn-border);
+    }
+
+    .hash-value-box {
+      font-family: var(--mono);
+      font-size: 0.84rem;
+      word-break: break-all;
+      color: var(--text);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 9px 11px;
+      min-height: 38px;
+      display: flex;
+      align-items: center;
+      user-select: all;
+    }
+
+    .hash-value-box.empty {
+      color: var(--text-subtle);
+      font-style: italic;
+      user-select: none;
+    }
+
+    .verifier-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .verifier-desc {
+      font-size: 0.84rem;
+      color: var(--text-subtle);
+      margin-bottom: 12px;
+    }
+
+    .verifier-input-row {
+      display: flex;
+      gap: 8px;
+      align-items: stretch;
+    }
+
+    .verifier-input {
+      flex: 1;
+      width: 100%;
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border-strong);
+      background: var(--surface-alt);
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+
+    .verifier-input:focus {
+      border-color: var(--primary);
+    }
+
+    .verify-status {
+      margin-top: 12px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: none;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .verify-status.visible {
+      display: flex;
+    }
+
+    .verify-status.match {
+      background: var(--success-bg);
+      color: var(--success);
+      border: 1px solid var(--success-border);
+    }
+
+    .verify-status.mismatch {
+      background: var(--danger-bg);
+      color: var(--danger);
+      border: 1px solid var(--danger-border);
+    }
+
+    .verify-status.invalid {
+      background: var(--warn-bg);
+      color: var(--warn);
+      border: 1px solid var(--warn-border);
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-subtle);
+      padding: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    footer a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 600px) {
+      .verifier-input-row {
+        flex-direction: column;
+      }
+      .toolbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand-group">
+        <a href="https://utilitibox.github.io/" class="breadcrumb">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+          <span>UtilitiBox</span>
+        </a>
+        <div class="title-row">
+          <h1 data-i18n="appTitle">File Hash Generator</h1>
+          <span class="badge-private">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span data-i18n="localBadge">100% Lokal di Browser</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button type="button" id="langToggle" aria-label="Switch Language">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          <span id="langLabel">ID</span>
+        </button>
+        <button type="button" id="themeToggle" aria-label="Toggle Theme">
+          <svg id="iconSun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg id="iconMoon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <section class="card">
+        <input type="file" id="fileInput" hidden />
+        <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Pilih atau seret file">
+          <svg class="dropzone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+          <div class="dropzone-title" data-i18n="dropTitle">Pilih file, seret ke sini, atau tempel (Ctrl+V)</div>
+          <div class="dropzone-sub" data-i18n="dropSub">Mendukung file ukuran kecil hingga multi-GB tanpa batas unggahan</div>
+        </div>
+
+        <div class="file-meta" id="fileMeta">
+          <div class="file-meta-top">
+            <div class="file-info">
+              <div class="file-name" id="fileName">-</div>
+              <div class="file-details">
+                <span id="fileSize">-</span>
+                <span id="fileTime">-</span>
+                <span class="engine-pill" id="engineBadge">-</span>
+              </div>
+            </div>
+            <div style="display:flex; gap:8px;">
+              <button type="button" class="btn-danger" id="cancelBtn" style="display:none;" data-i18n="cancelBtn">Batalkan</button>
+              <button type="button" id="resetBtn" data-i18n="resetBtn">Hapus File</button>
+            </div>
+          </div>
+
+          <div class="progress-wrap" id="progressWrap">
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill" id="progressBar"></div>
+            </div>
+            <div class="progress-stats">
+              <span id="progressPercent">0%</span>
+              <span id="progressSpeed">0 MB/s</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="toolbar">
+          <h2 class="section-title" data-i18n="resultsTitle">Hasil Checksum File</h2>
+          <div class="toolbar-controls">
+            <div class="segmented" role="group" aria-label="Format Huruf">
+              <button type="button" id="caseLower" class="active">lowercase</button>
+              <button type="button" id="caseUpper">UPPERCASE</button>
+            </div>
+            <button type="button" id="copyAllBtn" disabled>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <span data-i18n="copyAll">Salin Semua</span>
+            </button>
+            <button type="button" class="btn-primary" id="exportBtn" disabled>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span data-i18n="exportTxt">Unduh .txt</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="hash-list">
+          <div class="hash-item" id="card-SHA-256">
+            <div class="hash-header">
+              <div class="algo-label-group">
+                <span class="algo-name">SHA-256</span>
+                <span class="algo-bits">256-bit / 64 hex</span>
+                <span class="tag-rec" data-i18n="tagRec">Direkomendasikan</span>
+              </div>
+              <button type="button" class="copy-single" data-algo="SHA-256" disabled data-i18n="copy">Salin</button>
+            </div>
+            <div class="hash-value-box empty" id="val-SHA-256" data-i18n="waitingFile">Menunggu file dipilih...</div>
+          </div>
+
+          <div class="hash-item" id="card-SHA-384">
+            <div class="hash-header">
+              <div class="algo-label-group">
+                <span class="algo-name">SHA-384</span>
+                <span class="algo-bits">384-bit / 96 hex</span>
+              </div>
+              <button type="button" class="copy-single" data-algo="SHA-384" disabled data-i18n="copy">Salin</button>
+            </div>
+            <div class="hash-value-box empty" id="val-SHA-384" data-i18n="waitingFile">Menunggu file dipilih...</div>
+          </div>
+
+          <div class="hash-item" id="card-SHA-512">
+            <div class="hash-header">
+              <div class="algo-label-group">
+                <span class="algo-name">SHA-512</span>
+                <span class="algo-bits">512-bit / 128 hex</span>
+              </div>
+              <button type="button" class="copy-single" data-algo="SHA-512" disabled data-i18n="copy">Salin</button>
+            </div>
+            <div class="hash-value-box empty" id="val-SHA-512" data-i18n="waitingFile">Menunggu file dipilih...</div>
+          </div>
+
+          <div class="hash-item" id="card-SHA-1">
+            <div class="hash-header">
+              <div class="algo-label-group">
+                <span class="algo-name">SHA-1</span>
+                <span class="algo-bits">160-bit / 40 hex</span>
+                <span class="tag-legacy" data-i18n="tagLegacy">Kompatibilitas Lama</span>
+              </div>
+              <button type="button" class="copy-single" data-algo="SHA-1" disabled data-i18n="copy">Salin</button>
+            </div>
+            <div class="hash-value-box empty" id="val-SHA-1" data-i18n="waitingFile">Menunggu file dipilih...</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="verifier-header">
+          <h2 class="section-title" data-i18n="verifierTitle">Verifikasi Checksum (Pembanding)</h2>
+          <button type="button" id="clearVerifyBtn" data-i18n="clearBtn">Bersihkan</button>
+        </div>
+        <p class="verifier-desc" data-i18n="verifierDesc">Tempel nilai hash referensi dari sumber unduhan untuk mencocokkan integritas file secara otomatis (mendukung SHA-256, SHA-384, SHA-512, dan SHA-1).</p>
+        <div class="verifier-input-row">
+          <input type="text" id="verifyInput" class="verifier-input" spellcheck="false" autocomplete="off" placeholder="Tempel hash referensi (contoh: e3b0c44298fc1c149afbf4c8996fb924...)" data-i18n-placeholder="verifyPlaceholder" />
+        </div>
+        <div class="verify-status" id="verifyStatus"></div>
+      </section>
+    </main>
+
+    <footer>
+      <span data-i18n="footerText">Diproses sepenuhnya di perangkat Anda menggunakan Web Crypto API & Streaming Web Worker. Bagian dari</span>
+      <a href="https://utilitibox.github.io/">UtilitiBox</a>.
+    </footer>
+  </div>
+
+  <script id="worker-code" type="javascript/worker">
+    const MASK64 = 0xffffffffffffffffn;
+
+    function rotr32(x, n) {
+      return (x >>> n) | (x << (32 - n));
+    }
+
+    function rotr64(x, n) {
+      return ((x >> n) | (x << (64n - n))) & MASK64;
+    }
+
+    class Sha1Stream {
+      constructor() {
+        this.h0 = 0x67452301;
+        this.h1 = 0xefcdab89;
+        this.h2 = 0x98badcfe;
+        this.h3 = 0x10325476;
+        this.h4 = 0xc3d2e1f0;
+        this.buf = new Uint8Array(64);
+        this.bufLen = 0;
+        this.totalBytes = 0n;
+        this.w = new Uint32Array(80);
+      }
+
+      update(chunk) {
+        this.totalBytes += BigInt(chunk.length);
+        let offset = 0;
+        if (this.bufLen > 0) {
+          const need = 64 - this.bufLen;
+          if (chunk.length < need) {
+            this.buf.set(chunk, this.bufLen);
+            this.bufLen += chunk.length;
+            return;
+          }
+          this.buf.set(chunk.subarray(0, need), this.bufLen);
+          this._compress(this.buf, 0);
+          this.bufLen = 0;
+          offset = need;
+        }
+        while (offset + 64 <= chunk.length) {
+          this._compress(chunk, offset);
+          offset += 64;
+        }
+        if (offset < chunk.length) {
+          this.buf.set(chunk.subarray(offset), 0);
+          this.bufLen = chunk.length - offset;
+        }
+      }
+
+      _compress(data, offset) {
+        const w = this.w;
+        const dv = new DataView(data.buffer, data.byteOffset + offset, 64);
+        for (let i = 0; i < 16; i++) {
+          w[i] = dv.getUint32(i * 4, false);
+        }
+        for (let i = 16; i < 80; i++) {
+          const x = w[i - 3] ^ w[i - 8] ^ w[i - 14] ^ w[i - 16];
+          w[i] = (x << 1) | (x >>> 31);
+        }
+        let a = this.h0, b = this.h1, c = this.h2, d = this.h3, e = this.h4;
+        for (let t = 0; t < 80; t++) {
+          let f, k;
+          if (t < 20) {
+            f = (b & c) | (~b & d);
+            k = 0x5a827999;
+          } else if (t < 40) {
+            f = b ^ c ^ d;
+            k = 0x6ed9eba1;
+          } else if (t < 60) {
+            f = (b & c) | (b & d) | (c & d);
+            k = 0x8f1bbcdc;
+          } else {
+            f = b ^ c ^ d;
+            k = 0xca62c1d6;
+          }
+          const temp = (((a << 5) | (a >>> 27)) + f + e + k + w[t]) >>> 0;
+          e = d;
+          d = c;
+          c = ((b << 30) | (b >>> 2)) >>> 0;
+          b = a;
+          a = temp;
+        }
+        this.h0 = (this.h0 + a) >>> 0;
+        this.h1 = (this.h1 + b) >>> 0;
+        this.h2 = (this.h2 + c) >>> 0;
+        this.h3 = (this.h3 + d) >>> 0;
+        this.h4 = (this.h4 + e) >>> 0;
+      }
+
+      digestHex() {
+        const totalBits = this.totalBytes * 8n;
+        this.buf[this.bufLen++] = 0x80;
+        if (this.bufLen > 56) {
+          this.buf.fill(0, this.bufLen, 64);
+          this._compress(this.buf, 0);
+          this.bufLen = 0;
+        }
+        this.buf.fill(0, this.bufLen, 56);
+        const dv = new DataView(this.buf.buffer);
+        dv.setUint32(56, Number((totalBits >> 32n) & 0xffffffffn), false);
+        dv.setUint32(60, Number(totalBits & 0xffffffffn), false);
+        this._compress(this.buf, 0);
+        return [this.h0, this.h1, this.h2, this.h3, this.h4]
+          .map(v => v.toString(16).padStart(8, "0"))
+          .join("");
+      }
+    }
+
+    const K256 = new Uint32Array([
+      0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
+      0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
+      0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
+      0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
+      0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
+      0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
+      0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
+      0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
+    ]);
+
+    class Sha256Stream {
+      constructor() {
+        this.h = new Uint32Array([
+          0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
+          0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19
+        ]);
+        this.buf = new Uint8Array(64);
+        this.bufLen = 0;
+        this.totalBytes = 0n;
+        this.w = new Uint32Array(64);
+      }
+
+      update(chunk) {
+        this.totalBytes += BigInt(chunk.length);
+        let offset = 0;
+        if (this.bufLen > 0) {
+          const need = 64 - this.bufLen;
+          if (chunk.length < need) {
+            this.buf.set(chunk, this.bufLen);
+            this.bufLen += chunk.length;
+            return;
+          }
+          this.buf.set(chunk.subarray(0, need), this.bufLen);
+          this._compress(this.buf, 0);
+          this.bufLen = 0;
+          offset = need;
+        }
+        while (offset + 64 <= chunk.length) {
+          this._compress(chunk, offset);
+          offset += 64;
+        }
+        if (offset < chunk.length) {
+          this.buf.set(chunk.subarray(offset), 0);
+          this.bufLen = chunk.length - offset;
+        }
+      }
+
+      _compress(data, offset) {
+        const w = this.w;
+        const dv = new DataView(data.buffer, data.byteOffset + offset, 64);
+        for (let i = 0; i < 16; i++) {
+          w[i] = dv.getUint32(i * 4, false);
+        }
+        for (let i = 16; i < 64; i++) {
+          const s0 = rotr32(w[i - 15], 7) ^ rotr32(w[i - 15], 18) ^ (w[i - 15] >>> 3);
+          const s1 = rotr32(w[i - 2], 17) ^ rotr32(w[i - 2], 19) ^ (w[i - 2] >>> 10);
+          w[i] = (w[i - 16] + s0 + w[i - 7] + s1) >>> 0;
+        }
+        let a = this.h[0], b = this.h[1], c = this.h[2], d = this.h[3];
+        let e = this.h[4], f = this.h[5], g = this.h[6], h = this.h[7];
+
+        for (let i = 0; i < 64; i++) {
+          const S1 = rotr32(e, 6) ^ rotr32(e, 11) ^ rotr32(e, 25);
+          const ch = (e & f) ^ (~e & g);
+          const temp1 = (h + S1 + ch + K256[i] + w[i]) >>> 0;
+          const S0 = rotr32(a, 2) ^ rotr32(a, 13) ^ rotr32(a, 22);
+          const maj = (a & b) ^ (a & c) ^ (b & c);
+          const temp2 = (S0 + maj) >>> 0;
+
+          h = g;
+          g = f;
+          f = e;
+          e = (d + temp1) >>> 0;
+          d = c;
+          c = b;
+          b = a;
+          a = (temp1 + temp2) >>> 0;
+        }
+
+        this.h[0] = (this.h[0] + a) >>> 0;
+        this.h[1] = (this.h[1] + b) >>> 0;
+        this.h[2] = (this.h[2] + c) >>> 0;
+        this.h[3] = (this.h[3] + d) >>> 0;
+        this.h[4] = (this.h[4] + e) >>> 0;
+        this.h[5] = (this.h[5] + f) >>> 0;
+        this.h[6] = (this.h[6] + g) >>> 0;
+        this.h[7] = (this.h[7] + h) >>> 0;
+      }
+
+      digestHex() {
+        const totalBits = this.totalBytes * 8n;
+        this.buf[this.bufLen++] = 0x80;
+        if (this.bufLen > 56) {
+          this.buf.fill(0, this.bufLen, 64);
+          this._compress(this.buf, 0);
+          this.bufLen = 0;
+        }
+        this.buf.fill(0, this.bufLen, 56);
+        const dv = new DataView(this.buf.buffer);
+        dv.setUint32(56, Number((totalBits >> 32n) & 0xffffffffn), false);
+        dv.setUint32(60, Number(totalBits & 0xffffffffn), false);
+        this._compress(this.buf, 0);
+        return Array.from(this.h)
+          .map(v => v.toString(16).padStart(8, "0"))
+          .join("");
+      }
+    }
+
+    const K512 = [
+      0x428a2f98d728ae22n, 0x7137449123ef65cdn, 0xb5c0fbcfec4d3b2fn, 0xe9b5dba58189dbbcn,
+      0x3956c25bf348b538n, 0x59f111f1b605d019n, 0x923f82a4af194f9bn, 0xab1c5ed5da6d8118n,
+      0xd807aa98a3030242n, 0x12835b0145706fben, 0x243185be4ee4b28cn, 0x550c7dc3d5ffb4e2n,
+      0x72be5d74f27b896fn, 0x80deb1fe3b1696b1n, 0x9bdc06a725c71235n, 0xc19bf174cf692694n,
+      0xe49b69c19ef14ad2n, 0xefbe4786384f25e3n, 0x0fc19dc68b8cd5b5n, 0x240ca1cc77ac9c65n,
+      0x2de92c6f592b0275n, 0x4a7484aa6ea6e483n, 0x5cb0a9dcbd41fbd4n, 0x76f988da831153b5n,
+      0x983e5152ee66dfabn, 0xa831c66d2db43210n, 0xb00327c898fb213fn, 0xbf597fc7beef0ee4n,
+      0xc6e00bf33da88fc2n, 0xd5a79147930aa725n, 0x06ca6351e003826fn, 0x142929670a0e6e70n,
+      0x27b70a8546d22ffcn, 0x2e1b21385c26c926n, 0x4d2c6dfc5ac42aedn, 0x53380d139d95b3dfn,
+      0x650a73548baf63den, 0x766a0abb3c77b2a8n, 0x81c2c92e47edaee6n, 0x92722c851482353bn,
+      0xa2bfe8a14cf10364n, 0xa81a664bbc423001n, 0xc24b8b70d0f89791n, 0xc76c51a30654be30n,
+      0xd192e819d6ef5218n, 0xd69906245565a910n, 0xf40e35855771202an, 0x106aa07032bbd1b8n,
+      0x19a4c116b8d2d0c8n, 0x1e376c085141ab53n, 0x2748774cdf8eeb99n, 0x34b0bcb5e19b48a8n,
+      0x391c0cb3c5c95a63n, 0x4ed8aa4ae3418acbn, 0x5b9cca4f7763e373n, 0x682e6ff3d6b2b8a3n,
+      0x748f82ee5defb2fcn, 0x78a5636f43172f60n, 0x84c87814a1f0ab72n, 0x8cc702081a6439ecn,
+      0x90befffa23631e28n, 0xa4506cebde82bde9n, 0xbef9a3f7b2c67915n, 0xc67178f2e372532bn,
+      0xca273eceea26619cn, 0xd186b8c721c0c207n, 0xeada7dd6cde0eb1en, 0xf57d4f7fee6ed178n,
+      0x06f067aa72176fban, 0x0a637dc5a2c898a6n, 0x113f9804bef90daen, 0x1b710b35131c471bn,
+      0x28db77f523047d84n, 0x32caab7b40c72493n, 0x3c9ebe0a15c9bebcn, 0x431d67c49c100d4cn,
+      0x4cc5d4becb3e42b6n, 0x597f299cfc657e2an, 0x5fcb6fab3ad6faecn, 0x6c44198c4a475817n
+    ];
+
+    class Sha512Stream {
+      constructor(is384 = false) {
+        this.is384 = is384;
+        this.h = is384
+          ? [
+              0xcbbb9d5dc1059ed8n, 0x629a292a367cd507n, 0x9159015a3070dd17n, 0x152fecd8f70e5939n,
+              0x67332667ffc00b31n, 0x8eb44a8768581511n, 0xdb0c2e0d64f98fa7n, 0x47b5481dbefa4fa4n
+            ]
+          : [
+              0x6a09e667f3bcc908n, 0xbb67ae8584caa73bn, 0x3c6ef372fe94f82bn, 0xa54ff53a5f1d36f1n,
+              0x510e527fade682d1n, 0x9b05688c2b3e6c1fn, 0x1f83d9abfb41bd6bn, 0x5be0cd19137e2179n
+            ];
+        this.buf = new Uint8Array(128);
+        this.bufLen = 0;
+        this.totalBytes = 0n;
+        this.w = new Array(80).fill(0n);
+      }
+
+      update(chunk) {
+        this.totalBytes += BigInt(chunk.length);
+        let offset = 0;
+        if (this.bufLen > 0) {
+          const need = 128 - this.bufLen;
+          if (chunk.length < need) {
+            this.buf.set(chunk, this.bufLen);
+            this.bufLen += chunk.length;
+            return;
+          }
+          this.buf.set(chunk.subarray(0, need), this.bufLen);
+          this._compress(this.buf, 0);
+          this.bufLen = 0;
+          offset = need;
+        }
+        while (offset + 128 <= chunk.length) {
+          this._compress(chunk, offset);
+          offset += 128;
+        }
+        if (offset < chunk.length) {
+          this.buf.set(chunk.subarray(offset), 0);
+          this.bufLen = chunk.length - offset;
+        }
+      }
+
+      _compress(data, offset) {
+        const w = this.w;
+        const dv = new DataView(data.buffer, data.byteOffset + offset, 128);
+        for (let i = 0; i < 16; i++) {
+          w[i] = dv.getBigUint64(i * 8, false);
+        }
+        for (let i = 16; i < 80; i++) {
+          const s0 = rotr64(w[i - 15], 1n) ^ rotr64(w[i - 15], 8n) ^ (w[i - 15] >> 7n);
+          const s1 = rotr64(w[i - 2], 19n) ^ rotr64(w[i - 2], 61n) ^ (w[i - 2] >> 6n);
+          w[i] = (w[i - 16] + s0 + w[i - 7] + s1) & MASK64;
+        }
+        let a = this.h[0], b = this.h[1], c = this.h[2], d = this.h[3];
+        let e = this.h[4], f = this.h[5], g = this.h[6], h = this.h[7];
+
+        for (let i = 0; i < 80; i++) {
+          const S1 = rotr64(e, 14n) ^ rotr64(e, 18n) ^ rotr64(e, 41n);
+          const ch = (e & f) ^ ((~e & MASK64) & g);
+          const temp1 = (h + S1 + ch + K512[i] + w[i]) & MASK64;
+          const S0 = rotr64(a, 28n) ^ rotr64(a, 34n) ^ rotr64(a, 39n);
+          const maj = (a & b) ^ (a & c) ^ (b & c);
+          const temp2 = (S0 + maj) & MASK64;
+
+          h = g;
+          g = f;
+          f = e;
+          e = (d + temp1) & MASK64;
+          d = c;
+          c = b;
+          b = a;
+          a = (temp1 + temp2) & MASK64;
+        }
+
+        this.h[0] = (this.h[0] + a) & MASK64;
+        this.h[1] = (this.h[1] + b) & MASK64;
+        this.h[2] = (this.h[2] + c) & MASK64;
+        this.h[3] = (this.h[3] + d) & MASK64;
+        this.h[4] = (this.h[4] + e) & MASK64;
+        this.h[5] = (this.h[5] + f) & MASK64;
+        this.h[6] = (this.h[6] + g) & MASK64;
+        this.h[7] = (this.h[7] + h) & MASK64;
+      }
+
+      digestHex() {
+        const totalBits = this.totalBytes * 8n;
+        this.buf[this.bufLen++] = 0x80;
+        if (this.bufLen > 112) {
+          this.buf.fill(0, this.bufLen, 128);
+          this._compress(this.buf, 0);
+          this.bufLen = 0;
+        }
+        this.buf.fill(0, this.bufLen, 112);
+        const dv = new DataView(this.buf.buffer);
+        dv.setBigUint64(112, (totalBits >> 64n) & MASK64, false);
+        dv.setBigUint64(120, totalBits & MASK64, false);
+        this._compress(this.buf, 0);
+        const words = this.is384 ? this.h.slice(0, 6) : this.h;
+        return words.map(v => v.toString(16).padStart(16, "0")).join("");
+      }
+    }
+
+    function runSelfTest() {
+      const empty = new Uint8Array(0);
+      const s1 = new Sha1Stream(); s1.update(empty);
+      const s256 = new Sha256Stream(); s256.update(empty);
+      const s384 = new Sha512Stream(true); s384.update(empty);
+      const s512 = new Sha512Stream(false); s512.update(empty);
+      return (
+        s1.digestHex() === "da39a3ee5e6b4b0d3255bfef95601890afd80709" &&
+        s256.digestHex() === "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" &&
+        s384.digestHex() === "38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b" &&
+        s512.digestHex() === "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"
+      );
+    }
+
+    let aborted = false;
+
+    self.onmessage = async (e) => {
+      const msg = e.data;
+      if (msg.type === "abort") {
+        aborted = true;
+        return;
+      }
+      if (msg.type === "hash") {
+        aborted = false;
+        if (!runSelfTest()) {
+          self.postMessage({ type: "error", error: "FIPS 180-4 self-test failed." });
+          return;
+        }
+        const file = msg.file;
+        const CHUNK_SIZE = 2 * 1024 * 1024;
+        const sha1 = new Sha1Stream();
+        const sha256 = new Sha256Stream();
+        const sha384 = new Sha512Stream(true);
+        const sha512 = new Sha512Stream(false);
+
+        let offset = 0;
+        const startTime = performance.now();
+
+        try {
+          while (offset < file.size) {
+            if (aborted) {
+              self.postMessage({ type: "aborted" });
+              return;
+            }
+            const end = Math.min(offset + CHUNK_SIZE, file.size);
+            const buffer = await file.slice(offset, end).arrayBuffer();
+            const chunk = new Uint8Array(buffer);
+
+            sha256.update(chunk);
+            sha384.update(chunk);
+            sha512.update(chunk);
+            sha1.update(chunk);
+
+            offset = end;
+            const elapsedSec = Math.max((performance.now() - startTime) / 1000, 0.001);
+            const speedMBps = (offset / (1024 * 1024)) / elapsedSec;
+            self.postMessage({
+              type: "progress",
+              loaded: offset,
+              total: file.size,
+              speedMBps: speedMBps
+            });
+          }
+
+          if (file.size === 0) {
+            const empty = new Uint8Array(0);
+            sha256.update(empty);
+            sha384.update(empty);
+            sha512.update(empty);
+            sha1.update(empty);
+          }
+
+          self.postMessage({
+            type: "done",
+            hashes: {
+              "SHA-256": sha256.digestHex(),
+              "SHA-384": sha384.digestHex(),
+              "SHA-512": sha512.digestHex(),
+              "SHA-1": sha1.digestHex()
+            }
+          });
+        } catch (err) {
+          self.postMessage({ type: "error", error: err.message || String(err) });
+        }
+      }
+    };
+  </script>
+
+  <script>
+    const I18N = {
+      id: {
+        appTitle: "File Hash Generator",
+        localBadge: "100% Lokal di Browser",
+        dropTitle: "Pilih file, seret ke sini, atau tempel (Ctrl+V)",
+        dropSub: "Mendukung file ukuran kecil hingga multi-GB tanpa batas unggahan",
+        cancelBtn: "Batalkan",
+        resetBtn: "Hapus File",
+        resultsTitle: "Hasil Checksum File",
+        copyAll: "Salin Semua",
+        exportTxt: "Unduh .txt",
+        tagRec: "Direkomendasikan",
+        tagLegacy: "Kompatibilitas Lama",
+        copy: "Salin",
+        copied: "Tersalin",
+        waitingFile: "Menunggu file dipilih...",
+        calculating: "Menghitung hash...",
+        verifierTitle: "Verifikasi Checksum (Pembanding)",
+        clearBtn: "Bersihkan",
+        verifierDesc: "Tempel nilai hash referensi dari sumber unduhan untuk mencocokkan integritas file secara otomatis (mendukung SHA-256, SHA-384, SHA-512, dan SHA-1).",
+        verifyPlaceholder: "Tempel hash referensi (contoh: e3b0c44298fc1c149afbf4c8996fb924...)",
+        footerText: "Diproses sepenuhnya di perangkat Anda menggunakan Web Crypto API & Streaming Web Worker. Bagian dari",
+        engineFast: "Web Crypto Fast-Path",
+        engineStream: "Streaming Worker (2 MB/blok)",
+        matchMsg: "COCOK: Hash referensi identik dengan",
+        mismatchMsg: "TIDAK COCOK: Hash referensi tidak sama dengan hash file ini.",
+        invalidMsg: "FORMAT TIDAK VALID: Hash harus berupa 40, 64, 96, atau 128 karakter heksadesimal (0-9, a-f).",
+        waitHashMsg: "Pilih file terlebih dahulu untuk mulai memverifikasi hash referensi.",
+        abortedText: "Perhitungan dibatalkan."
+      },
+      en: {
+        appTitle: "File Hash Generator",
+        localBadge: "100% Local in Browser",
+        dropTitle: "Select a file, drag & drop here, or paste (Ctrl+V)",
+        dropSub: "Supports small files up to multi-GB archives with zero server uploads",
+        cancelBtn: "Cancel",
+        resetBtn: "Clear File",
+        resultsTitle: "File Checksum Results",
+        copyAll: "Copy All",
+        exportTxt: "Download .txt",
+        tagRec: "Recommended",
+        tagLegacy: "Legacy Compatibility",
+        copy: "Copy",
+        copied: "Copied",
+        waitingFile: "Waiting for a file...",
+        calculating: "Computing hashes...",
+        verifierTitle: "Checksum Verifier (Comparator)",
+        clearBtn: "Clear",
+        verifierDesc: "Paste the reference checksum from your download source to automatically verify file integrity (supports SHA-256, SHA-384, SHA-512, and SHA-1).",
+        verifyPlaceholder: "Paste reference hash (e.g., e3b0c44298fc1c149afbf4c8996fb924...)",
+        footerText: "Processed entirely on your device using Web Crypto API & Streaming Web Worker. Part of",
+        engineFast: "Web Crypto Fast-Path",
+        engineStream: "Streaming Worker (2 MB chunks)",
+        matchMsg: "MATCH: Reference hash matches",
+        mismatchMsg: "MISMATCH: Reference hash does not match this file.",
+        invalidMsg: "INVALID FORMAT: Expected 40, 64, 96, or 128 hexadecimal characters (0-9, a-f).",
+        waitHashMsg: "Select a file first to verify against the reference hash.",
+        abortedText: "Calculation aborted."
+      }
+    };
+
+    const FAST_PATH_LIMIT = 64 * 1024 * 1024; // 64 MB
+    const ALGOS = ["SHA-256", "SHA-384", "SHA-512", "SHA-1"];
+
+    let currentLang = localStorage.getItem("utilitibox_lang") || "id";
+    let currentTheme = localStorage.getItem("utilitibox_theme") || (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+    let isUpperCase = false;
+    let currentFile = null;
+    let rawHashes = null;
+    let activeWorker = null;
+
+    const el = {
+      dropzone: document.getElementById("dropzone"),
+      fileInput: document.getElementById("fileInput"),
+      fileMeta: document.getElementById("fileMeta"),
+      fileName: document.getElementById("fileName"),
+      fileSize: document.getElementById("fileSize"),
+      fileTime: document.getElementById("fileTime"),
+      engineBadge: document.getElementById("engineBadge"),
+      cancelBtn: document.getElementById("cancelBtn"),
+      resetBtn: document.getElementById("resetBtn"),
+      progressWrap: document.getElementById("progressWrap"),
+      progressBar: document.getElementById("progressBar"),
+      progressPercent: document.getElementById("progressPercent"),
+      progressSpeed: document.getElementById("progressSpeed"),
+      caseLower: document.getElementById("caseLower"),
+      caseUpper: document.getElementById("caseUpper"),
+      copyAllBtn: document.getElementById("copyAllBtn"),
+      exportBtn: document.getElementById("exportBtn"),
+      verifyInput: document.getElementById("verifyInput"),
+      clearVerifyBtn: document.getElementById("clearVerifyBtn"),
+      verifyStatus: document.getElementById("verifyStatus"),
+      langToggle: document.getElementById("langToggle"),
+      langLabel: document.getElementById("langLabel"),
+      themeToggle: document.getElementById("themeToggle"),
+      iconSun: document.getElementById("iconSun"),
+      iconMoon: document.getElementById("iconMoon")
+    };
+
+    function t(key) {
+      return (I18N[currentLang] && I18N[currentLang][key]) || I18N.id[key] || key;
+    }
+
+    function applyTheme(theme) {
+      currentTheme = theme;
+      document.documentElement.setAttribute("data-theme", theme);
+      localStorage.setItem("utilitibox_theme", theme);
+      el.iconSun.style.display = theme === "dark" ? "block" : "none";
+      el.iconMoon.style.display = theme === "light" ? "block" : "none";
+    }
+
+    function applyLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem("utilitibox_lang", lang);
+      document.documentElement.lang = lang;
+      el.langLabel.textContent = lang.toUpperCase();
+
+      document.querySelectorAll("[data-i18n]").forEach(node => {
+        const key = node.getAttribute("data-i18n");
+        if (key === "waitingFile" && rawHashes) return;
+        node.textContent = t(key);
+      });
+
+      document.querySelectorAll("[data-i18n-placeholder]").forEach(node => {
+        const key = node.getAttribute("data-i18n-placeholder");
+        node.setAttribute("placeholder", t(key));
+      });
+
+      if (currentFile) {
+        const useFast = canUseWebCrypto(currentFile);
+        el.engineBadge.textContent = useFast ? t("engineFast") : t("engineStream");
+      }
+
+      runVerification();
+    }
+
+    function formatBytes(bytes) {
+      if (bytes === 0) return "0 B (0 bytes)";
+      const units = ["B", "KB", "MB", "GB", "TB"];
+      const i = Math.floor(Math.log(bytes) / Math.log(1024));
+      const val = (bytes / Math.pow(1024, i)).toFixed(i === 0 ? 0 : 2);
+      return `${val} ${units[i]} (${bytes.toLocaleString()} bytes)`;
+    }
+
+    function formatHash(hex) {
+      if (!hex) return "";
+      return isUpperCase ? hex.toUpperCase() : hex.toLowerCase();
+    }
+
+    function canUseWebCrypto(file) {
+      return Boolean(window.crypto && window.crypto.subtle && file.size <= FAST_PATH_LIMIT);
+    }
+
+    function bufferToHex(buffer) {
+      const bytes = new Uint8Array(buffer);
+      let hex = "";
+      for (let i = 0; i < bytes.length; i++) {
+        hex += bytes[i].toString(16).padStart(2, "0");
+      }
+      return hex;
+    }
+
+    function createStreamWorker() {
+      const code = document.getElementById("worker-code").textContent;
+      const blob = new Blob([code], { type: "application/javascript" });
+      const url = URL.createObjectURL(blob);
+      const worker = new Worker(url);
+      worker._blobUrl = url;
+      return worker;
+    }
+
+    function terminateActiveWorker() {
+      if (activeWorker) {
+        activeWorker.postMessage({ type: "abort" });
+        activeWorker.terminate();
+        if (activeWorker._blobUrl) URL.revokeObjectURL(activeWorker._blobUrl);
+        activeWorker = null;
+      }
+    }
+
+    function renderHashes() {
+      ALGOS.forEach(algo => {
+        const box = document.getElementById(`val-${algo}`);
+        const copyBtn = document.querySelector(`.copy-single[data-algo="${algo}"]`);
+        if (rawHashes && rawHashes[algo]) {
+          box.textContent = formatHash(rawHashes[algo]);
+          box.classList.remove("empty");
+          copyBtn.disabled = false;
+        } else {
+          box.textContent = t("waitingFile");
+          box.classList.add("empty");
+          copyBtn.disabled = true;
+        }
+      });
+
+      const hasResults = Boolean(rawHashes);
+      el.copyAllBtn.disabled = !hasResults;
+      el.exportBtn.disabled = !hasResults;
+      runVerification();
+    }
+
+    function setCalculatingState() {
+      rawHashes = null;
+      ALGOS.forEach(algo => {
+        const box = document.getElementById(`val-${algo}`);
+        const copyBtn = document.querySelector(`.copy-single[data-algo="${algo}"]`);
+        const card = document.getElementById(`card-${algo}`);
+        box.textContent = t("calculating");
+        box.classList.add("empty");
+        copyBtn.disabled = true;
+        card.classList.remove("matched");
+      });
+      el.copyAllBtn.disabled = true;
+      el.exportBtn.disabled = true;
+    }
+
+    async function processFile(file) {
+      if (!file) return;
+      terminateActiveWorker();
+      currentFile = file;
+
+      el.fileName.textContent = file.name;
+      el.fileSize.textContent = formatBytes(file.size);
+      const dateStr = file.lastModified ? new Date(file.lastModified).toLocaleString(currentLang === "id" ? "id-ID" : "en-US") : "-";
+      el.fileTime.textContent = dateStr;
+      el.fileMeta.classList.add("visible");
+
+      setCalculatingState();
+
+      if (canUseWebCrypto(file)) {
+        el.engineBadge.textContent = t("engineFast");
+        el.progressWrap.classList.remove("visible");
+        el.cancelBtn.style.display = "none";
+
+        try {
+          const buffer = await file.arrayBuffer();
+          const digests = await Promise.all(
+            ALGOS.map(algo => window.crypto.subtle.digest(algo, buffer))
+          );
+          if (currentFile !== file) return;
+          rawHashes = {};
+          ALGOS.forEach((algo, idx) => {
+            rawHashes[algo] = bufferToHex(digests[idx]);
+          });
+          renderHashes();
+        } catch (err) {
+          processViaWorker(file);
+        }
+      } else {
+        processViaWorker(file);
+      }
+    }
+
+    function processViaWorker(file) {
+      el.engineBadge.textContent = t("engineStream");
+      el.progressWrap.classList.add("visible");
+      el.progressBar.style.width = "0%";
+      el.progressPercent.textContent = "0%";
+      el.progressSpeed.textContent = "0 MB/s";
+      el.cancelBtn.style.display = "inline-flex";
+
+      const worker = createStreamWorker();
+      activeWorker = worker;
+
+      worker.onmessage = (e) => {
+        const data = e.data;
+        if (data.type === "progress") {
+          const pct = data.total > 0 ? Math.min(100, (data.loaded / data.total) * 100) : 100;
+          el.progressBar.style.width = `${pct.toFixed(1)}%`;
+          el.progressPercent.textContent = `${pct.toFixed(1)}%`;
+          el.progressSpeed.textContent = `${data.speedMBps.toFixed(1)} MB/s`;
+        } else if (data.type === "done") {
+          rawHashes = data.hashes;
+          el.progressBar.style.width = "100%";
+          el.progressPercent.textContent = "100%";
+          el.cancelBtn.style.display = "none";
+          terminateActiveWorker();
+          renderHashes();
+        } else if (data.type === "aborted") {
+          el.cancelBtn.style.display = "none";
+          el.progressPercent.textContent = t("abortedText");
+          terminateActiveWorker();
+        } else if (data.type === "error") {
+          el.cancelBtn.style.display = "none";
+          alert(data.error);
+          terminateActiveWorker();
+        }
+      };
+
+      worker.postMessage({ type: "hash", file });
+    }
+
+    function resetAll() {
+      terminateActiveWorker();
+      currentFile = null;
+      rawHashes = null;
+      el.fileInput.value = "";
+      el.fileMeta.classList.remove("visible");
+      el.progressWrap.classList.remove("visible");
+      el.cancelBtn.style.display = "none";
+      ALGOS.forEach(algo => document.getElementById(`card-${algo}`).classList.remove("matched"));
+      renderHashes();
+    }
+
+    function runVerification() {
+      ALGOS.forEach(algo => document.getElementById(`card-${algo}`).classList.remove("matched"));
+      const rawInput = el.verifyInput.value.trim().replace(/\s+/g, "");
+
+      if (!rawInput) {
+        el.verifyStatus.className = "verify-status";
+        el.verifyStatus.textContent = "";
+        return;
+      }
+
+      const isHex = /^[0-9a-fA-F]+$/.test(rawInput);
+      const validLengths = [40, 64, 96, 128];
+
+      if (!isHex || !validLengths.includes(rawInput.length)) {
+        el.verifyStatus.className = "verify-status visible invalid";
+        el.verifyStatus.textContent = t("invalidMsg");
+        return;
+      }
+
+      if (!rawHashes) {
+        el.verifyStatus.className = "verify-status visible invalid";
+        el.verifyStatus.textContent = t("waitHashMsg");
+        return;
+      }
+
+      const target = rawInput.toLowerCase();
+      let matchedAlgo = null;
+
+      for (const algo of ALGOS) {
+        if (rawHashes[algo] && rawHashes[algo].toLowerCase() === target) {
+          matchedAlgo = algo;
+          break;
+        }
+      }
+
+      if (matchedAlgo) {
+        document.getElementById(`card-${matchedAlgo}`).classList.add("matched");
+        el.verifyStatus.className = "verify-status visible match";
+        el.verifyStatus.textContent = `${t("matchMsg")} ${matchedAlgo}`;
+      } else {
+        el.verifyStatus.className = "verify-status visible mismatch";
+        el.verifyStatus.textContent = t("mismatchMsg");
+      }
+    }
+
+    async function copyText(text, btnElement) {
+      if (!text) return;
+      try {
+        await navigator.clipboard.writeText(text);
+        if (btnElement) {
+          const original = btnElement.textContent;
+          btnElement.textContent = t("copied");
+          setTimeout(() => {
+            btnElement.textContent = original;
+          }, 1400);
+        }
+      } catch (_) {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+      }
+    }
+
+    function buildReportText() {
+      if (!currentFile || !rawHashes) return "";
+      const lines = [
+        `File: ${currentFile.name}`,
+        `Size: ${formatBytes(currentFile.size)}`,
+        `Generated: ${new Date().toISOString()}`,
+        `Tool: UtilitiBox File Hash Generator`,
+        "----------------------------------------"
+      ];
+      ALGOS.forEach(algo => {
+        lines.push(`${algo}: ${formatHash(rawHashes[algo])}`);
+      });
+      return lines.join("\n");
+    }
+
+    // Event Listeners
+    el.dropzone.addEventListener("click", () => el.fileInput.click());
+    el.dropzone.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        el.fileInput.click();
+      }
+    });
+
+    el.fileInput.addEventListener("change", (e) => {
+      if (e.target.files && e.target.files[0]) {
+        processFile(e.target.files[0]);
+      }
+    });
+
+    ["dragenter", "dragover"].forEach(evt => {
+      el.dropzone.addEventListener(evt, (e) => {
+        e.preventDefault();
+        el.dropzone.classList.add("drag-over");
+      });
+    });
+
+    ["dragleave", "drop"].forEach(evt => {
+      el.dropzone.addEventListener(evt, (e) => {
+        e.preventDefault();
+        el.dropzone.classList.remove("drag-over");
+      });
+    });
+
+    el.dropzone.addEventListener("drop", (e) => {
+      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+        processFile(e.dataTransfer.files[0]);
+      }
+    });
+
+    window.addEventListener("paste", (e) => {
+      if (e.clipboardData && e.clipboardData.files && e.clipboardData.files[0]) {
+        processFile(e.clipboardData.files[0]);
+      }
+    });
+
+    el.cancelBtn.addEventListener("click", () => {
+      terminateActiveWorker();
+      el.cancelBtn.style.display = "none";
+      el.progressPercent.textContent = t("abortedText");
+    });
+
+    el.resetBtn.addEventListener("click", resetAll);
+
+    el.caseLower.addEventListener("click", () => {
+      isUpperCase = false;
+      el.caseLower.classList.add("active");
+      el.caseUpper.classList.remove("active");
+      renderHashes();
+    });
+
+    el.caseUpper.addEventListener("click", () => {
+      isUpperCase = true;
+      el.caseUpper.classList.add("active");
+      el.caseLower.classList.remove("active");
+      renderHashes();
+    });
+
+    document.querySelectorAll(".copy-single").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const algo = btn.getAttribute("data-algo");
+        if (rawHashes && rawHashes[algo]) {
+          copyText(formatHash(rawHashes[algo]), btn);
+        }
+      });
+    });
+
+    el.copyAllBtn.addEventListener("click", () => {
+      const text = buildReportText();
+      const labelSpan = el.copyAllBtn.querySelector("span");
+      copyText(text, labelSpan);
+    });
+
+    el.exportBtn.addEventListener("click", () => {
+      const text = buildReportText();
+      if (!text) return;
+      const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${currentFile.name}.checksums.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+
+    el.verifyInput.addEventListener("input", runVerification);
+    el.clearVerifyBtn.addEventListener("click", () => {
+      el.verifyInput.value = "";
+      runVerification();
+    });
+
+    el.langToggle.addEventListener("click", () => {
+      applyLanguage(currentLang === "id" ? "en" : "id");
+    });
+
+    el.themeToggle.addEventListener("click", () => {
+      applyTheme(currentTheme === "dark" ? "light" : "dark");
+    });
+
+    // Init
+    applyTheme(currentTheme);
+    applyLanguage(currentLang);
+  </script>
+</body>
+</html>
