@@ -1,0 +1,1762 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR Code Generator - UtilitiBox</title>
+  <meta name="description" content="Buat QR Code untuk URL, Wi-Fi, Teks, Email, dan Nomor Telepon secara gratis dan privat langsung di browser tanpa mengirim data ke server.">
+  <style>
+    :root {
+      --bg-primary: #0f172a;
+      --bg-secondary: #1e293b;
+      --bg-tertiary: #334155;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --border-color: #334155;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --accent-soft: rgba(59, 130, 246, 0.15);
+      --danger: #ef4444;
+      --warning-bg: rgba(245, 158, 11, 0.15);
+      --warning-text: #fbbf24;
+      --warning-border: rgba(245, 158, 11, 0.4);
+      --success: #10b981;
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+      --radius: 12px;
+    }
+
+    [data-theme="light"] {
+      --bg-primary: #f1f5f9;
+      --bg-secondary: #ffffff;
+      --bg-tertiary: #e2e8f0;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --border-color: #cbd5e1;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --accent-soft: rgba(37, 99, 235, 0.1);
+      --warning-bg: rgba(245, 158, 11, 0.12);
+      --warning-text: #b45309;
+      --warning-border: rgba(245, 158, 11, 0.45);
+      --shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.2s, color 0.2s;
+    }
+
+    header {
+      background-color: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem 1.5rem;
+    }
+
+    .header-inner {
+      max-width: 1080px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--text-primary);
+    }
+
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: var(--accent);
+      color: #ffffff;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      font-size: 1.125rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .brand-sub {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      display: block;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      padding: 0.45rem 0.85rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: background-color 0.15s, border-color 0.15s;
+    }
+
+    .btn-ghost:hover {
+      background-color: var(--bg-tertiary);
+    }
+
+    main {
+      flex: 1;
+      max-width: 1080px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+
+    .privacy-banner {
+      background-color: var(--accent-soft);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: var(--radius);
+      padding: 0.75rem 1rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      font-size: 0.85rem;
+      color: var(--text-primary);
+    }
+
+    .privacy-banner svg {
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: 1.25fr 0.95fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    @media (max-width: 860px) {
+      .workspace {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      box-shadow: var(--shadow);
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.4rem;
+      background-color: var(--bg-primary);
+      padding: 0.35rem;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      margin-bottom: 1.25rem;
+    }
+
+    @media (max-width: 520px) {
+      .tabs {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      padding: 0.55rem 0.4rem;
+      border-radius: 7px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.3rem;
+      transition: all 0.15s;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-primary);
+      background-color: var(--bg-secondary);
+    }
+
+    .tab-btn.active {
+      background-color: var(--accent);
+      color: #ffffff;
+    }
+
+    .form-panel {
+      display: none;
+    }
+
+    .form-panel.active {
+      display: block;
+    }
+
+    .field {
+      margin-bottom: 1rem;
+    }
+
+    .field label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+      color: var(--text-primary);
+    }
+
+    .field-hint {
+      font-size: 0.76rem;
+      font-weight: 400;
+      color: var(--text-secondary);
+    }
+
+    input[type="text"],
+    input[type="url"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="password"],
+    select,
+    textarea {
+      width: 100%;
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      padding: 0.65rem 0.85rem;
+      border-radius: 8px;
+      font-size: 0.92rem;
+      font-family: inherit;
+      transition: border-color 0.15s;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    input:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 96px;
+    }
+
+    .password-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .password-wrap input {
+      padding-right: 4.5rem;
+    }
+
+    .toggle-pass {
+      position: absolute;
+      right: 0.5rem;
+      background: var(--bg-tertiary);
+      border: none;
+      color: var(--text-primary);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.3rem 0.55rem;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      font-size: 0.86rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .checkbox-row input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    .divider {
+      height: 1px;
+      background-color: var(--border-color);
+      margin: 1.25rem 0;
+    }
+
+    .section-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      margin-bottom: 0.9rem;
+      color: var(--text-primary);
+    }
+
+    .custom-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.9rem;
+    }
+
+    @media (max-width: 480px) {
+      .custom-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .color-picker-box {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      padding: 0.4rem 0.65rem;
+      border-radius: 8px;
+    }
+
+    input[type="color"] {
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .color-hex {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.84rem;
+      color: var(--text-primary);
+      text-transform: uppercase;
+    }
+
+    .preview-card {
+      position: sticky;
+      top: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .qr-stage {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      max-width: 300px;
+      background-color: var(--bg-primary);
+      border: 1px dashed var(--border-color);
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .qr-stage.has-qr {
+      border-style: solid;
+    }
+
+    #qrCanvas {
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      border-radius: 6px;
+      display: none;
+    }
+
+    .qr-placeholder {
+      color: var(--text-secondary);
+      font-size: 0.86rem;
+      padding: 1rem;
+    }
+
+    .meta-badges {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.45rem;
+      margin-bottom: 1rem;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+    }
+
+    .alert-box {
+      width: 100%;
+      background-color: var(--warning-bg);
+      border: 1px solid var(--warning-border);
+      color: var(--warning-text);
+      font-size: 0.8rem;
+      padding: 0.6rem 0.8rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      text-align: left;
+      display: none;
+    }
+
+    .alert-box.show {
+      display: block;
+    }
+
+    .action-grid {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+    }
+
+    .btn-primary {
+      background-color: var(--accent);
+      color: #ffffff;
+      border: none;
+      padding: 0.7rem 1rem;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      transition: background-color 0.15s, opacity 0.15s;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background-color: var(--accent-hover);
+    }
+
+    .btn-primary:disabled,
+    .btn-secondary:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background-color: var(--bg-tertiary);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      padding: 0.7rem 1rem;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      transition: background-color 0.15s, opacity 0.15s;
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      filter: brightness(1.08);
+    }
+
+    .btn-full {
+      grid-column: 1 / -1;
+    }
+
+    .payload-preview {
+      width: 100%;
+      margin-top: 1rem;
+      text-align: left;
+    }
+
+    .payload-preview summary {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .payload-code {
+      margin-top: 0.45rem;
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 0.6rem 0.75rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.76rem;
+      color: var(--text-secondary);
+      word-break: break-all;
+      white-space: pre-wrap;
+    }
+
+    footer {
+      border-top: 1px solid var(--border-color);
+      padding: 1rem 1.5rem;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-top: 2rem;
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <a href="https://utilitibox.github.io/" class="brand">
+        <div class="brand-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+            <path d="M14 14h3v3h-3zM20 14v3h-3M14 20h7"></path>
+          </svg>
+        </div>
+        <div>
+          <span class="brand-title">QR Code Generator</span>
+          <span class="brand-sub">UtilitiBox Client-Side Tools</span>
+        </div>
+      </a>
+      <div class="header-actions">
+        <a href="https://utilitibox.github.io/" class="btn-ghost">Beranda UtilitiBox</a>
+        <button type="button" id="themeToggle" class="btn-ghost" aria-label="Ganti Tema">Tema Terang</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="privacy-banner">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+      </svg>
+      <span><strong>100% Lokal & Privat:</strong> Kata sandi Wi-Fi, tautan, email, dan nomor telepon diproses sepenuhnya di browser Anda tanpa dikirim ke server mana pun.</span>
+    </div>
+
+    <div class="workspace">
+      <div class="card">
+        <div class="tabs" role="tablist" aria-label="Pilih Tipe QR Code">
+          <button type="button" class="tab-btn active" data-type="url" role="tab" aria-selected="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+            </svg>
+            <span>URL</span>
+          </button>
+          <button type="button" class="tab-btn" data-type="wifi" role="tab" aria-selected="false">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+              <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
+              <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+              <circle cx="12" cy="20" r="1"></circle>
+            </svg>
+            <span>Wi-Fi</span>
+          </button>
+          <button type="button" class="tab-btn" data-type="text" role="tab" aria-selected="false">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+            </svg>
+            <span>Teks</span>
+          </button>
+          <button type="button" class="tab-btn" data-type="email" role="tab" aria-selected="false">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+            </svg>
+            <span>Email</span>
+          </button>
+          <button type="button" class="tab-btn" data-type="phone" role="tab" aria-selected="false">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+            </svg>
+            <span>Telepon</span>
+          </button>
+        </div>
+
+        <!-- PANEL 1: URL -->
+        <div id="panel-url" class="form-panel active">
+          <div class="field">
+            <label for="inputUrl">Alamat Website / URL <span class="field-hint">Otomatis melengkapi https://</span></label>
+            <input type="url" id="inputUrl" placeholder="contoh: https://utilitibox.github.io" autocomplete="off">
+          </div>
+        </div>
+
+        <!-- PANEL 2: WI-FI -->
+        <div id="panel-wifi" class="form-panel">
+          <div class="field">
+            <label for="wifiSsid">Nama Jaringan (SSID) <span class="field-hint">Wajib diisi</span></label>
+            <input type="text" id="wifiSsid" placeholder="Nama Wi-Fi Anda" autocomplete="off">
+          </div>
+          <div class="custom-grid">
+            <div class="field">
+              <label for="wifiEncryption">Keamanan / Enkripsi</label>
+              <select id="wifiEncryption">
+                <option value="WPA" selected>WPA / WPA2 / WPA3</option>
+                <option value="WEP">WEP</option>
+                <option value="nopass">Tanpa Sandi (Terbuka)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="wifiPass">Kata Sandi Wi-Fi</label>
+              <div class="password-wrap">
+                <input type="password" id="wifiPass" placeholder="Masukkan kata sandi" autocomplete="off">
+                <button type="button" id="toggleWifiPass" class="toggle-pass">Lihat</button>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label class="checkbox-row">
+              <input type="checkbox" id="wifiHidden">
+              <span>Jaringan tersembunyi (Hidden SSID)</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- PANEL 3: TEKS -->
+        <div id="panel-text" class="form-panel">
+          <div class="field">
+            <label for="inputText">Isi Teks / Catatan <span class="field-hint" id="textCounter">0 karakter</span></label>
+            <textarea id="inputText" placeholder="Tulis pesan, catatan, kode voucher, atau teks apa pun di sini..."></textarea>
+          </div>
+        </div>
+
+        <!-- PANEL 4: EMAIL -->
+        <div id="panel-email" class="form-panel">
+          <div class="field">
+            <label for="emailTo">Alamat Email Tujuan <span class="field-hint">Wajib diisi</span></label>
+            <input type="email" id="emailTo" placeholder="nama@domain.com" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="emailSubject">Subjek Email <span class="field-hint">Opsional</span></label>
+            <input type="text" id="emailSubject" placeholder="Judul pesan email">
+          </div>
+          <div class="field">
+            <label for="emailBody">Isi Pesan <span class="field-hint">Opsional</span></label>
+            <textarea id="emailBody" placeholder="Tulis isi pesan email default..."></textarea>
+          </div>
+        </div>
+
+        <!-- PANEL 5: TELEPON -->
+        <div id="panel-phone" class="form-panel">
+          <div class="field">
+            <label for="inputPhone">Nomor Telepon <span class="field-hint">Gunakan kode negara, mis. +62</span></label>
+            <input type="tel" id="inputPhone" placeholder="+6281234567890" autocomplete="off">
+          </div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="section-title">Kustomisasi Tampilan & Logo Tengah</div>
+
+        <div class="field">
+          <label class="checkbox-row">
+            <input type="checkbox" id="optCenterLogo" checked>
+            <span>Tampilkan ikon otomatis di tengah sesuai tipe QR (URL, Wi-Fi, Teks, Email, Telepon)</span>
+          </label>
+        </div>
+
+        <div class="custom-grid">
+          <div class="field">
+            <label for="optSize">Ukuran Unduhan (PNG)</label>
+            <select id="optSize">
+              <option value="256">256 x 256 px (Kecil)</option>
+              <option value="512" selected>512 x 512 px (Standar)</option>
+              <option value="1024">1024 x 1024 px (HD)</option>
+              <option value="2048">2048 x 2048 px (Cetak Besar)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="optEcc">Koreksi Kesalahan (ECC)</label>
+            <select id="optEcc">
+              <option value="L">L - Rendah (7%)</option>
+              <option value="M">M - Sedang (15%)</option>
+              <option value="Q">Q - Kuat (25%)</option>
+              <option value="H" selected>H - Tinggi (30% - Ideal untuk Logo)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="optFgColor">Warna Kode QR</label>
+            <div class="color-picker-box">
+              <input type="color" id="optFgColor" value="#0f172a">
+              <span class="color-hex" id="fgHex">#0F172A</span>
+            </div>
+          </div>
+          <div class="field">
+            <label for="optBgColor">Warna Latar Belakang</label>
+            <div class="color-picker-box">
+              <input type="color" id="optBgColor" value="#ffffff">
+              <span class="color-hex" id="bgHex">#FFFFFF</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PREVIEW & DOWNLOAD CARD -->
+      <div class="card preview-card">
+        <div class="qr-stage" id="qrStage">
+          <canvas id="qrCanvas"></canvas>
+          <div class="qr-placeholder" id="qrPlaceholder">
+            Isi formulir di samping untuk membuat QR Code secara otomatis.
+          </div>
+        </div>
+
+        <div class="meta-badges" id="metaBadges" style="display: none;">
+          <span class="badge" id="badgeType">Tipe: URL</span>
+          <span class="badge" id="badgeVersion">Versi 1 (21x21)</span>
+          <span class="badge" id="badgeEcc">ECC: H</span>
+        </div>
+
+        <div class="alert-box" id="alertBox"></div>
+
+        <div class="action-grid">
+          <button type="button" id="btnDownloadPng" class="btn-primary" disabled>Unduh PNG</button>
+          <button type="button" id="btnDownloadSvg" class="btn-secondary" disabled>Unduh SVG</button>
+          <button type="button" id="btnCopyImage" class="btn-secondary btn-full" disabled>Salin Gambar QR ke Clipboard</button>
+        </div>
+
+        <details class="payload-preview" id="payloadDetails" style="display: none;">
+          <summary>Lihat data mentah (Payload QR)</summary>
+          <div class="payload-code" id="payloadCode"></div>
+        </details>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    Bagian dari <a href="https://utilitibox.github.io/">UtilitiBox</a>. Standar QR Code ISO/IEC 18004 tanpa dependensi pihak ketiga.
+  </footer>
+
+  <script>
+    (function () {
+      "use strict";
+
+      /* =====================================================================
+         1. PURE VANILLA JS QR CODE ENCODER (ISO/IEC 18004, VERSIONS 1 - 25)
+         ===================================================================== */
+      const ECC_LEVELS = { L: 0, M: 1, Q: 2, H: 3 };
+
+      const ECC_CODEWORDS_PER_BLOCK = [
+        // Version 1..25
+        [null, 7, 10, 15, 20, 26, 18, 20, 24, 30, 18, 20, 24, 26, 30, 22, 24, 28, 30, 28, 28, 28, 28, 30, 30, 26], // L
+        [null, 10, 16, 26, 18, 24, 16, 18, 22, 22, 26, 30, 22, 22, 24, 24, 28, 28, 26, 26, 26, 26, 28, 28, 28, 28], // M
+        [null, 13, 22, 18, 26, 18, 24, 18, 22, 20, 24, 28, 26, 24, 20, 30, 24, 28, 28, 26, 30, 28, 30, 30, 30, 30], // Q
+        [null, 17, 28, 22, 16, 22, 28, 26, 26, 24, 28, 24, 28, 22, 24, 24, 30, 28, 28, 26, 28, 30, 24, 30, 30, 30]  // H
+      ];
+
+      const NUM_ERROR_CORRECTION_BLOCKS = [
+        // Version 1..25
+        [null, 1, 1, 1, 1, 1, 2, 2, 2, 2, 4, 4, 4, 4, 4, 6, 6, 6, 6, 7, 8, 8, 9, 9, 10, 12], // L
+        [null, 1, 1, 1, 2, 2, 4, 4, 4, 5, 5, 5, 8, 9, 9, 10, 10, 11, 13, 14, 16, 17, 17, 18, 20, 21], // M
+        [null, 1, 1, 2, 2, 4, 4, 6, 6, 8, 8, 8, 10, 12, 16, 12, 17, 16, 18, 21, 20, 23, 23, 25, 27, 29], // Q
+        [null, 1, 1, 2, 4, 4, 4, 5, 6, 8, 8, 11, 11, 16, 16, 18, 16, 19, 21, 25, 25, 25, 34, 30, 32, 35]  // H
+      ];
+
+      function getNumRawDataModules(ver) {
+        const size = ver * 4 + 17;
+        let result = size * size;
+        result -= 192; // 3 finder patterns + separators
+        result -= 2 * (size - 16); // 2 timing patterns
+        result -= 31; // format info + dark module
+        if (ver >= 2) {
+          const numAlign = Math.floor(ver / 7) + 2;
+          result -= (numAlign * numAlign - 3) * 25;
+          result -= (numAlign - 2) * 10;
+        }
+        if (ver >= 7) {
+          result -= 36; // version info
+        }
+        return result;
+      }
+
+      function getNumDataCodewords(ver, eccIdx) {
+        const totalCodewords = Math.floor(getNumRawDataModules(ver) / 8);
+        const ecBlocks = NUM_ERROR_CORRECTION_BLOCKS[eccIdx][ver];
+        const ecPerBlock = ECC_CODEWORDS_PER_BLOCK[eccIdx][ver];
+        return totalCodewords - ecBlocks * ecPerBlock;
+      }
+
+      function gfMul(x, y) {
+        let z = 0;
+        for (let i = 7; i >= 0; i--) {
+          z = (z << 1) ^ ((z >>> 7) * 0x11d);
+          z ^= ((y >>> i) & 1) * x;
+        }
+        return z;
+      }
+
+      function rsComputeDivisor(degree) {
+        const result = new Uint8Array(degree);
+        result[degree - 1] = 1;
+        let root = 1;
+        for (let i = 0; i < degree; i++) {
+          for (let j = 0; j < degree; j++) {
+            result[j] = gfMul(result[j], root);
+            if (j + 1 < degree) result[j] ^= result[j + 1];
+          }
+          root = gfMul(root, 0x02);
+        }
+        return result;
+      }
+
+      function rsComputeRemainder(data, divisor) {
+        const result = new Uint8Array(divisor.length);
+        for (let k = 0; k < data.length; k++) {
+          const factor = data[k] ^ result[0];
+          result.copyWithin(0, 1);
+          result[result.length - 1] = 0;
+          for (let i = 0; i < divisor.length; i++) {
+            result[i] ^= gfMul(divisor[i], factor);
+          }
+        }
+        return result;
+      }
+
+      function getAlignmentPatternPositions(ver) {
+        if (ver === 1) return [];
+        const numAlign = Math.floor(ver / 7) + 2;
+        const step = Math.ceil((ver * 4 + 4) / (numAlign - 1) / 2) * 2;
+        const result = [6];
+        for (let pos = ver * 4 + 10; result.length < numAlign; pos -= step) {
+          result.splice(1, 0, pos);
+        }
+        return result;
+      }
+
+      function appendBits(val, len, bitBuffer) {
+        for (let i = len - 1; i >= 0; i--) {
+          bitBuffer.push((val >>> i) & 1);
+        }
+      }
+
+      function encodeQR(text, eccLetter) {
+        const eccIdx = ECC_LEVELS[eccLetter] !== undefined ? ECC_LEVELS[eccLetter] : 3;
+        const utf8Bytes = new TextEncoder().encode(text);
+
+        // Select smallest version that fits
+        let version = -1;
+        for (let v = 1; v <= 25; v++) {
+          const ccBits = v <= 9 ? 8 : 16;
+          const requiredBits = 4 + ccBits + utf8Bytes.length * 8;
+          const capacityBits = getNumDataCodewords(v, eccIdx) * 8;
+          if (requiredBits <= capacityBits) {
+            version = v;
+            break;
+          }
+        }
+
+        if (version === -1) {
+          throw new Error("Data terlalu panjang untuk kapasitas QR Code (maksimum versi 25).");
+        }
+
+        const dataCapacityBytes = getNumDataCodewords(version, eccIdx);
+        const dataCapacityBits = dataCapacityBytes * 8;
+        const bitBuffer = [];
+
+        // Mode indicator: Byte mode (0100)
+        appendBits(0b0100, 4, bitBuffer);
+        // Character count indicator
+        appendBits(utf8Bytes.length, version <= 9 ? 8 : 16, bitBuffer);
+        // Data bytes
+        for (let i = 0; i < utf8Bytes.length; i++) {
+          appendBits(utf8Bytes[i], 8, bitBuffer);
+        }
+        // Terminator (up to 4 zeros)
+        const terminatorLen = Math.min(4, dataCapacityBits - bitBuffer.length);
+        appendBits(0, terminatorLen, bitBuffer);
+        // Pad to byte boundary
+        while (bitBuffer.length % 8 !== 0) {
+          bitBuffer.push(0);
+        }
+        // Pad bytes (0xEC, 0x11)
+        const padBytes = [0xec, 0x11];
+        let padIdx = 0;
+        while (bitBuffer.length < dataCapacityBits) {
+          appendBits(padBytes[padIdx % 2], 8, bitBuffer);
+          padIdx++;
+        }
+
+        // Convert bits to data codewords
+        const dataCodewords = new Uint8Array(dataCapacityBytes);
+        for (let i = 0; i < dataCapacityBytes; i++) {
+          let byteVal = 0;
+          for (let b = 0; b < 8; b++) {
+            byteVal = (byteVal << 1) | bitBuffer[i * 8 + b];
+          }
+          dataCodewords[i] = byteVal;
+        }
+
+        // Split into blocks & compute Reed-Solomon EC codewords
+        const numBlocks = NUM_ERROR_CORRECTION_BLOCKS[eccIdx][version];
+        const blockEccLen = ECC_CODEWORDS_PER_BLOCK[eccIdx][version];
+        const rawCodewords = Math.floor(getNumRawDataModules(version) / 8);
+        const numShortBlocks = numBlocks - (rawCodewords % numBlocks);
+        const shortBlockLen = Math.floor(rawCodewords / numBlocks);
+
+        const blocks = [];
+        const rsDiv = rsComputeDivisor(blockEccLen);
+        let offset = 0;
+
+        for (let i = 0; i < numBlocks; i++) {
+          const datLen = shortBlockLen - blockEccLen + (i < numShortBlocks ? 0 : 1);
+          const dat = dataCodewords.slice(offset, offset + datLen);
+          offset += datLen;
+          const ecc = rsComputeRemainder(dat, rsDiv);
+          blocks.push({ dat, ecc });
+        }
+
+        // Interleave data and EC codewords
+        const allCodewords = [];
+        const maxDatLen = blocks[blocks.length - 1].dat.length;
+        for (let i = 0; i < maxDatLen; i++) {
+          for (let b = 0; b < numBlocks; b++) {
+            if (i < blocks[b].dat.length) {
+              allCodewords.push(blocks[b].dat[i]);
+            }
+          }
+        }
+        for (let i = 0; i < blockEccLen; i++) {
+          for (let b = 0; b < numBlocks; b++) {
+            allCodewords.push(blocks[b].ecc[i]);
+          }
+        }
+
+        // Initialize grid
+        const size = version * 4 + 17;
+        const modules = Array.from({ length: size }, () => new Uint8Array(size));
+        const isFunction = Array.from({ length: size }, () => new Uint8Array(size));
+
+        function setFunctionModule(x, y, isDark) {
+          modules[y][x] = isDark ? 1 : 0;
+          isFunction[y][x] = 1;
+        }
+
+        // Timing patterns
+        for (let i = 0; i < size; i++) {
+          setFunctionModule(6, i, i % 2 === 0);
+          setFunctionModule(i, 6, i % 2 === 0);
+        }
+
+        // Finder patterns + separators
+        function drawFinderPattern(cx, cy) {
+          for (let dy = -4; dy <= 4; dy++) {
+            for (let dx = -4; dx <= 4; dx++) {
+              const x = cx + dx;
+              const y = cy + dy;
+              if (x >= 0 && x < size && y >= 0 && y < size) {
+                const dist = Math.max(Math.abs(dx), Math.abs(dy));
+                setFunctionModule(x, y, dist !== 2 && dist !== 4);
+              }
+            }
+          }
+        }
+        drawFinderPattern(3, 3);
+        drawFinderPattern(size - 4, 3);
+        drawFinderPattern(3, size - 4);
+
+        // Alignment patterns
+        const alignPos = getAlignmentPatternPositions(version);
+        for (let i = 0; i < alignPos.length; i++) {
+          for (let j = 0; j < alignPos.length; j++) {
+            if (
+              (i === 0 && j === 0) ||
+              (i === 0 && j === alignPos.length - 1) ||
+              (i === alignPos.length - 1 && j === 0)
+            ) {
+              continue;
+            }
+            const cx = alignPos[i];
+            const cy = alignPos[j];
+            for (let dy = -2; dy <= 2; dy++) {
+              for (let dx = -2; dx <= 2; dx++) {
+                setFunctionModule(cx + dx, cy + dy, Math.max(Math.abs(dx), Math.abs(dy)) !== 1);
+              }
+            }
+          }
+        }
+
+        // Reserve format info & dark module
+        for (let i = 0; i <= 8; i++) {
+          if (i !== 6) {
+            setFunctionModule(8, i, false);
+            setFunctionModule(i, 8, false);
+          }
+        }
+        for (let i = 0; i < 8; i++) {
+          setFunctionModule(size - 1 - i, 8, false);
+          if (i < 7) setFunctionModule(8, size - 1 - i, false);
+        }
+        setFunctionModule(8, size - 8, true);
+
+        // Version info (version >= 7)
+        if (version >= 7) {
+          let rem = version;
+          for (let i = 0; i < 12; i++) {
+            rem = (rem << 1) ^ ((rem >>> 11) * 0x1f25);
+          }
+          const verBits = (version << 12) | rem;
+          for (let i = 0; i < 18; i++) {
+            const bit = ((verBits >>> i) & 1) !== 0;
+            const a = size - 11 + (i % 3);
+            const b = Math.floor(i / 3);
+            setFunctionModule(a, b, bit);
+            setFunctionModule(b, a, bit);
+          }
+        }
+
+        // Place data bits in zig-zag order
+        let bitIdx = 0;
+        const totalBits = allCodewords.length * 8;
+        let upward = true;
+        for (let right = size - 1; right >= 1; right -= 2) {
+          if (right === 6) right = 5;
+          for (let vert = 0; vert < size; vert++) {
+            const y = upward ? size - 1 - vert : vert;
+            for (let j = 0; j < 2; j++) {
+              const x = right - j;
+              if (!isFunction[y][x]) {
+                let dark = false;
+                if (bitIdx < totalBits) {
+                  dark = ((allCodewords[bitIdx >>> 3] >>> (7 - (bitIdx & 7))) & 1) !== 0;
+                  bitIdx++;
+                }
+                modules[y][x] = dark ? 1 : 0;
+              }
+            }
+          }
+          upward = !upward;
+        }
+
+        // Format info helper
+        const EC_FORMAT_BITS = [1, 0, 3, 2]; // L=1, M=0, Q=3, H=2
+        function drawFormatBits(mask) {
+          const data = (EC_FORMAT_BITS[eccIdx] << 3) | mask;
+          let rem = data;
+          for (let i = 0; i < 10; i++) {
+            rem = (rem << 1) ^ ((rem >>> 9) * 0x537);
+          }
+          const bits = ((data << 10) | rem) ^ 0x5412;
+
+          for (let i = 0; i <= 5; i++) modules[8][i] = (bits >>> i) & 1;
+          modules[8][7] = (bits >>> 6) & 1;
+          modules[8][8] = (bits >>> 7) & 1;
+          modules[7][8] = (bits >>> 8) & 1;
+          for (let i = 9; i < 15; i++) modules[14 - i][8] = (bits >>> i) & 1;
+
+          for (let i = 0; i < 8; i++) modules[size - 1 - i][8] = (bits >>> i) & 1;
+          for (let i = 8; i < 15; i++) modules[8][size - 15 + i] = (bits >>> i) & 1;
+          modules[size - 8][8] = 1;
+        }
+
+        function applyMask(mask) {
+          for (let y = 0; y < size; y++) {
+            for (let x = 0; x < size; x++) {
+              if (!isFunction[y][x]) {
+                let invert = false;
+                switch (mask) {
+                  case 0: invert = (y + x) % 2 === 0; break;
+                  case 1: invert = y % 2 === 0; break;
+                  case 2: invert = x % 3 === 0; break;
+                  case 3: invert = (y + x) % 3 === 0; break;
+                  case 4: invert = (Math.floor(y / 2) + Math.floor(x / 3)) % 2 === 0; break;
+                  case 5: invert = ((y * x) % 2) + ((y * x) % 3) === 0; break;
+                  case 6: invert = (((y * x) % 2) + ((y * x) % 3)) % 2 === 0; break;
+                  case 7: invert = (((y + x) % 2) + ((y * x) % 3)) % 2 === 0; break;
+                }
+                if (invert) modules[y][x] ^= 1;
+              }
+            }
+          }
+        }
+
+        function getPenaltyScore() {
+          let penalty = 0;
+          // Rule 1: Adjacent modules in row/column
+          for (let y = 0; y < size; y++) {
+            let runColor = modules[y][0];
+            let runLen = 1;
+            for (let x = 1; x < size; x++) {
+              if (modules[y][x] === runColor) {
+                runLen++;
+                if (runLen === 5) penalty += 3;
+                else if (runLen > 5) penalty += 1;
+              } else {
+                runColor = modules[y][x];
+                runLen = 1;
+              }
+            }
+          }
+          for (let x = 0; x < size; x++) {
+            let runColor = modules[0][x];
+            let runLen = 1;
+            for (let y = 1; y < size; y++) {
+              if (modules[y][x] === runColor) {
+                runLen++;
+                if (runLen === 5) penalty += 3;
+                else if (runLen > 5) penalty += 1;
+              } else {
+                runColor = modules[y][x];
+                runLen = 1;
+              }
+            }
+          }
+          // Rule 2: 2x2 blocks
+          for (let y = 0; y < size - 1; y++) {
+            for (let x = 0; x < size - 1; x++) {
+              const c = modules[y][x];
+              if (c === modules[y][x + 1] && c === modules[y + 1][x] && c === modules[y + 1][x + 1]) {
+                penalty += 3;
+              }
+            }
+          }
+          // Rule 3: Finder-like patterns
+          function hasFinderPattern(arr) {
+            let count = 0;
+            for (let i = 0; i <= arr.length - 11; i++) {
+              if (
+                arr[i] === 1 && arr[i + 1] === 0 && arr[i + 2] === 1 && arr[i + 3] === 1 &&
+                arr[i + 4] === 1 && arr[i + 5] === 0 && arr[i + 6] === 1 &&
+                arr[i + 7] === 0 && arr[i + 8] === 0 && arr[i + 9] === 0 && arr[i + 10] === 0
+              ) count++;
+              if (
+                arr[i] === 0 && arr[i + 1] === 0 && arr[i + 2] === 0 && arr[i + 3] === 0 &&
+                arr[i + 4] === 1 && arr[i + 5] === 0 && arr[i + 6] === 1 && arr[i + 7] === 1 &&
+                arr[i + 8] === 1 && arr[i + 9] === 0 && arr[i + 10] === 1
+              ) count++;
+            }
+            return count * 40;
+          }
+          for (let y = 0; y < size; y++) {
+            penalty += hasFinderPattern(modules[y]);
+          }
+          for (let x = 0; x < size; x++) {
+            const col = new Uint8Array(size);
+            for (let y = 0; y < size; y++) col[y] = modules[y][x];
+            penalty += hasFinderPattern(col);
+          }
+          // Rule 4: Dark module balance
+          let darkCount = 0;
+          for (let y = 0; y < size; y++) {
+            for (let x = 0; x < size; x++) {
+              if (modules[y][x] === 1) darkCount++;
+            }
+          }
+          const total = size * size;
+          const k = Math.ceil(Math.abs(darkCount * 20 - total * 10) / total) - 1;
+          penalty += Math.max(0, k) * 10;
+          return penalty;
+        }
+
+        // Choose best mask
+        let minPenalty = Infinity;
+        let bestMask = 0;
+        for (let m = 0; m < 8; m++) {
+          applyMask(m);
+          drawFormatBits(m);
+          const score = getPenaltyScore();
+          if (score < minPenalty) {
+            minPenalty = score;
+            bestMask = m;
+          }
+          applyMask(m); // Undo
+        }
+
+        applyMask(bestMask);
+        drawFormatBits(bestMask);
+
+        return { version, size, modules };
+      }
+
+      /* =====================================================================
+         2. CENTER VECTOR ICONS PER QR TYPE (24x24 VIEWBOX)
+         ===================================================================== */
+      const TYPE_ICON_PATHS = {
+        url: [
+          { tag: "path", d: "M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" },
+          { tag: "path", d: "M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" }
+        ],
+        wifi: [
+          { tag: "path", d: "M5 12.55a11 11 0 0 1 14.08 0" },
+          { tag: "path", d: "M1.42 9a16 16 0 0 1 21.16 0" },
+          { tag: "path", d: "M8.53 16.11a6 6 0 0 1 6.95 0" },
+          { tag: "circle", cx: 12, cy: 20, r: 1.3, fill: true }
+        ],
+        text: [
+          { tag: "path", d: "M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" },
+          { tag: "polyline", points: "14 2 14 8 20 8" },
+          { tag: "line", x1: 16, y1: 13, x2: 8, y2: 13 },
+          { tag: "line", x1: 16, y1: 17, x2: 8, y2: 17 }
+        ],
+        email: [
+          { tag: "rect", x: 2, y: 4, width: 20, height: 16, rx: 2 },
+          { tag: "path", d: "m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" }
+        ],
+        phone: [
+          { tag: "path", d: "M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" }
+        ]
+      };
+
+      const TYPE_LABELS = {
+        url: "URL",
+        wifi: "Wi-Fi",
+        text: "Teks",
+        email: "Email",
+        phone: "Telepon"
+      };
+
+      /* =====================================================================
+         3. PAYLOAD BUILDERS & VALIDATION
+         ===================================================================== */
+      function escapeWifiValue(str) {
+        return str.replace(/([\\;,:"])/g, "\\$1");
+      }
+
+      function buildPayload(type) {
+        if (type === "url") {
+          let val = document.getElementById("inputUrl").value.trim();
+          if (!val) return "";
+          if (!/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(val)) {
+            val = "https://" + val;
+          }
+          return val;
+        }
+
+        if (type === "wifi") {
+          const ssid = document.getElementById("wifiSsid").value.trim();
+          if (!ssid) return "";
+          const enc = document.getElementById("wifiEncryption").value;
+          const pass = document.getElementById("wifiPass").value;
+          const hidden = document.getElementById("wifiHidden").checked;
+          const escSsid = escapeWifiValue(ssid);
+          const escPass = enc === "nopass" ? "" : escapeWifiValue(pass);
+          return `WIFI:T:${enc};S:${escSsid};P:${escPass};H:${hidden ? "true" : "false"};;`;
+        }
+
+        if (type === "text") {
+          return document.getElementById("inputText").value;
+        }
+
+        if (type === "email") {
+          const to = document.getElementById("emailTo").value.trim();
+          if (!to) return "";
+          const subject = document.getElementById("emailSubject").value.trim();
+          const body = document.getElementById("emailBody").value.trim();
+          const params = [];
+          if (subject) params.push("subject=" + encodeURIComponent(subject));
+          if (body) params.push("body=" + encodeURIComponent(body));
+          return params.length > 0 ? `mailto:${to}?${params.join("&")}` : `mailto:${to}`;
+        }
+
+        if (type === "phone") {
+          const raw = document.getElementById("inputPhone").value.trim();
+          if (!raw) return "";
+          const cleaned = raw.replace(/[^\d+]/g, "");
+          if (!cleaned || cleaned === "+") return "";
+          return `tel:${cleaned}`;
+        }
+
+        return "";
+      }
+
+      /* =====================================================================
+         4. CONTRAST CHECKER (WCAG LUMINANCE)
+         ===================================================================== */
+      function hexToRgb(hex) {
+        const clean = hex.replace("#", "");
+        return {
+          r: parseInt(clean.substring(0, 2), 16),
+          g: parseInt(clean.substring(2, 4), 16),
+          b: parseInt(clean.substring(4, 6), 16)
+        };
+      }
+
+      function getRelativeLuminance(hex) {
+        const { r, g, b } = hexToRgb(hex);
+        const srgb = [r, g, b].map((v) => {
+          const c = v / 255;
+          return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+        });
+        return 0.2126 * srgb[0] + 0.7152 * srgb[1] + 0.0722 * srgb[2];
+      }
+
+      function getContrastRatio(hex1, hex2) {
+        const l1 = getRelativeLuminance(hex1);
+        const l2 = getRelativeLuminance(hex2);
+        const lighter = Math.max(l1, l2);
+        const darker = Math.min(l1, l2);
+        return (lighter + 0.05) / (darker + 0.05);
+      }
+
+      /* =====================================================================
+         5. RENDERERS (CANVAS PNG & STANDALONE VECTOR SVG)
+         ===================================================================== */
+      function drawRoundedRectPath(ctx, x, y, w, h, r) {
+        const radius = Math.min(r, w / 2, h / 2);
+        ctx.beginPath();
+        ctx.moveTo(x + radius, y);
+        ctx.arcTo(x + w, y, x + w, y + h, radius);
+        ctx.arcTo(x + w, y + h, x, y + h, radius);
+        ctx.arcTo(x, y + h, x, y, radius);
+        ctx.arcTo(x, y, x + w, y, radius);
+        ctx.closePath();
+      }
+
+      function renderCanvas(qrData, options) {
+        const canvas = document.getElementById("qrCanvas");
+        const ctx = canvas.getContext("2d");
+        const { size, modules } = qrData;
+        const quietZone = 4;
+        const totalModules = size + quietZone * 2;
+        const pxSize = options.pxSize;
+        const cellSize = pxSize / totalModules;
+
+        canvas.width = pxSize;
+        canvas.height = pxSize;
+
+        // Background
+        ctx.fillStyle = options.bgColor;
+        ctx.fillRect(0, 0, pxSize, pxSize);
+
+        // Safe zone in modules if center icon enabled (~19% width)
+        const badgeModuleSpan = Math.max(5, Math.round(size * 0.21));
+        const safeStart = Math.floor((size - badgeModuleSpan) / 2);
+        const safeEnd = safeStart + badgeModuleSpan - 1;
+
+        // Draw QR modules
+        ctx.fillStyle = options.fgColor;
+        for (let y = 0; y < size; y++) {
+          for (let x = 0; x < size; x++) {
+            if (options.showLogo && x >= safeStart && x <= safeEnd && y >= safeStart && y <= safeEnd) {
+              continue;
+            }
+            if (modules[y][x] === 1) {
+              const rx = (x + quietZone) * cellSize;
+              const ry = (y + quietZone) * cellSize;
+              ctx.fillRect(Math.floor(rx), Math.floor(ry), Math.ceil(cellSize), Math.ceil(cellSize));
+            }
+          }
+        }
+
+        // Draw Center Badge & Vector Icon
+        if (options.showLogo) {
+          const badgePx = badgeModuleSpan * cellSize;
+          const badgeX = (pxSize - badgePx) / 2;
+          const badgeY = (pxSize - badgePx) / 2;
+          const badgeRadius = badgePx * 0.24;
+
+          ctx.save();
+          drawRoundedRectPath(ctx, badgeX, badgeY, badgePx, badgePx, badgeRadius);
+          ctx.fillStyle = options.bgColor;
+          ctx.fill();
+          ctx.lineWidth = Math.max(2, cellSize * 0.45);
+          ctx.strokeStyle = options.fgColor;
+          ctx.stroke();
+
+          // Render 24x24 icon paths inside badge
+          const iconBox = badgePx * 0.62;
+          const iconOffset = (pxSize - iconBox) / 2;
+          const scale = iconBox / 24;
+
+          ctx.translate(iconOffset, iconOffset);
+          ctx.scale(scale, scale);
+          ctx.strokeStyle = options.fgColor;
+          ctx.fillStyle = options.fgColor;
+          ctx.lineWidth = 2.2;
+          ctx.lineCap = "round";
+          ctx.lineJoin = "round";
+
+          const shapes = TYPE_ICON_PATHS[options.type] || TYPE_ICON_PATHS.url;
+          for (const s of shapes) {
+            if (s.tag === "path") {
+              const p = new Path2D(s.d);
+              ctx.stroke(p);
+            } else if (s.tag === "circle") {
+              ctx.beginPath();
+              ctx.arc(s.cx, s.cy, s.r, 0, Math.PI * 2);
+              if (s.fill) ctx.fill();
+              else ctx.stroke();
+            } else if (s.tag === "rect") {
+              drawRoundedRectPath(ctx, s.x, s.y, s.width, s.height, s.rx || 0);
+              ctx.stroke();
+            } else if (s.tag === "line") {
+              ctx.beginPath();
+              ctx.moveTo(s.x1, s.y1);
+              ctx.lineTo(s.x2, s.y2);
+              ctx.stroke();
+            } else if (s.tag === "polyline") {
+              const pts = s.points.trim().split(/\s+/).map(Number);
+              ctx.beginPath();
+              ctx.moveTo(pts[0], pts[1]);
+              for (let i = 2; i < pts.length; i += 2) {
+                ctx.lineTo(pts[i], pts[i + 1]);
+              }
+              ctx.stroke();
+            }
+          }
+          ctx.restore();
+        }
+      }
+
+      function buildSvgString(qrData, options) {
+        const { size, modules } = qrData;
+        const quietZone = 4;
+        const total = size + quietZone * 2;
+        const badgeModuleSpan = Math.max(5, Math.round(size * 0.21));
+        const safeStart = Math.floor((size - badgeModuleSpan) / 2);
+        const safeEnd = safeStart + badgeModuleSpan - 1;
+
+        let pathData = "";
+        for (let y = 0; y < size; y++) {
+          for (let x = 0; x < size; x++) {
+            if (options.showLogo && x >= safeStart && x <= safeEnd && y >= safeStart && y <= safeEnd) {
+              continue;
+            }
+            if (modules[y][x] === 1) {
+              const mx = x + quietZone;
+              const my = y + quietZone;
+              pathData += `M${mx},${my}h1v1h-1z`;
+            }
+          }
+        }
+
+        let centerSvg = "";
+        if (options.showLogo) {
+          const badgePos = (total - badgeModuleSpan) / 2;
+          const badgeRx = (badgeModuleSpan * 0.24).toFixed(3);
+          const iconSpan = badgeModuleSpan * 0.62;
+          const iconPos = (total - iconSpan) / 2;
+          const iconScale = (iconSpan / 24).toFixed(5);
+          const shapes = TYPE_ICON_PATHS[options.type] || TYPE_ICON_PATHS.url;
+
+          let innerShapes = "";
+          for (const s of shapes) {
+            if (s.tag === "path") {
+              innerShapes += `<path d="${s.d}"/>`;
+            } else if (s.tag === "circle") {
+              innerShapes += `<circle cx="${s.cx}" cy="${s.cy}" r="${s.r}"${s.fill ? ` fill="${options.fgColor}" stroke="none"` : ""}/>`;
+            } else if (s.tag === "rect") {
+              innerShapes += `<rect x="${s.x}" y="${s.y}" width="${s.width}" height="${s.height}" rx="${s.rx || 0}"/>`;
+            } else if (s.tag === "line") {
+              innerShapes += `<line x1="${s.x1}" y1="${s.y1}" x2="${s.x2}" y2="${s.y2}"/>`;
+            } else if (s.tag === "polyline") {
+              innerShapes += `<polyline points="${s.points}"/>`;
+            }
+          }
+
+          centerSvg = `
+  <rect x="${badgePos}" y="${badgePos}" width="${badgeModuleSpan}" height="${badgeModuleSpan}" rx="${badgeRx}" fill="${options.bgColor}" stroke="${options.fgColor}" stroke-width="0.45"/>
+  <g transform="translate(${iconPos.toFixed(4)}, ${iconPos.toFixed(4)}) scale(${iconScale})" fill="none" stroke="${options.fgColor}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    ${innerShapes}
+  </g>`;
+        }
+
+        return `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${total} ${total}" width="${options.pxSize}" height="${options.pxSize}" shape-rendering="crispEdges">
+  <rect width="${total}" height="${total}" fill="${options.bgColor}"/>
+  <path d="${pathData}" fill="${options.fgColor}"/>${centerSvg}
+</svg>`;
+      }
+
+      /* =====================================================================
+         6. UI STATE & EVENT CONTROLLER
+         ===================================================================== */
+      let currentType = "url";
+      let lastQrData = null;
+      let lastOptions = null;
+
+      const tabButtons = document.querySelectorAll(".tab-btn");
+      const panels = document.querySelectorAll(".form-panel");
+      const optCenterLogo = document.getElementById("optCenterLogo");
+      const optEcc = document.getElementById("optEcc");
+      const optSize = document.getElementById("optSize");
+      const optFgColor = document.getElementById("optFgColor");
+      const optBgColor = document.getElementById("optBgColor");
+      const fgHex = document.getElementById("fgHex");
+      const bgHex = document.getElementById("bgHex");
+
+      const qrStage = document.getElementById("qrStage");
+      const qrCanvas = document.getElementById("qrCanvas");
+      const qrPlaceholder = document.getElementById("qrPlaceholder");
+      const metaBadges = document.getElementById("metaBadges");
+      const badgeType = document.getElementById("badgeType");
+      const badgeVersion = document.getElementById("badgeVersion");
+      const badgeEcc = document.getElementById("badgeEcc");
+      const alertBox = document.getElementById("alertBox");
+      const btnDownloadPng = document.getElementById("btnDownloadPng");
+      const btnDownloadSvg = document.getElementById("btnDownloadSvg");
+      const btnCopyImage = document.getElementById("btnCopyImage");
+      const payloadDetails = document.getElementById("payloadDetails");
+      const payloadCode = document.getElementById("payloadCode");
+
+      function showAlert(msg) {
+        if (!msg) {
+          alertBox.textContent = "";
+          alertBox.classList.remove("show");
+          return;
+        }
+        alertBox.textContent = msg;
+        alertBox.classList.add("show");
+      }
+
+      function updateQR() {
+        const payload = buildPayload(currentType);
+        const showLogo = optCenterLogo.checked;
+        const ecc = optEcc.value;
+        const pxSize = parseInt(optSize.value, 10);
+        const fgColor = optFgColor.value;
+        const bgColor = optBgColor.value;
+
+        fgHex.textContent = fgColor.toUpperCase();
+        bgHex.textContent = bgColor.toUpperCase();
+
+        // Check warnings
+        const warnings = [];
+        const contrast = getContrastRatio(fgColor, bgColor);
+        if (contrast < 3.0) {
+          warnings.push("Kontras warna terlalu rendah. Kamera mungkin kesulitan memindai QR Code ini.");
+        }
+        if (showLogo && (ecc === "L" || ecc === "M")) {
+          warnings.push("Disarankan menggunakan Koreksi Kesalahan (ECC) tingkat Q atau H saat ikon tengah aktif.");
+        }
+
+        if (!payload) {
+          lastQrData = null;
+          lastOptions = null;
+          qrCanvas.style.display = "none";
+          qrPlaceholder.style.display = "block";
+          qrStage.classList.remove("has-qr");
+          metaBadges.style.display = "none";
+          payloadDetails.style.display = "none";
+          btnDownloadPng.disabled = true;
+          btnDownloadSvg.disabled = true;
+          btnCopyImage.disabled = true;
+          showAlert(warnings.join(" "));
+          return;
+        }
+
+        try {
+          const qrData = encodeQR(payload, ecc);
+          const options = {
+            type: currentType,
+            showLogo,
+            ecc,
+            pxSize,
+            fgColor,
+            bgColor
+          };
+
+          renderCanvas(qrData, options);
+          lastQrData = qrData;
+          lastOptions = options;
+
+          qrPlaceholder.style.display = "none";
+          qrCanvas.style.display = "block";
+          qrStage.classList.add("has-qr");
+
+          badgeType.textContent = `Tipe: ${TYPE_LABELS[currentType]}`;
+          badgeVersion.textContent = `Versi ${qrData.version} (${qrData.size}x${qrData.size})`;
+          badgeEcc.textContent = `ECC: ${ecc}`;
+          metaBadges.style.display = "flex";
+
+          payloadCode.textContent = payload;
+          payloadDetails.style.display = "block";
+
+          btnDownloadPng.disabled = false;
+          btnDownloadSvg.disabled = false;
+          btnCopyImage.disabled = false;
+
+          showAlert(warnings.join(" "));
+        } catch (err) {
+          lastQrData = null;
+          qrCanvas.style.display = "none";
+          qrPlaceholder.style.display = "block";
+          qrStage.classList.remove("has-qr");
+          btnDownloadPng.disabled = true;
+          btnDownloadSvg.disabled = true;
+          btnCopyImage.disabled = true;
+          showAlert(err.message);
+        }
+      }
+
+      // Tab switching
+      tabButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          tabButtons.forEach((b) => {
+            b.classList.remove("active");
+            b.setAttribute("aria-selected", "false");
+          });
+          btn.classList.add("active");
+          btn.setAttribute("aria-selected", "true");
+
+          currentType = btn.dataset.type;
+          panels.forEach((p) => p.classList.remove("active"));
+          document.getElementById(`panel-${currentType}`).classList.add("active");
+          updateQR();
+        });
+      });
+
+      // Wi-Fi encryption toggle
+      const wifiEncryption = document.getElementById("wifiEncryption");
+      const wifiPass = document.getElementById("wifiPass");
+      const toggleWifiPass = document.getElementById("toggleWifiPass");
+
+      wifiEncryption.addEventListener("change", () => {
+        const isOpen = wifiEncryption.value === "nopass";
+        wifiPass.disabled = isOpen;
+        toggleWifiPass.disabled = isOpen;
+        if (isOpen) wifiPass.value = "";
+        updateQR();
+      });
+
+      toggleWifiPass.addEventListener("click", () => {
+        if (wifiPass.type === "password") {
+          wifiPass.type = "text";
+          toggleWifiPass.textContent = "Sembunyi";
+        } else {
+          wifiPass.type = "password";
+          toggleWifiPass.textContent = "Lihat";
+        }
+      });
+
+      // Text counter
+      const inputText = document.getElementById("inputText");
+      const textCounter = document.getElementById("textCounter");
+      inputText.addEventListener("input", () => {
+        const byteLen = new TextEncoder().encode(inputText.value).length;
+        textCounter.textContent = `${inputText.value.length} karakter (${byteLen} byte)`;
+        updateQR();
+      });
+
+      // Auto-upgrade ECC to H when center logo is toggled on
+      optCenterLogo.addEventListener("change", () => {
+        if (optCenterLogo.checked && optEcc.value !== "H") {
+          optEcc.value = "H";
+        }
+        updateQR();
+      });
+
+      // Live listeners for all other inputs
+      const liveInputs = [
+        "inputUrl",
+        "wifiSsid",
+        "wifiPass",
+        "wifiHidden",
+        "emailTo",
+        "emailSubject",
+        "emailBody",
+        "inputPhone",
+        "optSize",
+        "optEcc",
+        "optFgColor",
+        "optBgColor"
+      ];
+
+      liveInputs.forEach((id) => {
+        const el = document.getElementById(id);
+        el.addEventListener("input", updateQR);
+        el.addEventListener("change", updateQR);
+      });
+
+      // Download PNG
+      btnDownloadPng.addEventListener("click", () => {
+        if (!lastQrData) return;
+        const link = document.createElement("a");
+        link.download = `qr-${currentType}-${Date.now()}.png`;
+        link.href = qrCanvas.toDataURL("image/png");
+        link.click();
+      });
+
+      // Download SVG
+      btnDownloadSvg.addEventListener("click", () => {
+        if (!lastQrData || !lastOptions) return;
+        const svgContent = buildSvgString(lastQrData, lastOptions);
+        const blob = new Blob([svgContent], { type: "image/svg+xml;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.download = `qr-${currentType}-${Date.now()}.svg`;
+        link.href = url;
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      });
+
+      // Copy PNG to Clipboard
+      btnCopyImage.addEventListener("click", () => {
+        if (!lastQrData) return;
+        qrCanvas.toBlob(async (blob) => {
+          if (!blob) return;
+          try {
+            await navigator.clipboard.write([
+              new ClipboardItem({ "image/png": blob })
+            ]);
+            const origText = btnCopyImage.textContent;
+            btnCopyImage.textContent = "Tersalin ke Clipboard";
+            setTimeout(() => {
+              btnCopyImage.textContent = origText;
+            }, 2000);
+          } catch (err) {
+            showAlert("Browser tidak mengizinkan salin gambar otomatis. Silakan gunakan tombol Unduh PNG.");
+          }
+        }, "image/png");
+      });
+
+      // Theme Toggle
+      const themeToggle = document.getElementById("themeToggle");
+      themeToggle.addEventListener("click", () => {
+        const root = document.documentElement;
+        const nextTheme = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        root.setAttribute("data-theme", nextTheme);
+        themeToggle.textContent = nextTheme === "dark" ? "Tema Terang" : "Tema Gelap";
+      });
+    })();
+  </script>
+</body>
+</html>
