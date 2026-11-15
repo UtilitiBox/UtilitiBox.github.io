@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="UtilitiBox - Kumpulan alat utilitas web praktis untuk keamanan kata sandi, pengelolaan metadata gambar, penggabungan gambar, dan pembuatan kode QR.">
+  <meta name="description" content="UtilitiBox - Kumpulan alat utilitas web praktis untuk keamanan kata sandi, pengelolaan metadata gambar, penggabungan gambar, pembuatan kode QR, dan generator hash file.">
   <meta name="theme-color" content="#0f172a">
   <title>UtilitiBox - Kumpulan Alat Utilitas Web Praktis</title>
   <link rel="canonical" href="https://utilitibox.github.io/">
@@ -226,7 +226,7 @@
     }
 
     .hero p {
-      max-width: 620px;
+      max-width: 640px;
       margin: 0 auto 28px;
       color: var(--text-secondary);
       font-size: 1.02rem;
@@ -602,7 +602,7 @@
     <section class="hero">
       <div class="hero-badge" id="heroBadge">Utilitas Web Cepat & Praktis</div>
       <h1 id="heroTitle">Satu Tempat untuk Alat Digital Harian Anda</h1>
-      <p id="heroSubtitle">Akses kumpulan utilitas web ringan untuk membuat kata sandi aman, mengelola metadata gambar, menggabungkan foto, hingga membuat kode QR langsung dari browser.</p>
+      <p id="heroSubtitle">Akses kumpulan utilitas web ringan untuk membuat kata sandi aman, mengelola metadata gambar, menggabungkan foto, membuat kode QR, hingga menghitung hash file langsung dari browser.</p>
     </section>
 
     <section aria-label="Daftar Utilitas">
@@ -612,7 +612,7 @@
             <circle cx="11" cy="11" r="8"></circle>
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
-          <input type="search" id="searchInput" class="search-input" placeholder="Cari alat (misal: password, metadata, QR)..." autocomplete="off">
+          <input type="search" id="searchInput" class="search-input" placeholder="Cari alat (misal: password, metadata, QR, hash)..." autocomplete="off">
           <span class="kbd-hint" aria-hidden="true">/</span>
         </div>
 
@@ -625,7 +625,7 @@
       </div>
 
       <div class="status-bar">
-        <span id="toolsCount">Menampilkan 5 dari 5 alat</span>
+        <span id="toolsCount">Menampilkan 6 dari 6 alat</span>
       </div>
 
       <div class="tools-grid" id="toolsGrid"></div>
@@ -634,19 +634,19 @@
 
   <footer class="footer">
     <div class="container footer-inner">
-      <span id="footerCopy">UtilitiBox - Hosted on GitHub Pages.</span>
+      <span id="footerCopy">UtilitiBox - Dijalankan di GitHub Pages.</span>
       <a href="https://github.com/UtilitiBox/UtilitiBox.github.io/tree/UtilitiBox" target="_blank" rel="noopener noreferrer" class="repo-link" id="footerRepoLink">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
         </svg>
-        <span id="footerRepoText">Kode Sumber di GitHub (Branch UtilitiBox)</span>
+        <span id="footerRepoText">Repositori GitHub (Branch UtilitiBox)</span>
       </a>
     </div>
   </footer>
 
   <script>
     (function () {
-      // Konfigurasi terpusat seluruh tools UtilitiBox
+      // Konfigurasi terpusat seluruh tools UtilitiBox sesuai urutan yang ditentukan
       const TOOLS_DATA = [
         {
           id: 'pass-generator',
@@ -727,6 +727,22 @@
             id: 'Buat kode QR instan untuk tautan URL, akses jaringan Wi-Fi, teks biasa, alamat email, dan nomor telepon.',
             en: 'Generate instant QR codes for website URLs, Wi-Fi networks, plain text, email addresses, and phone numbers.'
           }
+        },
+        {
+          id: 'file-hash-generator',
+          url: './file-hash-generator/',
+          slugDisplay: '/file-hash-generator/',
+          category: 'security',
+          tags: ['hash', 'checksum', 'sha256', 'sha512', 'sha384', 'sha1', 'file', 'verifikasi', 'integritas'],
+          icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="9" x2="20" y2="9"></line><line x1="4" y1="15" x2="20" y2="15"></line><line x1="10" y1="3" x2="8" y2="21"></line><line x1="16" y1="3" x2="14" y2="21"></line></svg>',
+          title: {
+            id: 'File Hash Generator',
+            en: 'File Hash Generator'
+          },
+          description: {
+            id: 'Hitung dan verifikasi nilai checksum kriptografi file (SHA-256, SHA-384, SHA-512, SHA-1) untuk memastikan keaslian dan integritas berkas.',
+            en: 'Compute and verify cryptographic file checksums (SHA-256, SHA-384, SHA-512, SHA-1) to ensure file authenticity and integrity.'
+          }
         }
       ];
 
@@ -734,11 +750,11 @@
       const UI_TEXT = {
         id: {
           pageTitle: 'UtilitiBox - Kumpulan Alat Utilitas Web Praktis',
-          metaDesc: 'UtilitiBox - Kumpulan alat utilitas web praktis untuk keamanan kata sandi, pengelolaan metadata gambar, penggabungan gambar, dan pembuatan kode QR.',
+          metaDesc: 'UtilitiBox - Kumpulan alat utilitas web praktis untuk keamanan kata sandi, pengelolaan metadata gambar, penggabungan gambar, pembuatan kode QR, dan generator hash file.',
           heroBadge: 'Utilitas Web Cepat & Praktis',
           heroTitle: 'Satu Tempat untuk Alat Digital Harian Anda',
-          heroSubtitle: 'Akses kumpulan utilitas web ringan untuk membuat kata sandi aman, mengelola metadata gambar, menggabungkan foto, hingga membuat kode QR langsung dari browser.',
-          searchPlaceholder: 'Cari alat (misal: password, metadata, QR)...',
+          heroSubtitle: 'Akses kumpulan utilitas web ringan untuk membuat kata sandi aman, mengelola metadata gambar, menggabungkan foto, membuat kode QR, hingga menghitung hash file langsung dari browser.',
+          searchPlaceholder: 'Cari alat (misal: password, metadata, QR, hash)...',
           filterAll: 'Semua',
           filterSecurity: 'Keamanan',
           filterMetadata: 'Metadata',
@@ -761,11 +777,11 @@
         },
         en: {
           pageTitle: 'UtilitiBox - Practical Web Utility Tools Collection',
-          metaDesc: 'UtilitiBox - A collection of practical web utilities for password security, image metadata management, image merging, and QR code generation.',
+          metaDesc: 'UtilitiBox - A collection of practical web utilities for password security, image metadata management, image merging, QR code generation, and file hashing.',
           heroBadge: 'Fast & Practical Web Utilities',
           heroTitle: 'One Place for Your Daily Digital Tools',
-          heroSubtitle: 'Access lightweight browser utilities to generate secure passwords, manage image metadata, merge photos, and create QR codes directly in your browser.',
-          searchPlaceholder: 'Search tools (e.g., password, metadata, QR)...',
+          heroSubtitle: 'Access lightweight browser utilities to generate secure passwords, manage image metadata, merge photos, create QR codes, and compute file hashes directly in your browser.',
+          searchPlaceholder: 'Search tools (e.g., password, metadata, QR, hash)...',
           filterAll: 'All',
           filterSecurity: 'Security',
           filterMetadata: 'Metadata',
