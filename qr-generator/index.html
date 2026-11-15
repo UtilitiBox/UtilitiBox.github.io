@@ -1076,7 +1076,7 @@
           upward = !upward;
         }
 
-        // Format info helper
+        // Format info helper (ISO/IEC 18004 Figure 19)
         const EC_FORMAT_BITS = [1, 0, 3, 2]; // L=1, M=0, Q=3, H=2
         function drawFormatBits(mask) {
           const data = (EC_FORMAT_BITS[eccIdx] << 3) | mask;
@@ -1086,14 +1086,16 @@
           }
           const bits = ((data << 10) | rem) ^ 0x5412;
 
-          for (let i = 0; i <= 5; i++) modules[8][i] = (bits >>> i) & 1;
-          modules[8][7] = (bits >>> 6) & 1;
+          // Copy 1: around top-left finder pattern
+          for (let i = 0; i <= 5; i++) modules[i][8] = (bits >>> i) & 1;
+          modules[7][8] = (bits >>> 6) & 1;
           modules[8][8] = (bits >>> 7) & 1;
-          modules[7][8] = (bits >>> 8) & 1;
-          for (let i = 9; i < 15; i++) modules[14 - i][8] = (bits >>> i) & 1;
+          modules[8][7] = (bits >>> 8) & 1;
+          for (let i = 9; i < 15; i++) modules[8][14 - i] = (bits >>> i) & 1;
 
-          for (let i = 0; i < 8; i++) modules[size - 1 - i][8] = (bits >>> i) & 1;
-          for (let i = 8; i < 15; i++) modules[8][size - 15 + i] = (bits >>> i) & 1;
+          // Copy 2: top-right and bottom-left finder patterns
+          for (let i = 0; i < 8; i++) modules[8][size - 1 - i] = (bits >>> i) & 1;
+          for (let i = 8; i < 15; i++) modules[size - 15 + i][8] = (bits >>> i) & 1;
           modules[size - 8][8] = 1;
         }
 
@@ -1339,6 +1341,12 @@
       /* =====================================================================
          5. RENDERERS (CANVAS PNG & STANDALONE VECTOR SVG)
          ===================================================================== */
+      function getBadgeModuleSpan(size) {
+        let span = Math.max(5, Math.round(size * 0.2));
+        if (span % 2 === 0) span -= 1;
+        return Math.max(5, span);
+      }
+
       function drawRoundedRectPath(ctx, x, y, w, h, r) {
         const radius = Math.min(r, w / 2, h / 2);
         ctx.beginPath();
@@ -1366,8 +1374,8 @@
         ctx.fillStyle = options.bgColor;
         ctx.fillRect(0, 0, pxSize, pxSize);
 
-        // Safe zone in modules if center icon enabled (~19% width)
-        const badgeModuleSpan = Math.max(5, Math.round(size * 0.21));
+        // Odd-aligned safe zone in modules when center icon is enabled
+        const badgeModuleSpan = getBadgeModuleSpan(size);
         const safeStart = Math.floor((size - badgeModuleSpan) / 2);
         const safeEnd = safeStart + badgeModuleSpan - 1;
 
@@ -1450,7 +1458,7 @@
         const { size, modules } = qrData;
         const quietZone = 4;
         const total = size + quietZone * 2;
-        const badgeModuleSpan = Math.max(5, Math.round(size * 0.21));
+        const badgeModuleSpan = getBadgeModuleSpan(size);
         const safeStart = Math.floor((size - badgeModuleSpan) / 2);
         const safeEnd = safeStart + badgeModuleSpan - 1;
 
