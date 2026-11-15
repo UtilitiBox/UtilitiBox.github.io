@@ -1,228 +1,1002 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UtilitiBox - Kumpulan Alat Web Klien</title>
-    
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="UtilitiBox - Kumpulan alat utilitas web praktis untuk keamanan kata sandi, pengelolaan metadata gambar, penggabungan gambar, dan pembuatan kode QR.">
+  <meta name="theme-color" content="#0f172a">
+  <title>UtilitiBox - Kumpulan Alat Utilitas Web Praktis</title>
+  <link rel="canonical" href="https://utilitibox.github.io/">
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    animation: {
-                        'blob': 'blob 7s infinite',
-                    },
-                    keyframes: {
-                        blob: {
-                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
-                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
-                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
-                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    
-    <style>
-        body {
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent; 
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1; 
-            border-radius: 4px;
-        }
-        .dark ::-webkit-scrollbar-thumb {
-            background: #475569; 
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8; 
-        }
-    </style>
+  <!-- Mencegah FOUC (Flash of Unstyled Content) saat memuat tema -->
+  <script>
+    (function () {
+      try {
+        var savedTheme = localStorage.getItem('utilitibox_theme');
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var theme = savedTheme ? savedTheme : (prefersDark ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+
+  <style>
+    :root {
+      --bg-page: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-surface-hover: #f1f5f9;
+      --bg-subtle: #e2e8f0;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --border-hover: #cbd5e1;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --accent-soft: rgba(37, 99, 235, 0.1);
+      --badge-security-bg: rgba(16, 185, 129, 0.12);
+      --badge-security-text: #047857;
+      --badge-metadata-bg: rgba(245, 158, 11, 0.14);
+      --badge-metadata-text: #b45309;
+      --badge-utility-bg: rgba(37, 99, 235, 0.12);
+      --badge-utility-text: #1d4ed8;
+      --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+      --shadow-md: 0 8px 24px -4px rgba(15, 23, 42, 0.08);
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    [data-theme="dark"] {
+      --bg-page: #0b1120;
+      --bg-surface: #111827;
+      --bg-surface-hover: #1e293b;
+      --bg-subtle: #1e293b;
+      --text-primary: #f8fafc;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --border-color: #1e293b;
+      --border-hover: #334155;
+      --accent: #3b82f6;
+      --accent-hover: #60a5fa;
+      --accent-soft: rgba(59, 130, 246, 0.15);
+      --badge-security-bg: rgba(16, 185, 129, 0.16);
+      --badge-security-text: #34d399;
+      --badge-metadata-bg: rgba(245, 158, 11, 0.16);
+      --badge-metadata-text: #fbbf24;
+      --badge-utility-bg: rgba(59, 130, 246, 0.18);
+      --badge-utility-text: #60a5fa;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 10px 28px -4px rgba(0, 0, 0, 0.45);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-page);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Header & Navbar */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background-color: var(--bg-page);
+      border-bottom: 1px solid var(--border-color);
+      backdrop-filter: blur(8px);
+    }
+
+    .navbar-inner {
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: var(--accent);
+      color: #ffffff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .nav-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .control-btn {
+      height: 36px;
+      padding: 0 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-surface);
+      color: var(--text-primary);
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: border-color 0.15s ease, background-color 0.15s ease;
+    }
+
+    .control-btn:hover {
+      border-color: var(--border-hover);
+      background-color: var(--bg-surface-hover);
+    }
+
+    .control-btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .lang-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .lang-active {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .lang-inactive {
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: 48px 0 32px;
+      text-align: center;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      background-color: var(--accent-soft);
+      color: var(--accent);
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .hero h1 {
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+
+    .hero p {
+      max-width: 620px;
+      margin: 0 auto 28px;
+      color: var(--text-secondary);
+      font-size: 1.02rem;
+    }
+
+    /* Search & Filter Toolbar */
+    .toolbar {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    @media (min-width: 768px) {
+      .toolbar {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+
+    .search-box {
+      position: relative;
+      flex: 1;
+      max-width: 420px;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .search-input {
+      width: 100%;
+      height: 42px;
+      padding: 0 42px 0 38px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-surface);
+      color: var(--text-primary);
+      font-size: 0.92rem;
+      font-family: inherit;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .search-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+
+    .kbd-hint {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      padding: 2px 6px;
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      background-color: var(--bg-subtle);
+      border-radius: 4px;
+      pointer-events: none;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .filter-btn {
+      height: 36px;
+      padding: 0 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-surface);
+      color: var(--text-secondary);
+      font-size: 0.84rem;
+      font-weight: 500;
+      transition: all 0.15s ease;
+    }
+
+    .filter-btn:hover {
+      border-color: var(--border-hover);
+      color: var(--text-primary);
+    }
+
+    .filter-btn.active {
+      background-color: var(--accent);
+      border-color: var(--accent);
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* Tools Grid */
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+      gap: 18px;
+      margin-bottom: 56px;
+    }
+
+    @media (min-width: 640px) {
+      .tools-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (min-width: 960px) {
+      .tools-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    .tool-card {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 18px;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    }
+
+    .tool-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--accent);
+    }
+
+    .tool-card:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .tool-icon-wrap {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background-color: var(--accent-soft);
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .category-badge {
+      font-size: 0.74rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+      letter-spacing: 0.01em;
+    }
+
+    .badge-security {
+      background-color: var(--badge-security-bg);
+      color: var(--badge-security-text);
+    }
+
+    .badge-metadata {
+      background-color: var(--badge-metadata-bg);
+      color: var(--badge-metadata-text);
+    }
+
+    .badge-utility {
+      background-color: var(--badge-utility-bg);
+      color: var(--badge-utility-text);
+    }
+
+    .tool-title {
+      font-size: 1.12rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+    }
+
+    .tool-desc {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    .card-footer {
+      padding-top: 14px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .tool-slug {
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .open-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .tool-card:hover .open-label svg {
+      transform: translate(2px, -2px);
+    }
+
+    .open-label svg {
+      transition: transform 0.15s ease;
+    }
+
+    /* Empty State */
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 48px 20px;
+      background-color: var(--bg-surface);
+      border: 1px dashed var(--border-color);
+      border-radius: var(--radius-lg);
+      color: var(--text-secondary);
+    }
+
+    .empty-state p {
+      margin-bottom: 14px;
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: auto;
+      border-top: 1px solid var(--border-color);
+      padding: 24px 0;
+      background-color: var(--bg-surface);
+    }
+
+    .footer-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 0.86rem;
+      color: var(--text-secondary);
+      text-align: center;
+    }
+
+    @media (min-width: 640px) {
+      .footer-inner {
+        flex-direction: row;
+        text-align: left;
+      }
+    }
+
+    .repo-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .repo-link:hover {
+      color: var(--accent);
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+  </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 min-h-screen transition-colors duration-300 relative overflow-x-hidden">
+<body>
+  <header class="navbar">
+    <div class="container navbar-inner">
+      <a href="./" class="brand" aria-label="UtilitiBox Home">
+        <span class="brand-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+          </svg>
+        </span>
+        <span>UtilitiBox</span>
+      </a>
 
-    <!-- Background Decorative Blobs -->
-    <div class="fixed inset-0 w-full h-full pointer-events-none z-0 overflow-hidden">
-        <div class="absolute top-0 -left-4 w-72 h-72 bg-blue-300 dark:bg-blue-900 rounded-full mix-blend-multiply dark:mix-blend-color filter blur-3xl opacity-30 animate-blob"></div>
-        <div class="absolute top-0 -right-4 w-72 h-72 bg-purple-300 dark:bg-purple-900 rounded-full mix-blend-multiply dark:mix-blend-color filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
-        <div class="absolute -bottom-8 left-20 w-72 h-72 bg-emerald-300 dark:bg-emerald-900 rounded-full mix-blend-multiply dark:mix-blend-color filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+      <div class="nav-controls">
+        <a href="https://github.com/UtilitiBox/UtilitiBox.github.io/tree/UtilitiBox" target="_blank" rel="noopener noreferrer" class="control-btn" id="navRepoBtn" aria-label="GitHub Repository">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+          <span>GitHub</span>
+        </a>
+
+        <button type="button" class="control-btn" id="langToggle" aria-label="Ganti bahasa / Switch language">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+          </svg>
+          <span class="lang-pill" id="langIndicator">
+            <span class="lang-active">ID</span>
+            <span class="lang-inactive">/</span>
+            <span class="lang-inactive">EN</span>
+          </span>
+        </button>
+
+        <button type="button" class="control-btn" id="themeToggle" aria-label="Ganti tema gelap atau terang">
+          <svg id="iconSun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg id="iconMoon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+          <span class="sr-only" id="themeLabel">Mode Gelap</span>
+        </button>
+      </div>
     </div>
+  </header>
 
-    <div class="relative z-10 flex flex-col min-h-screen">
-        
-        <!-- Navigation / Header -->
-        <nav class="w-full max-w-6xl mx-auto px-6 py-6 flex justify-between items-center">
-            <div class="flex items-center gap-2">
-                <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-600/30">
-                    <i class="fa-solid fa-box-open text-xl"></i>
-                </div>
-                <span class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Utiliti<span class="text-blue-600 dark:text-blue-400">Box</span></span>
-            </div>
-            
-            <button id="themeToggle" class="p-2.5 rounded-full bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500" title="Ganti Tema">
-                <i id="themeToggleLightIcon" class="fa-solid fa-sun hidden text-lg w-5 h-5 flex items-center justify-center"></i>
-                <i id="themeToggleDarkIcon" class="fa-solid fa-moon hidden text-lg w-5 h-5 flex items-center justify-center"></i>
-            </button>
-        </nav>
+  <main class="container">
+    <section class="hero">
+      <div class="hero-badge" id="heroBadge">Utilitas Web Cepat & Praktis</div>
+      <h1 id="heroTitle">Satu Tempat untuk Alat Digital Harian Anda</h1>
+      <p id="heroSubtitle">Akses kumpulan utilitas web ringan untuk membuat kata sandi aman, mengelola metadata gambar, menggabungkan foto, hingga membuat kode QR langsung dari browser.</p>
+    </section>
 
-        <!-- Main Content -->
-        <main class="flex-grow w-full max-w-6xl mx-auto px-6 py-12 md:py-20 flex flex-col items-center">
-            
-            <!-- Hero Section -->
-            <div class="text-center max-w-3xl mb-16">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-sm font-semibold mb-6 border border-blue-100 dark:border-blue-800/50">
-                    <span class="relative flex h-2 w-2">
-                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                      <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-                    </span>
-                    100% Client-Side Processing
-                </div>
-                <h1 class="text-4xl md:text-6xl font-extrabold text-slate-900 dark:text-white mb-6 leading-tight tracking-tight">
-                    Kumpulan Alat Web <br class="hidden md:block" />
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">Cepat & Privasi Terjaga</span>
-                </h1>
-                <p class="text-lg text-slate-600 dark:text-slate-400 leading-relaxed max-w-2xl mx-auto">
-                    Koleksi utilitas harian yang memproses semua data langsung di perangkat Anda (browser). Tanpa server, tanpa jejak tertinggal, privasi Anda terjamin sepenuhnya.
-                </p>
-            </div>
+    <section aria-label="Daftar Utilitas">
+      <div class="toolbar">
+        <div class="search-box">
+          <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="search" id="searchInput" class="search-input" placeholder="Cari alat (misal: password, metadata, QR)..." autocomplete="off">
+          <span class="kbd-hint" aria-hidden="true">/</span>
+        </div>
 
-            <!-- Grid Layout for Tools -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 w-full">
-                
-                <!-- Card 1: Password Generator -->
-                <a href="https://utilitibox.github.io/pass-generator/" class="group flex flex-col bg-white dark:bg-slate-800 rounded-3xl p-8 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-2xl hover:shadow-blue-500/10 dark:hover:shadow-blue-900/20 hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-4 group-hover:translate-x-0 duration-300">
-                        <i class="fa-solid fa-arrow-right text-slate-400 dark:text-slate-500"></i>
-                    </div>
-                    <div class="w-14 h-14 rounded-2xl bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center text-2xl mb-6 shadow-inner">
-                        <i class="fa-solid fa-shield-halved"></i>
-                    </div>
-                    <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-3">Password Generator</h2>
-                    <p class="text-slate-600 dark:text-slate-400 leading-relaxed flex-grow">
-                        Buat kata sandi acak yang kuat dan aman dengan berbagai kustomisasi panjang dan karakter untuk melindungi akun Anda.
-                    </p>
-                </a>
+        <div class="filter-group" role="tablist" aria-label="Kategori Alat">
+          <button type="button" class="filter-btn active" data-category="all" id="filterAll">Semua</button>
+          <button type="button" class="filter-btn" data-category="security" id="filterSecurity">Keamanan</button>
+          <button type="button" class="filter-btn" data-category="metadata" id="filterMetadata">Metadata</button>
+          <button type="button" class="filter-btn" data-category="utility" id="filterUtility">Gambar & QR</button>
+        </div>
+      </div>
 
-                <!-- Card 2: Metadata Remover -->
-                <a href="https://utilitibox.github.io/metadata-remover/" class="group flex flex-col bg-white dark:bg-slate-800 rounded-3xl p-8 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-2xl hover:shadow-red-500/10 dark:hover:shadow-red-900/20 hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-4 group-hover:translate-x-0 duration-300">
-                        <i class="fa-solid fa-arrow-right text-slate-400 dark:text-slate-500"></i>
-                    </div>
-                    <div class="w-14 h-14 rounded-2xl bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400 flex items-center justify-center text-2xl mb-6 shadow-inner">
-                        <i class="fa-solid fa-eraser"></i>
-                    </div>
-                    <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-3">Metadata Remover</h2>
-                    <p class="text-slate-600 dark:text-slate-400 leading-relaxed flex-grow">
-                        Lindungi privasi foto Anda dengan menghapus data EXIF seperti lokasi GPS dan tipe kamera sebelum diunggah ke internet.
-                    </p>
-                </a>
+      <div class="status-bar">
+        <span id="toolsCount">Menampilkan 5 dari 5 alat</span>
+      </div>
 
-                <!-- Card 3: Copy-Paste Metadata -->
-                <a href="https://utilitibox.github.io/Copypaste-matadata/" class="group flex flex-col bg-white dark:bg-slate-800 rounded-3xl p-8 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-2xl hover:shadow-purple-500/10 dark:hover:shadow-purple-900/20 hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-4 group-hover:translate-x-0 duration-300">
-                        <i class="fa-solid fa-arrow-right text-slate-400 dark:text-slate-500"></i>
-                    </div>
-                    <div class="w-14 h-14 rounded-2xl bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 flex items-center justify-center text-2xl mb-6 shadow-inner">
-                        <i class="fa-solid fa-clipboard"></i>
-                    </div>
-                    <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-3">Copy-Paste Metadata</h2>
-                    <p class="text-slate-600 dark:text-slate-400 leading-relaxed flex-grow">
-                        Kloning atau salin seluruh informasi metadata dari satu file media dan tempelkan ke file lain dengan satu kali klik.
-                    </p>
-                </a>
+      <div class="tools-grid" id="toolsGrid"></div>
+    </section>
+  </main>
 
-                <!-- Card 4: Image Merger -->
-                <a href="https://utilitibox.github.io/Image-Merger-Utility/" class="group flex flex-col bg-white dark:bg-slate-800 rounded-3xl p-8 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-2xl hover:shadow-emerald-500/10 dark:hover:shadow-emerald-900/20 hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-4 group-hover:translate-x-0 duration-300">
-                        <i class="fa-solid fa-arrow-right text-slate-400 dark:text-slate-500"></i>
-                    </div>
-                    <div class="w-14 h-14 rounded-2xl bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-2xl mb-6 shadow-inner">
-                        <i class="fa-solid fa-layer-group"></i>
-                    </div>
-                    <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-3">Image Merger</h2>
-                    <p class="text-slate-600 dark:text-slate-400 leading-relaxed flex-grow">
-                        Gabungkan banyak gambar sekaligus secara vertikal, horizontal, atau bentuk grid kotak tanpa batas memori server.
-                    </p>
-                </a>
-
-            </div>
-        </main>
-
-        <!-- Footer -->
-        <footer class="w-full max-w-6xl mx-auto px-6 py-8 border-t border-slate-200 dark:border-slate-800 text-center flex flex-col md:flex-row justify-between items-center gap-4">
-            <p class="text-slate-500 dark:text-slate-400 text-sm">
-                &copy; <script>document.write(new Date().getFullYear())</script> UtilitiBox. Hak Cipta Dilindungi.
-            </p>
-            <div class="flex gap-4">
-                <a href="#" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
-                    <i class="fa-brands fa-github text-xl"></i>
-                </a>
-            </div>
-        </footer>
+  <footer class="footer">
+    <div class="container footer-inner">
+      <span id="footerCopy">UtilitiBox - Hosted on GitHub Pages.</span>
+      <a href="https://github.com/UtilitiBox/UtilitiBox.github.io/tree/UtilitiBox" target="_blank" rel="noopener noreferrer" class="repo-link" id="footerRepoLink">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+        </svg>
+        <span id="footerRepoText">Kode Sumber di GitHub (Branch UtilitiBox)</span>
+      </a>
     </div>
+  </footer>
 
-    <!-- Script for Dark Mode Toggle -->
-    <script>
-        const themeToggleBtn = document.getElementById('themeToggle');
-        const themeToggleDarkIcon = document.getElementById('themeToggleDarkIcon');
-        const themeToggleLightIcon = document.getElementById('themeToggleLightIcon');
+  <script>
+    (function () {
+      // Konfigurasi terpusat seluruh tools UtilitiBox
+      const TOOLS_DATA = [
+        {
+          id: 'pass-generator',
+          url: './pass-generator/',
+          slugDisplay: '/pass-generator/',
+          category: 'security',
+          tags: ['password', 'sandi', 'generator', 'keamanan', 'security', 'acak', 'random'],
+          icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>',
+          title: {
+            id: 'Password Generator',
+            en: 'Password Generator'
+          },
+          description: {
+            id: 'Buat kata sandi acak yang kuat dengan panjang dan kombinasi karakter (huruf besar, kecil, angka, simbol) yang dapat diatur.',
+            en: 'Generate strong random passwords with customizable length and character combinations (uppercase, lowercase, numbers, symbols).'
+          }
+        },
+        {
+          id: 'metadata-remover',
+          url: './metadata-remover/',
+          slugDisplay: '/metadata-remover/',
+          category: 'metadata',
+          tags: ['exif', 'metadata', 'hapus', 'remover', 'privasi', 'privacy', 'gps', 'foto', 'image'],
+          icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><line x1="9" y1="9" x2="15" y2="15"></line><line x1="15" y1="9" x2="9" y2="15"></line></svg>',
+          title: {
+            id: 'Metadata Remover',
+            en: 'Metadata Remover'
+          },
+          description: {
+            id: 'Hapus data EXIF, koordinat lokasi GPS, dan informasi kamera tersembunyi dari file gambar demi menjaga privasi sebelum dibagikan.',
+            en: 'Strip EXIF data, GPS coordinates, and hidden camera details from image files to protect your privacy before sharing.'
+          }
+        },
+        {
+          id: 'copypaste-metadata',
+          url: './Copypaste-matadata/',
+          slugDisplay: '/Copypaste-matadata/',
+          category: 'metadata',
+          tags: ['copy', 'paste', 'salin', 'tempel', 'metadata', 'exif', 'gambar', 'image'],
+          icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>',
+          title: {
+            id: 'Copy-Paste Metadata',
+            en: 'Copy-Paste Metadata'
+          },
+          description: {
+            id: 'Salin dan tempel metadata antar file gambar dengan cepat untuk mempertahankan informasi teknis atau kredit pembuat karya.',
+            en: 'Quickly copy and paste metadata between image files to preserve technical details or creator attribution.'
+          }
+        },
+        {
+          id: 'image-merger',
+          url: './Image-Merger-Utility/',
+          slugDisplay: '/Image-Merger-Utility/',
+          category: 'utility',
+          tags: ['image', 'gambar', 'merge', 'gabung', 'collage', 'kolase', 'border', 'bingkai'],
+          icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="12" y1="3" x2="12" y2="21"></line><line x1="3" y1="12" x2="12" y2="12"></line></svg>',
+          title: {
+            id: 'Image Merger Utility',
+            en: 'Image Merger Utility'
+          },
+          description: {
+            id: 'Gabungkan beberapa gambar secara vertikal atau horizontal dengan penyesuaian ukuran otomatis, jarak antar gambar, dan warna bingkai.',
+            en: 'Combine multiple images vertically or horizontally with auto-resize, custom spacing, and outer border controls.'
+          }
+        },
+        {
+          id: 'qr-generator',
+          url: './qr-generator/',
+          slugDisplay: '/qr-generator/',
+          category: 'utility',
+          tags: ['qr', 'qrcode', 'barcode', 'wifi', 'url', 'tautan', 'generator'],
+          icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><path d="M14 14h3v3h-3z"></path><path d="M18 18h3v3h-3z"></path><path d="M14 20h2"></path><path d="M20 14v2"></path></svg>',
+          title: {
+            id: 'QR Generator',
+            en: 'QR Generator'
+          },
+          description: {
+            id: 'Buat kode QR instan untuk tautan URL, akses jaringan Wi-Fi, teks biasa, alamat email, dan nomor telepon.',
+            en: 'Generate instant QR codes for website URLs, Wi-Fi networks, plain text, email addresses, and phone numbers.'
+          }
+        }
+      ];
 
-        // Initial check for theme
-        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-            themeToggleLightIcon.classList.remove('hidden');
-        } else {
-            document.documentElement.classList.remove('dark');
-            themeToggleDarkIcon.classList.remove('hidden');
+      // Kamus UI Dwibahasa (Default: id)
+      const UI_TEXT = {
+        id: {
+          pageTitle: 'UtilitiBox - Kumpulan Alat Utilitas Web Praktis',
+          metaDesc: 'UtilitiBox - Kumpulan alat utilitas web praktis untuk keamanan kata sandi, pengelolaan metadata gambar, penggabungan gambar, dan pembuatan kode QR.',
+          heroBadge: 'Utilitas Web Cepat & Praktis',
+          heroTitle: 'Satu Tempat untuk Alat Digital Harian Anda',
+          heroSubtitle: 'Akses kumpulan utilitas web ringan untuk membuat kata sandi aman, mengelola metadata gambar, menggabungkan foto, hingga membuat kode QR langsung dari browser.',
+          searchPlaceholder: 'Cari alat (misal: password, metadata, QR)...',
+          filterAll: 'Semua',
+          filterSecurity: 'Keamanan',
+          filterMetadata: 'Metadata',
+          filterUtility: 'Gambar & QR',
+          categoryLabels: {
+            security: 'Keamanan',
+            metadata: 'Metadata',
+            utility: 'Gambar & QR'
+          },
+          openTool: 'Buka Alat',
+          countText: function (shown, total) {
+            return 'Menampilkan ' + shown + ' dari ' + total + ' alat';
+          },
+          emptyText: 'Tidak ada alat yang cocok dengan kata kunci pencarian Anda.',
+          resetBtn: 'Atur Ulang Filter',
+          footerCopy: 'UtilitiBox - Dijalankan di GitHub Pages.',
+          footerRepo: 'Repositori GitHub (Branch UtilitiBox)',
+          themeToDark: 'Aktifkan Mode Gelap',
+          themeToLight: 'Aktifkan Mode Terang'
+        },
+        en: {
+          pageTitle: 'UtilitiBox - Practical Web Utility Tools Collection',
+          metaDesc: 'UtilitiBox - A collection of practical web utilities for password security, image metadata management, image merging, and QR code generation.',
+          heroBadge: 'Fast & Practical Web Utilities',
+          heroTitle: 'One Place for Your Daily Digital Tools',
+          heroSubtitle: 'Access lightweight browser utilities to generate secure passwords, manage image metadata, merge photos, and create QR codes directly in your browser.',
+          searchPlaceholder: 'Search tools (e.g., password, metadata, QR)...',
+          filterAll: 'All',
+          filterSecurity: 'Security',
+          filterMetadata: 'Metadata',
+          filterUtility: 'Image & QR',
+          categoryLabels: {
+            security: 'Security',
+            metadata: 'Metadata',
+            utility: 'Image & QR'
+          },
+          openTool: 'Open Tool',
+          countText: function (shown, total) {
+            return 'Showing ' + shown + ' of ' + total + ' tools';
+          },
+          emptyText: 'No tools matched your search query.',
+          resetBtn: 'Reset Filters',
+          footerCopy: 'UtilitiBox - Hosted on GitHub Pages.',
+          footerRepo: 'GitHub Repository (UtilitiBox Branch)',
+          themeToDark: 'Switch to Dark Mode',
+          themeToLight: 'Switch to Light Mode'
+        }
+      };
+
+      // State Aplikasi
+      let currentLang = 'id';
+      let currentCategory = 'all';
+      let searchQuery = '';
+
+      try {
+        const savedLang = localStorage.getItem('utilitibox_lang');
+        if (savedLang === 'id' || savedLang === 'en') {
+          currentLang = savedLang;
+        }
+      } catch (e) {
+        currentLang = 'id';
+      }
+
+      // Referensi Elemen DOM
+      const htmlEl = document.documentElement;
+      const langToggleBtn = document.getElementById('langToggle');
+      const langIndicator = document.getElementById('langIndicator');
+      const themeToggleBtn = document.getElementById('themeToggle');
+      const iconSun = document.getElementById('iconSun');
+      const iconMoon = document.getElementById('iconMoon');
+      const themeLabel = document.getElementById('themeLabel');
+      const searchInput = document.getElementById('searchInput');
+      const filterButtons = document.querySelectorAll('.filter-btn');
+      const toolsGrid = document.getElementById('toolsGrid');
+      const toolsCount = document.getElementById('toolsCount');
+
+      function updateThemeIcons() {
+        const isDark = htmlEl.getAttribute('data-theme') === 'dark';
+        const dict = UI_TEXT[currentLang];
+        iconSun.style.display = isDark ? 'block' : 'none';
+        iconMoon.style.display = isDark ? 'none' : 'block';
+        const label = isDark ? dict.themeToLight : dict.themeToDark;
+        themeLabel.textContent = label;
+        themeToggleBtn.setAttribute('title', label);
+        themeToggleBtn.setAttribute('aria-label', label);
+      }
+
+      function toggleTheme() {
+        const currentTheme = htmlEl.getAttribute('data-theme');
+        const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        htmlEl.setAttribute('data-theme', nextTheme);
+        try {
+          localStorage.setItem('utilitibox_theme', nextTheme);
+        } catch (e) {}
+        updateThemeIcons();
+      }
+
+      function updateLanguageUI() {
+        const dict = UI_TEXT[currentLang];
+        htmlEl.setAttribute('lang', currentLang);
+        document.title = dict.pageTitle;
+
+        const metaDesc = document.querySelector('meta[name="description"]');
+        if (metaDesc) {
+          metaDesc.setAttribute('content', dict.metaDesc);
         }
 
-        themeToggleBtn.addEventListener('click', function() {
-            // Toggle icons
-            themeToggleDarkIcon.classList.toggle('hidden');
-            themeToggleLightIcon.classList.toggle('hidden');
+        if (currentLang === 'id') {
+          langIndicator.innerHTML = '<span class="lang-active">ID</span><span class="lang-inactive">/</span><span class="lang-inactive">EN</span>';
+        } else {
+          langIndicator.innerHTML = '<span class="lang-inactive">ID</span><span class="lang-inactive">/</span><span class="lang-active">EN</span>';
+        }
 
-            // If set via local storage previously
-            if (localStorage.getItem('color-theme')) {
-                if (localStorage.getItem('color-theme') === 'light') {
-                    document.documentElement.classList.add('dark');
-                    localStorage.setItem('color-theme', 'dark');
-                } else {
-                    document.documentElement.classList.remove('dark');
-                    localStorage.setItem('color-theme', 'light');
-                }
-            } else {
-                // If not set via local storage previously
-                if (document.documentElement.classList.contains('dark')) {
-                    document.documentElement.classList.remove('dark');
-                    localStorage.setItem('color-theme', 'light');
-                } else {
-                    document.documentElement.classList.add('dark');
-                    localStorage.setItem('color-theme', 'dark');
-                }
-            }
+        document.getElementById('heroBadge').textContent = dict.heroBadge;
+        document.getElementById('heroTitle').textContent = dict.heroTitle;
+        document.getElementById('heroSubtitle').textContent = dict.heroSubtitle;
+        searchInput.setAttribute('placeholder', dict.searchPlaceholder);
+
+        document.getElementById('filterAll').textContent = dict.filterAll;
+        document.getElementById('filterSecurity').textContent = dict.filterSecurity;
+        document.getElementById('filterMetadata').textContent = dict.filterMetadata;
+        document.getElementById('filterUtility').textContent = dict.filterUtility;
+
+        document.getElementById('footerCopy').textContent = dict.footerCopy;
+        document.getElementById('footerRepoText').textContent = dict.footerRepo;
+
+        updateThemeIcons();
+        renderTools();
+      }
+
+      function toggleLanguage() {
+        currentLang = currentLang === 'id' ? 'en' : 'id';
+        try {
+          localStorage.setItem('utilitibox_lang', currentLang);
+        } catch (e) {}
+        updateLanguageUI();
+      }
+
+      function getBadgeClass(category) {
+        if (category === 'security') return 'badge-security';
+        if (category === 'metadata') return 'badge-metadata';
+        return 'badge-utility';
+      }
+
+      function renderTools() {
+        const dict = UI_TEXT[currentLang];
+        const query = searchQuery.trim().toLowerCase();
+
+        const filtered = TOOLS_DATA.filter(function (tool) {
+          const matchesCategory = currentCategory === 'all' || tool.category === currentCategory;
+          if (!matchesCategory) return false;
+          if (!query) return true;
+
+          const titleText = tool.title[currentLang].toLowerCase();
+          const descText = tool.description[currentLang].toLowerCase();
+          const slugText = tool.slugDisplay.toLowerCase();
+          const tagsMatch = tool.tags.some(function (tag) {
+            return tag.indexOf(query) !== -1;
+          });
+
+          return titleText.indexOf(query) !== -1 ||
+                 descText.indexOf(query) !== -1 ||
+                 slugText.indexOf(query) !== -1 ||
+                 tagsMatch;
         });
-    </script>
+
+        toolsCount.textContent = dict.countText(filtered.length, TOOLS_DATA.length);
+
+        if (filtered.length === 0) {
+          toolsGrid.innerHTML =
+            '<div class="empty-state">' +
+              '<p>' + dict.emptyText + '</p>' +
+              '<button type="button" class="control-btn" id="resetFiltersBtn">' + dict.resetBtn + '</button>' +
+            '</div>';
+
+          const resetBtn = document.getElementById('resetFiltersBtn');
+          if (resetBtn) {
+            resetBtn.addEventListener('click', function () {
+              searchQuery = '';
+              searchInput.value = '';
+              currentCategory = 'all';
+              filterButtons.forEach(function (btn) {
+                btn.classList.toggle('active', btn.getAttribute('data-category') === 'all');
+              });
+              renderTools();
+            });
+          }
+          return;
+        }
+
+        const cardsHtml = filtered.map(function (tool) {
+          const categoryLabel = dict.categoryLabels[tool.category] || tool.category;
+          const badgeClass = getBadgeClass(tool.category);
+
+          return (
+            '<a href="' + tool.url + '" class="tool-card">' +
+              '<div>' +
+                '<div class="card-top">' +
+                  '<div class="tool-icon-wrap" aria-hidden="true">' + tool.icon + '</div>' +
+                  '<span class="category-badge ' + badgeClass + '">' + categoryLabel + '</span>' +
+                '</div>' +
+                '<h2 class="tool-title">' + tool.title[currentLang] + '</h2>' +
+                '<p class="tool-desc">' + tool.description[currentLang] + '</p>' +
+              '</div>' +
+              '<div class="card-footer">' +
+                '<span class="tool-slug">' + tool.slugDisplay + '</span>' +
+                '<span class="open-label">' +
+                  dict.openTool +
+                  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+                    '<line x1="7" y1="17" x2="17" y2="7"></line>' +
+                    '<polyline points="7 7 17 7 17 17"></polyline>' +
+                  '</svg>' +
+                '</span>' +
+              '</div>' +
+            '</a>'
+          );
+        }).join('');
+
+        toolsGrid.innerHTML = cardsHtml;
+      }
+
+      // Event Listeners
+      langToggleBtn.addEventListener('click', toggleLanguage);
+      themeToggleBtn.addEventListener('click', toggleTheme);
+
+      searchInput.addEventListener('input', function (e) {
+        searchQuery = e.target.value;
+        renderTools();
+      });
+
+      filterButtons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          currentCategory = btn.getAttribute('data-category');
+          filterButtons.forEach(function (item) {
+            item.classList.toggle('active', item === btn);
+          });
+          renderTools();
+        });
+      });
+
+      // Pintasan keyboard '/' untuk fokus pencarian, 'Escape' untuk hapus pencarian
+      document.addEventListener('keydown', function (e) {
+        if (e.key === '/' && document.activeElement !== searchInput &&
+            document.activeElement.tagName !== 'INPUT' &&
+            document.activeElement.tagName !== 'TEXTAREA') {
+          e.preventDefault();
+          searchInput.focus();
+        } else if (e.key === 'Escape' && document.activeElement === searchInput) {
+          searchQuery = '';
+          searchInput.value = '';
+          searchInput.blur();
+          renderTools();
+        }
+      });
+
+      // Inisialisasi awal
+      updateLanguageUI();
+    })();
+  </script>
 </body>
 </html>
