@@ -786,7 +786,6 @@
       const ECC_LEVELS = { L: 0, M: 1, Q: 2, H: 3 };
 
       const ECC_CODEWORDS_PER_BLOCK = [
-        // Version 1..25
         [null, 7, 10, 15, 20, 26, 18, 20, 24, 30, 18, 20, 24, 26, 30, 22, 24, 28, 30, 28, 28, 28, 28, 30, 30, 26], // L
         [null, 10, 16, 26, 18, 24, 16, 18, 22, 22, 26, 30, 22, 22, 24, 24, 28, 28, 26, 26, 26, 26, 28, 28, 28, 28], // M
         [null, 13, 22, 18, 26, 18, 24, 18, 22, 20, 24, 28, 26, 24, 20, 30, 24, 28, 28, 26, 30, 28, 30, 30, 30, 30], // Q
@@ -794,7 +793,6 @@
       ];
 
       const NUM_ERROR_CORRECTION_BLOCKS = [
-        // Version 1..25
         [null, 1, 1, 1, 1, 1, 2, 2, 2, 2, 4, 4, 4, 4, 4, 6, 6, 6, 6, 7, 8, 8, 9, 9, 10, 12], // L
         [null, 1, 1, 1, 2, 2, 4, 4, 4, 5, 5, 5, 8, 9, 9, 10, 10, 11, 13, 14, 16, 17, 17, 18, 20, 21], // M
         [null, 1, 1, 2, 2, 4, 4, 6, 6, 8, 8, 8, 10, 12, 16, 12, 17, 16, 18, 21, 20, 23, 23, 25, 27, 29], // Q
@@ -810,7 +808,7 @@
         if (ver >= 2) {
           const numAlign = Math.floor(ver / 7) + 2;
           result -= (numAlign * numAlign - 3) * 25;
-          result -= (numAlign - 2) * 10;
+          result += (numAlign - 2) * 10; // Add back overlap with timing patterns
         }
         if (ver >= 7) {
           result -= 36; // version info
@@ -1342,7 +1340,7 @@
          5. RENDERERS (CANVAS PNG & STANDALONE VECTOR SVG)
          ===================================================================== */
       function getBadgeModuleSpan(size) {
-        let span = Math.max(5, Math.round(size * 0.2));
+        let span = Math.max(5, Math.round(size * 0.16));
         if (span % 2 === 0) span -= 1;
         return Math.max(5, span);
       }
