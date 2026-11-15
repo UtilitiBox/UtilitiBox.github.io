@@ -1,0 +1,1474 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penggabung Gambar - UtilitiBox</title>
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome 6 CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Tailwind CSS CDN dengan konfigurasi darkMode: 'class' -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Inisialisasi Tema Awal sebelum render untuk mencegah kedipan layar (FOUC) -->
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('color-theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+    </script>
+
+    <style>
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Pola Papan Catur (Checkerboard) untuk indikator latar belakang transparan */
+        .checkerboard-bg {
+            background-color: #ffffff;
+            background-image:
+                linear-gradient(45deg, #e2e8f0 25%, transparent 25%),
+                linear-gradient(-45deg, #e2e8f0 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #e2e8f0 75%),
+                linear-gradient(-45deg, transparent 75%, #e2e8f0 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0;
+        }
+
+        .dark .checkerboard-bg {
+            background-color: #0f172a;
+            background-image:
+                linear-gradient(45deg, #1e293b 25%, transparent 25%),
+                linear-gradient(-45deg, #1e293b 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #1e293b 75%),
+                linear-gradient(-45deg, transparent 75%, #1e293b 75%);
+        }
+
+        /* Pola papan catur mini untuk tombol preset Transparan */
+        .checkerboard-swatch {
+            background-color: #ffffff;
+            background-image:
+                linear-gradient(45deg, #cbd5e1 25%, transparent 25%),
+                linear-gradient(-45deg, #cbd5e1 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #cbd5e1 75%),
+                linear-gradient(-45deg, transparent 75%, #cbd5e1 75%);
+            background-size: 8px 8px;
+            background-position: 0 0, 0 4px, 4px -4px, -4px 0;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 7px;
+            height: 7px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #334155;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Hilangkan panah spinner bawaan pada input number agar lebih rapi */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        /* Styling khusus input color native */
+        input[type="color"] {
+            -webkit-appearance: none;
+            border: none;
+            padding: 0;
+        }
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+        input[type="color"]::-webkit-color-swatch {
+            border: none;
+            border-radius: 0.65rem;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen transition-colors duration-200 flex flex-col">
+
+    <!-- ==================== HEADER / NAVBAR ==================== -->
+    <header class="sticky top-0 z-30 bg-white/85 dark:bg-slate-900/85 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between gap-3">
+            <!-- Identitas Aplikasi -->
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center shadow-md shadow-emerald-500/20 shrink-0">
+                    <i class="fa-solid fa-layer-group text-lg sm:text-xl"></i>
+                </div>
+                <div class="min-w-0">
+                    <div class="flex items-center gap-2">
+                        <h1 class="text-lg sm:text-xl font-extrabold tracking-tight text-slate-900 dark:text-white truncate">
+                            Penggabung Gambar
+                        </h1>
+                        <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60">
+                            Client-Side
+                        </span>
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 truncate">
+                        UtilitiBox - 100% Client-Side, Privasi Terjaga
+                    </p>
+                </div>
+            </div>
+
+            <!-- Kontrol Kanan: Beranda & Toggle Mode Malam -->
+            <div class="flex items-center gap-2 shrink-0">
+                <a href="https://utilitibox.github.io/" title="Kembali ke Beranda UtilitiBox"
+                   class="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                    <i class="fa-solid fa-box-open text-blue-600 dark:text-blue-400"></i>
+                    <span class="hidden md:inline">UtilitiBox</span>
+                </a>
+
+                <button id="themeToggle" type="button" title="Ganti Mode Malam / Terang"
+                        class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    <i id="themeLightIcon" class="fa-solid fa-sun hidden text-amber-400 text-base"></i>
+                    <i id="themeDarkIcon" class="fa-solid fa-moon hidden text-slate-700 text-base"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== MAIN WORKSPACE ==================== -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+
+            <!-- ==================== KOLOM KIRI: KONTROL & PENGATURAN ==================== -->
+            <div class="lg:col-span-5 space-y-6">
+
+                <!-- 1. PANEL UNGGAH & URUTAN GAMBAR -->
+                <section class="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                            <span class="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xs">
+                                <i class="fa-solid fa-images"></i>
+                            </span>
+                            Daftar Gambar
+                            <span id="imageCountBadge" class="ml-1 px-2 py-0.5 text-xs font-semibold rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                                0
+                            </span>
+                        </h2>
+
+                        <button id="clearAllBtn" type="button" disabled
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/50 hover:bg-rose-100 dark:hover:bg-rose-900/40 disabled:opacity-40 disabled:pointer-events-none transition-colors">
+                            <i class="fa-solid fa-trash-can"></i>
+                            Hapus Semua
+                        </button>
+                    </div>
+
+                    <!-- Area Dropzone Unggah Gambar -->
+                    <div id="dropZone" role="button" tabindex="0"
+                         class="group relative border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-500 rounded-2xl p-5 sm:p-6 text-center cursor-pointer bg-slate-50/70 dark:bg-slate-800/40 hover:bg-emerald-50/40 dark:hover:bg-emerald-950/20 transition-all">
+                        <input id="fileInput" type="file" accept="image/png,image/jpeg,image/webp" multiple class="hidden">
+
+                        <div class="w-12 h-12 mx-auto mb-3 rounded-2xl bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl group-hover:scale-105 transition-transform">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                        </div>
+                        <p class="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">
+                            Klik untuk pilih gambar atau seret ke sini
+                        </p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">
+                            Mendukung format PNG, JPG, WebP (Bisa pilih banyak sekaligus)
+                        </p>
+                    </div>
+
+                    <!-- Daftar Thumbnail & Kontrol Urutan -->
+                    <div id="imageListWrapper" class="mt-4 hidden">
+                        <div class="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 mb-2 px-1">
+                            <span><i class="fa-solid fa-arrows-up-down mr-1"></i>Geser (desktop) atau klik panah (HP) untuk urutkan</span>
+                        </div>
+                        <ul id="imageList" class="space-y-2.5 max-h-[340px] overflow-y-auto pr-1">
+                            <!-- Item gambar dirender secara dinamis oleh JavaScript -->
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- 2. PANEL PENGATURAN TATA LETAK (LAYOUT) -->
+                <section class="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5">
+                    <h2 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                        <span class="w-7 h-7 rounded-lg bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xs">
+                            <i class="fa-solid fa-table-cells-large"></i>
+                        </span>
+                        Pengaturan Tata Letak
+                    </h2>
+
+                    <!-- Pilihan Mode Penggabungan -->
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
+                            Arah Penggabungan
+                        </label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button type="button" data-mode="vertical"
+                                    class="mode-btn flex flex-col items-center justify-center gap-1.5 py-3 px-2 rounded-2xl border-2 text-xs font-semibold transition-all border-emerald-500 bg-emerald-50/70 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300">
+                                <i class="fa-solid fa-arrows-up-down text-base"></i>
+                                <span>Vertikal</span>
+                            </button>
+
+                            <button type="button" data-mode="horizontal"
+                                    class="mode-btn flex flex-col items-center justify-center gap-1.5 py-3 px-2 rounded-2xl border-2 text-xs font-semibold transition-all border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700">
+                                <i class="fa-solid fa-arrows-left-right text-base"></i>
+                                <span>Horizontal</span>
+                            </button>
+
+                            <button type="button" data-mode="grid"
+                                    class="mode-btn flex flex-col items-center justify-center gap-1.5 py-3 px-2 rounded-2xl border-2 text-xs font-semibold transition-all border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700">
+                                <i class="fa-solid fa-grip text-base"></i>
+                                <span>Grid Kolase</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Pilihan Jumlah Kolom (Khusus Mode Grid) -->
+                    <div id="gridColumnsContainer" class="hidden pt-1">
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
+                            Jumlah Kolom Grid
+                        </label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button type="button" data-cols="2"
+                                    class="grid-col-btn py-2.5 px-3 rounded-xl border-2 text-xs font-bold transition-all border-emerald-500 bg-emerald-50/70 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300">
+                                2 Kolom
+                            </button>
+                            <button type="button" data-cols="3"
+                                    class="grid-col-btn py-2.5 px-3 rounded-xl border-2 text-xs font-bold transition-all border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700">
+                                3 Kolom
+                            </button>
+                            <button type="button" data-cols="4"
+                                    class="grid-col-btn py-2.5 px-3 rounded-xl border-2 text-xs font-bold transition-all border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700">
+                                4 Kolom
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Toggle Auto-Resize Proporsional -->
+                    <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800 flex items-start justify-between gap-3">
+                        <div class="space-y-0.5">
+                            <label for="autoResizeToggle" class="text-sm font-semibold text-slate-800 dark:text-slate-100 cursor-pointer block">
+                                Auto-Resize Proporsional
+                            </label>
+                            <p id="autoResizeDesc" class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                                Menyamakan lebar semua gambar mengikuti gambar pertama tanpa distorsi.
+                            </p>
+                        </div>
+
+                        <label class="relative inline-flex items-center cursor-pointer shrink-0 mt-0.5">
+                            <input id="autoResizeToggle" type="checkbox" checked class="sr-only peer">
+                            <div class="w-11 h-6 bg-slate-300 dark:bg-slate-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-emerald-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                        </label>
+                    </div>
+                </section>
+
+                <!-- 3. PANEL TEPIAN & WARNA (BORDER & SPACING CONTROLS) -->
+                <section class="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5">
+                    <h2 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                        <span class="w-7 h-7 rounded-lg bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 flex items-center justify-center text-xs">
+                            <i class="fa-solid fa-border-all"></i>
+                        </span>
+                        Tepian & Warna Latar
+                    </h2>
+
+                    <!-- Ketebalan Tepian Luar (Outer Border / Padding) -->
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <label for="outerBorderSlider" class="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                                Ketebalan Tepian Luar (Padding)
+                            </label>
+                            <div class="flex items-center bg-slate-100 dark:bg-slate-800 rounded-xl px-2.5 py-1 border border-slate-200 dark:border-slate-700">
+                                <input id="outerBorderInput" type="number" min="0" max="150" value="16"
+                                       class="w-11 text-right text-xs font-bold bg-transparent text-slate-800 dark:text-slate-100 focus:outline-none">
+                                <span class="text-[11px] font-medium text-slate-400 ml-1">px</span>
+                            </div>
+                        </div>
+                        <input id="outerBorderSlider" type="range" min="0" max="150" value="16"
+                               class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-600">
+                    </div>
+
+                    <!-- Jarak Antar Gambar (Inner Gap / Spacing) -->
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <label for="innerGapSlider" class="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                                Jarak Antar Gambar (Spacing)
+                            </label>
+                            <div class="flex items-center bg-slate-100 dark:bg-slate-800 rounded-xl px-2.5 py-1 border border-slate-200 dark:border-slate-700">
+                                <input id="innerGapInput" type="number" min="0" max="150" value="16"
+                                       class="w-11 text-right text-xs font-bold bg-transparent text-slate-800 dark:text-slate-100 focus:outline-none">
+                                <span class="text-[11px] font-medium text-slate-400 ml-1">px</span>
+                            </div>
+                        </div>
+                        <input id="innerGapSlider" type="range" min="0" max="150" value="16"
+                               class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-600">
+
+                        <!-- Opsi Centang: Samakan jarak antar gambar dengan tepian luar -->
+                        <label class="mt-3 inline-flex items-center gap-2.5 cursor-pointer select-none">
+                            <input id="syncSpacingCheckbox" type="checkbox" checked
+                                   class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 border-slate-300 dark:border-slate-600 dark:bg-slate-800">
+                            <span class="text-xs font-medium text-slate-600 dark:text-slate-400">
+                                Samakan jarak antar gambar dengan tepian luar
+                            </span>
+                        </label>
+                    </div>
+
+                    <!-- Pemilih Warna Tepian / Latar -->
+                    <div class="pt-1 border-t border-slate-100 dark:border-slate-800">
+                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2.5">
+                            Warna Tepian & Latar Belakang
+                        </label>
+
+                        <!-- Input Color Picker + Hex Text Input Tersinkronisasi -->
+                        <div class="flex items-center gap-2.5 mb-3">
+                            <div class="relative w-12 h-11 rounded-xl border border-slate-300 dark:border-slate-700 overflow-hidden shadow-xs shrink-0">
+                                <input id="bgColorPicker" type="color" value="#FFFFFF" title="Pilih Warna Kustom"
+                                       class="w-full h-full cursor-pointer bg-transparent">
+                            </div>
+
+                            <div class="flex-grow flex items-center bg-slate-100 dark:bg-slate-800 rounded-xl px-3 h-11 border border-slate-200 dark:border-slate-700 focus-within:ring-2 focus-within:ring-emerald-500">
+                                <span class="text-xs font-semibold text-slate-400 mr-2">HEX</span>
+                                <input id="bgColorHex" type="text" value="#FFFFFF" maxlength="10" placeholder="#FFFFFF"
+                                       class="w-full bg-transparent text-sm font-mono font-bold uppercase text-slate-800 dark:text-slate-100 focus:outline-none">
+                            </div>
+                        </div>
+
+                        <!-- Tombol Preset Warna Cepat -->
+                        <div>
+                            <span class="block text-[11px] font-medium text-slate-500 dark:text-slate-400 mb-2">
+                                Preset Warna Cepat:
+                            </span>
+                            <div class="grid grid-cols-5 gap-2">
+                                <!-- Putih -->
+                                <button type="button" data-preset="#FFFFFF" title="Putih (#FFFFFF)"
+                                        class="preset-color-btn flex flex-col items-center gap-1 p-2 rounded-xl border-2 border-emerald-500 bg-slate-50 dark:bg-slate-800/80 transition-all">
+                                    <span class="w-6 h-6 rounded-full bg-white border border-slate-300 shadow-xs"></span>
+                                    <span class="text-[10px] font-semibold text-slate-700 dark:text-slate-300">Putih</span>
+                                </button>
+
+                                <!-- Hitam -->
+                                <button type="button" data-preset="#000000" title="Hitam (#000000)"
+                                        class="preset-color-btn flex flex-col items-center gap-1 p-2 rounded-xl border-2 border-transparent bg-slate-50 dark:bg-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 transition-all">
+                                    <span class="w-6 h-6 rounded-full bg-black border border-slate-600 shadow-xs"></span>
+                                    <span class="text-[10px] font-semibold text-slate-700 dark:text-slate-300">Hitam</span>
+                                </button>
+
+                                <!-- Abu-abu Terang -->
+                                <button type="button" data-preset="#E2E8F0" title="Abu-abu Terang (#E2E8F0)"
+                                        class="preset-color-btn flex flex-col items-center gap-1 p-2 rounded-xl border-2 border-transparent bg-slate-50 dark:bg-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 transition-all">
+                                    <span class="w-6 h-6 rounded-full bg-[#E2E8F0] border border-slate-300 shadow-xs"></span>
+                                    <span class="text-[10px] font-semibold text-slate-700 dark:text-slate-300">Terang</span>
+                                </button>
+
+                                <!-- Abu-abu Gelap -->
+                                <button type="button" data-preset="#1E293B" title="Abu-abu Gelap (#1E293B)"
+                                        class="preset-color-btn flex flex-col items-center gap-1 p-2 rounded-xl border-2 border-transparent bg-slate-50 dark:bg-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 transition-all">
+                                    <span class="w-6 h-6 rounded-full bg-[#1E293B] border border-slate-600 shadow-xs"></span>
+                                    <span class="text-[10px] font-semibold text-slate-700 dark:text-slate-300">Gelap</span>
+                                </button>
+
+                                <!-- Transparan -->
+                                <button type="button" data-preset="transparent" title="Transparan (Tanpa Latar)"
+                                        class="preset-color-btn flex flex-col items-center gap-1 p-2 rounded-xl border-2 border-transparent bg-slate-50 dark:bg-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 transition-all">
+                                    <span class="w-6 h-6 rounded-full checkerboard-swatch border border-slate-300 dark:border-slate-600 shadow-xs"></span>
+                                    <span class="text-[10px] font-semibold text-slate-700 dark:text-slate-300">Transparan</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- ==================== KOLOM KANAN: PRATINJAU & EKSPOR ==================== -->
+            <div class="lg:col-span-7 lg:sticky lg:top-24 space-y-6">
+
+                <!-- 4. PANEL PRATINJAU REAL-TIME -->
+                <section class="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <!-- Header Pratinjau & Info Dimensi -->
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+                        <h2 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                            <span class="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xs">
+                                <i class="fa-solid fa-eye"></i>
+                            </span>
+                            Pratinjau Real-Time
+                        </h2>
+
+                        <!-- Badge Dimensi Hasil -->
+                        <div class="flex items-center gap-2">
+                            <span id="transparentBadge" class="hidden items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-semibold bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300">
+                                <i class="fa-solid fa-chess-board text-[10px]"></i>
+                                Transparan
+                            </span>
+                            <div class="px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-mono font-bold text-slate-700 dark:text-slate-200">
+                                <i class="fa-solid fa-expand text-slate-400 mr-1.5"></i>
+                                <span id="dimensionDisplay">0 × 0 px</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Peringatan Batas Ukuran Kanvas Browser (>16.000 px) -->
+                    <div id="sizeWarningBanner" class="hidden mb-4 p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-800 text-amber-800 dark:text-amber-200 text-xs flex items-start gap-3">
+                        <i class="fa-solid fa-triangle-exclamation text-amber-500 text-base mt-0.5 shrink-0"></i>
+                        <div>
+                            <p class="font-bold mb-0.5">Ukuran Kanvas Mendekati Batas Maksimum Browser!</p>
+                            <p id="sizeWarningText" class="leading-relaxed opacity-90">
+                                Dimensi gambar melebihi 16.000 px. Beberapa browser mungkin membatasi ukuran ekspor. Aktifkan Auto-Resize atau kurangi resolusi gambar jika hasil terpotong.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Wadah Kanvas Pratinjau (dengan pola papan catur untuk transparansi) -->
+                    <div class="relative rounded-2xl border border-slate-200 dark:border-slate-800 checkerboard-bg min-h-[300px] sm:min-h-[400px] max-h-[65vh] flex items-center justify-center p-4 sm:p-6 overflow-auto">
+                        <!-- Placeholder saat belum ada gambar -->
+                        <div id="emptyPreviewState" class="text-center max-w-xs py-10 px-4 rounded-2xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-xs border border-slate-200/80 dark:border-slate-800 shadow-xs">
+                            <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center text-2xl">
+                                <i class="fa-regular fa-image"></i>
+                            </div>
+                            <p class="text-sm font-bold text-slate-800 dark:text-slate-200 mb-1">
+                                Belum Ada Gambar
+                            </p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">
+                                Unggah minimal 1 gambar di panel kiri untuk melihat hasil penggabungan secara langsung.
+                            </p>
+                        </div>
+
+                        <!-- Kanvas Utama -->
+                        <canvas id="previewCanvas" class="hidden max-w-full max-h-[58vh] w-auto h-auto rounded-lg shadow-lg"></canvas>
+                    </div>
+                </section>
+
+                <!-- 5. PANEL EKSPOR & UNDUH -->
+                <section class="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                            <span class="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xs">
+                                <i class="fa-solid fa-download"></i>
+                            </span>
+                            Ekspor Hasil Gambar
+                        </h2>
+                        <span id="pngSuggestNote" class="hidden text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-lg">
+                            <i class="fa-solid fa-circle-info mr-1"></i>PNG disarankan untuk latar transparan
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Pilihan Format Unduhan -->
+                        <div>
+                            <label for="exportFormat" class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">
+                                Format File
+                            </label>
+                            <select id="exportFormat"
+                                    class="w-full h-11 px-3.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-semibold text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                <option value="image/png">PNG (Lossless • Transparan)</option>
+                                <option value="image/jpeg">JPEG (Ukuran Ringan)</option>
+                                <option value="image/webp">WebP (Modern & Efisien)</option>
+                            </select>
+                        </div>
+
+                        <!-- Pengaturan Kualitas (10% - 100%) -->
+                        <div id="qualityControlWrapper" class="opacity-50 pointer-events-none transition-opacity">
+                            <div class="flex items-center justify-between mb-1.5">
+                                <label for="exportQualitySlider" class="text-xs font-semibold text-slate-600 dark:text-slate-400">
+                                    Kualitas Kompresi
+                                </label>
+                                <span id="exportQualityValue" class="text-xs font-bold font-mono text-emerald-600 dark:text-emerald-400">
+                                    92%
+                                </span>
+                            </div>
+                            <div class="h-11 flex items-center px-3 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                                <input id="exportQualitySlider" type="range" min="10" max="100" value="92"
+                                       class="w-full h-2 bg-slate-300 dark:bg-slate-600 rounded-lg appearance-none cursor-pointer accent-emerald-600">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tombol Unduh Gambar Gabungan -->
+                    <button id="downloadBtn" type="button" disabled
+                            class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:from-slate-300 disabled:to-slate-300 dark:disabled:from-slate-800 dark:disabled:to-slate-800 disabled:text-slate-500 text-white font-bold text-sm sm:text-base shadow-lg shadow-emerald-600/20 disabled:shadow-none flex items-center justify-center gap-2.5 transition-all active:scale-[0.99] cursor-pointer disabled:cursor-not-allowed">
+                        <i class="fa-solid fa-download"></i>
+                        <span>Unduh Gambar Gabungan</span>
+                    </button>
+                </section>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="mt-12 border-t border-slate-200 dark:border-slate-800/80 py-6 px-4 text-center text-xs text-slate-500 dark:text-slate-400">
+        <p>
+            &copy; <span id="currentYear"></span> <strong>UtilitiBox</strong> &mdash; Seluruh gambar diproses secara lokal di browser Anda tanpa unggahan ke server.
+        </p>
+    </footer>
+
+    <!-- ==================== CUSTOM CONFIRMATION MODAL (PENGGANTI confirm()) ==================== -->
+    <div id="confirmModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-sm w-full p-6 shadow-2xl transform transition-all">
+            <div class="w-12 h-12 rounded-2xl bg-rose-100 dark:bg-rose-950/70 text-rose-600 dark:text-rose-400 flex items-center justify-center text-xl mb-4">
+                <i class="fa-solid fa-trash-can"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-1.5">Hapus Semua Gambar?</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">
+                Semua gambar yang telah ditambahkan akan dihapus dari daftar dan memori browser akan dibersihkan.
+            </p>
+            <div class="flex items-center justify-end gap-2.5">
+                <button id="cancelClearBtn" type="button"
+                        class="px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                    Batal
+                </button>
+                <button id="confirmClearBtn" type="button"
+                        class="px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-rose-600 hover:bg-rose-500 transition-colors">
+                    Ya, Hapus Semua
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== TOAST NOTIFICATION CONTAINER (PENGGANTI alert()) ==================== -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-[calc(100%-2.5rem)] pointer-events-none"></div>
+
+    <!-- ==================== JAVASCRIPT APPLICATION LOGIC ==================== -->
+    <script>
+        /**
+         * UtilitiBox - Image Merger Utility (Client-Side)
+         * Arsitektur berbasis State tunggal dengan pembaruan DOM & Canvas reaktif.
+         */
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set tahun pada footer
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+            // -------------------- 1. STATE APLIKASI --------------------
+            const state = {
+                images: [],               // Array objek: { id, name, size, width, height, url, img }
+                mode: 'vertical',         // 'vertical' | 'horizontal' | 'grid'
+                gridCols: 2,              // 2 | 3 | 4
+                autoResize: true,         // true | false
+                outerBorder: 16,          // 0 - 150 px
+                innerGap: 16,             // 0 - 150 px
+                syncSpacing: true,        // Samakan innerGap dengan outerBorder
+                bgColor: '#FFFFFF',       // Kode Hex valid
+                isTransparent: false,     // true jika memilih preset Transparan
+                exportFormat: 'image/png',// 'image/png' | 'image/jpeg' | 'image/webp'
+                exportQuality: 0.92,      // 0.10 - 1.00
+                draggedIndex: null        // Indeks item yang sedang di-drag untuk reorder
+            };
+
+            // -------------------- 2. REFERENSI ELEMEN DOM --------------------
+            const el = {
+                // Tema
+                themeToggle: document.getElementById('themeToggle'),
+                themeLightIcon: document.getElementById('themeLightIcon'),
+                themeDarkIcon: document.getElementById('themeDarkIcon'),
+
+                // Upload & Daftar Gambar
+                dropZone: document.getElementById('dropZone'),
+                fileInput: document.getElementById('fileInput'),
+                imageCountBadge: document.getElementById('imageCountBadge'),
+                clearAllBtn: document.getElementById('clearAllBtn'),
+                imageListWrapper: document.getElementById('imageListWrapper'),
+                imageList: document.getElementById('imageList'),
+
+                // Tata Letak
+                modeBtns: document.querySelectorAll('.mode-btn'),
+                gridColumnsContainer: document.getElementById('gridColumnsContainer'),
+                gridColBtns: document.querySelectorAll('.grid-col-btn'),
+                autoResizeToggle: document.getElementById('autoResizeToggle'),
+                autoResizeDesc: document.getElementById('autoResizeDesc'),
+
+                // Tepian & Warna
+                outerBorderSlider: document.getElementById('outerBorderSlider'),
+                outerBorderInput: document.getElementById('outerBorderInput'),
+                innerGapSlider: document.getElementById('innerGapSlider'),
+                innerGapInput: document.getElementById('innerGapInput'),
+                syncSpacingCheckbox: document.getElementById('syncSpacingCheckbox'),
+                bgColorPicker: document.getElementById('bgColorPicker'),
+                bgColorHex: document.getElementById('bgColorHex'),
+                presetColorBtns: document.querySelectorAll('.preset-color-btn'),
+
+                // Pratinjau & Ekspor
+                previewCanvas: document.getElementById('previewCanvas'),
+                emptyPreviewState: document.getElementById('emptyPreviewState'),
+                dimensionDisplay: document.getElementById('dimensionDisplay'),
+                transparentBadge: document.getElementById('transparentBadge'),
+                sizeWarningBanner: document.getElementById('sizeWarningBanner'),
+                sizeWarningText: document.getElementById('sizeWarningText'),
+                pngSuggestNote: document.getElementById('pngSuggestNote'),
+                exportFormat: document.getElementById('exportFormat'),
+                qualityControlWrapper: document.getElementById('qualityControlWrapper'),
+                exportQualitySlider: document.getElementById('exportQualitySlider'),
+                exportQualityValue: document.getElementById('exportQualityValue'),
+                downloadBtn: document.getElementById('downloadBtn'),
+
+                // Modal & Toast
+                confirmModal: document.getElementById('confirmModal'),
+                cancelClearBtn: document.getElementById('cancelClearBtn'),
+                confirmClearBtn: document.getElementById('confirmClearBtn'),
+                toastContainer: document.getElementById('toastContainer')
+            };
+
+            const ctx = el.previewCanvas.getContext('2d');
+
+            // -------------------- 3. SISTEM NOTIFIKASI TOAST --------------------
+            /**
+             * Menampilkan pesan notifikasi non-intrusif (pengganti alert()).
+             */
+            function showToast(message, type = 'info') {
+                const styles = {
+                    info: 'bg-slate-900 dark:bg-slate-800 text-white border-slate-700',
+                    success: 'bg-emerald-600 text-white border-emerald-500',
+                    warning: 'bg-amber-500 text-slate-950 border-amber-400',
+                    error: 'bg-rose-600 text-white border-rose-500'
+                };
+                const icons = {
+                    info: 'fa-circle-info',
+                    success: 'fa-circle-check',
+                    warning: 'fa-triangle-exclamation',
+                    error: 'fa-circle-xmark'
+                };
+
+                const toast = document.createElement('div');
+                toast.className = `pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-2xl border shadow-xl text-xs sm:text-sm font-medium transition-all duration-300 translate-y-2 opacity-0 ${styles[type] || styles.info}`;
+                toast.innerHTML = `
+                    <i class="fa-solid ${icons[type] || icons.info} text-base shrink-0"></i>
+                    <span class="leading-snug">${message}</span>
+                `;
+
+                el.toastContainer.appendChild(toast);
+                requestAnimationFrame(() => {
+                    toast.classList.remove('translate-y-2', 'opacity-0');
+                });
+
+                setTimeout(() => {
+                    toast.classList.add('translate-y-2', 'opacity-0');
+                    setTimeout(() => toast.remove(), 300);
+                }, 3200);
+            }
+
+            // -------------------- 4. PENGATURAN TEMA (DARK MODE) --------------------
+            function syncThemeIcons() {
+                const isDark = document.documentElement.classList.contains('dark');
+                if (isDark) {
+                    el.themeLightIcon.classList.remove('hidden');
+                    el.themeDarkIcon.classList.add('hidden');
+                } else {
+                    el.themeDarkIcon.classList.remove('hidden');
+                    el.themeLightIcon.classList.add('hidden');
+                }
+            }
+            syncThemeIcons();
+
+            el.themeToggle.addEventListener('click', () => {
+                const isDark = document.documentElement.classList.toggle('dark');
+                localStorage.setItem('color-theme', isDark ? 'dark' : 'light');
+                syncThemeIcons();
+            });
+
+            // -------------------- 5. UTILITAS FORMATTER --------------------
+            function formatFileSize(bytes) {
+                if (bytes < 1024) return bytes + ' B';
+                if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+                return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+            }
+
+            function clampNumber(val, min, max, fallback = 0) {
+                const num = parseInt(val, 10);
+                if (isNaN(num)) return fallback;
+                return Math.min(max, Math.max(min, num));
+            }
+
+            // -------------------- 6. UNGGAH & PEMUATAN GAMBAR --------------------
+            /**
+             * Memproses FileList dari input file, drag-and-drop, atau paste.
+             */
+            async function handleFiles(fileList) {
+                const validTypes = ['image/png', 'image/jpeg', 'image/webp'];
+                const files = Array.from(fileList || []);
+                if (files.length === 0) return;
+
+                let skippedCount = 0;
+                const validFiles = files.filter(file => {
+                    const isValid = validTypes.includes(file.type);
+                    if (!isValid) skippedCount++;
+                    return isValid;
+                });
+
+                if (skippedCount > 0) {
+                    showToast(`${skippedCount} file dilewati karena bukan format PNG, JPG, atau WebP.`, 'warning');
+                }
+
+                if (validFiles.length === 0) return;
+
+                try {
+                    const loadPromises = validFiles.map(file => loadSingleImage(file));
+                    const loadedItems = await Promise.all(loadPromises);
+                    const successfulItems = loadedItems.filter(Boolean);
+
+                    if (successfulItems.length > 0) {
+                        state.images.push(...successfulItems);
+                        renderImageList();
+                        renderCanvas();
+                        showToast(`${successfulItems.length} gambar berhasil ditambahkan.`, 'success');
+                    }
+                } catch (err) {
+                    console.error('Gagal memuat gambar:', err);
+                    showToast('Terjadi kesalahan saat membaca salah satu gambar.', 'error');
+                }
+            }
+
+            function loadSingleImage(file) {
+                return new Promise((resolve) => {
+                    const objectUrl = URL.createObjectURL(file);
+                    const img = new Image();
+
+                    img.onload = () => {
+                        resolve({
+                            id: 'img_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8),
+                            name: file.name,
+                            size: file.size,
+                            width: img.naturalWidth,
+                            height: img.naturalHeight,
+                            url: objectUrl,
+                            img: img
+                        });
+                    };
+
+                    img.onerror = () => {
+                        URL.revokeObjectURL(objectUrl);
+                        resolve(null);
+                    };
+
+                    img.src = objectUrl;
+                });
+            }
+
+            // Event klik & drag-and-drop pada DropZone unggah
+            el.dropZone.addEventListener('click', () => el.fileInput.click());
+            el.dropZone.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    el.fileInput.click();
+                }
+            });
+
+            el.fileInput.addEventListener('change', (e) => {
+                handleFiles(e.target.files);
+                el.fileInput.value = ''; // Reset agar file yang sama bisa dipilih ulang
+            });
+
+            ['dragenter', 'dragover'].forEach(evtName => {
+                el.dropZone.addEventListener(evtName, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    el.dropZone.classList.add('border-emerald-500', 'bg-emerald-50/70', 'dark:bg-emerald-950/30');
+                });
+            });
+
+            ['dragleave', 'drop'].forEach(evtName => {
+                el.dropZone.addEventListener(evtName, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    el.dropZone.classList.remove('border-emerald-500', 'bg-emerald-50/70', 'dark:bg-emerald-950/30');
+                });
+            });
+
+            el.dropZone.addEventListener('drop', (e) => {
+                if (e.dataTransfer && e.dataTransfer.files) {
+                    handleFiles(e.dataTransfer.files);
+                }
+            });
+
+            // Dukungan tempel gambar dari clipboard (Ctrl+V)
+            window.addEventListener('paste', (e) => {
+                if (e.clipboardData && e.clipboardData.files && e.clipboardData.files.length > 0) {
+                    handleFiles(e.clipboardData.files);
+                }
+            });
+
+            // -------------------- 7. MANAJEMEN DAFTAR & URUTAN GAMBAR --------------------
+            function moveImage(index, direction) {
+                const targetIndex = index + direction;
+                if (targetIndex < 0 || targetIndex >= state.images.length) return;
+
+                const temp = state.images[index];
+                state.images[index] = state.images[targetIndex];
+                state.images[targetIndex] = temp;
+
+                renderImageList();
+                renderCanvas();
+            }
+
+            function removeImage(index) {
+                const item = state.images[index];
+                if (!item) return;
+
+                // Bebaskan memori Object URL
+                URL.revokeObjectURL(item.url);
+                state.images.splice(index, 1);
+
+                renderImageList();
+                renderCanvas();
+            }
+
+            function clearAllImages() {
+                state.images.forEach(item => {
+                    try {
+                        URL.revokeObjectURL(item.url);
+                    } catch (e) {
+                        // Abaikan jika sudah dibersihkan
+                    }
+                });
+                state.images = [];
+                el.fileInput.value = '';
+                renderImageList();
+                renderCanvas();
+                showToast('Semua gambar dihapus dan memori dibersihkan.', 'info');
+            }
+
+            // Modal konfirmasi Hapus Semua
+            el.clearAllBtn.addEventListener('click', () => {
+                if (state.images.length === 0) return;
+                el.confirmModal.classList.remove('hidden');
+                el.confirmModal.classList.add('flex');
+            });
+
+            el.cancelClearBtn.addEventListener('click', () => {
+                el.confirmModal.classList.add('hidden');
+                el.confirmModal.classList.remove('flex');
+            });
+
+            el.confirmClearBtn.addEventListener('click', () => {
+                el.confirmModal.classList.add('hidden');
+                el.confirmModal.classList.remove('flex');
+                clearAllImages();
+            });
+
+            el.confirmModal.addEventListener('click', (e) => {
+                if (e.target === el.confirmModal) {
+                    el.confirmModal.classList.add('hidden');
+                    el.confirmModal.classList.remove('flex');
+                }
+            });
+
+            /**
+             * Merender daftar item gambar dengan dukungan Drag-and-Drop (desktop)
+             * serta tombol Naik, Turun, dan Hapus (mobile/sentuh).
+             */
+            function renderImageList() {
+                const count = state.images.length;
+                el.imageCountBadge.textContent = count;
+                el.clearAllBtn.disabled = count === 0;
+                el.downloadBtn.disabled = count === 0;
+
+                if (count === 0) {
+                    el.imageListWrapper.classList.add('hidden');
+                    el.imageList.innerHTML = '';
+                    return;
+                }
+
+                el.imageListWrapper.classList.remove('hidden');
+                el.imageList.innerHTML = '';
+
+                state.images.forEach((item, index) => {
+                    const li = document.createElement('li');
+                    li.draggable = true;
+                    li.dataset.index = index;
+                    li.className = 'group flex items-center gap-2.5 p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700/80 hover:border-emerald-400 dark:hover:border-emerald-600 transition-all select-none';
+
+                    li.innerHTML = `
+                        <!-- Handle Drag & Nomor Urut -->
+                        <div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 cursor-grab active:cursor-grabbing px-1" title="Seret untuk mengubah urutan">
+                            <span class="text-[10px] font-extrabold text-emerald-600 dark:text-emerald-400 leading-none mb-1">#${index + 1}</span>
+                            <i class="fa-solid fa-grip-vertical text-xs"></i>
+                        </div>
+
+                        <!-- Thumbnail Gambar -->
+                        <img src="${item.url}" alt="${escapeHtml(item.name)}"
+                             class="w-12 h-12 rounded-xl object-cover bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shrink-0">
+
+                        <!-- Nama File & Resolusi Asli -->
+                        <div class="flex-grow min-w-0">
+                            <p class="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 truncate" title="${escapeHtml(item.name)}">
+                                ${escapeHtml(item.name)}
+                            </p>
+                            <div class="flex items-center gap-2 mt-0.5 text-[11px] text-slate-500 dark:text-slate-400 font-mono">
+                                <span>${item.width} × ${item.height} px</span>
+                                <span>•</span>
+                                <span>${formatFileSize(item.size)}</span>
+                            </div>
+                        </div>
+
+                        <!-- Tombol Kontrol Sentuh / Klik: Naik, Turun, Hapus -->
+                        <div class="flex items-center gap-1 shrink-0">
+                            <button type="button" data-action="up" ${index === 0 ? 'disabled' : ''} title="Geser Naik"
+                                    class="w-8 h-8 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/60 hover:text-emerald-600 disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center transition-colors">
+                                <i class="fa-solid fa-arrow-up text-xs"></i>
+                            </button>
+
+                            <button type="button" data-action="down" ${index === count - 1 ? 'disabled' : ''} title="Geser Turun"
+                                    class="w-8 h-8 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/60 hover:text-emerald-600 disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center transition-colors">
+                                <i class="fa-solid fa-arrow-down text-xs"></i>
+                            </button>
+
+                            <button type="button" data-action="delete" title="Hapus Gambar"
+                                    class="w-8 h-8 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/60 flex items-center justify-center transition-colors">
+                                <i class="fa-solid fa-xmark text-xs"></i>
+                            </button>
+                        </div>
+                    `;
+
+                    // Event tombol Naik / Turun / Hapus
+                    li.querySelector('[data-action="up"]').addEventListener('click', () => moveImage(index, -1));
+                    li.querySelector('[data-action="down"]').addEventListener('click', () => moveImage(index, 1));
+                    li.querySelector('[data-action="delete"]').addEventListener('click', () => removeImage(index));
+
+                    // Event Drag-and-Drop Reordering (Desktop)
+                    li.addEventListener('dragstart', (e) => {
+                        state.draggedIndex = index;
+                        li.classList.add('opacity-50', 'scale-[0.98]');
+                        e.dataTransfer.effectAllowed = 'move';
+                        e.dataTransfer.setData('text/plain', String(index));
+                    });
+
+                    li.addEventListener('dragend', () => {
+                        state.draggedIndex = null;
+                        li.classList.remove('opacity-50', 'scale-[0.98]');
+                        document.querySelectorAll('#imageList li').forEach(node => {
+                            node.classList.remove('ring-2', 'ring-emerald-500');
+                        });
+                    });
+
+                    li.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        if (state.draggedIndex === null || state.draggedIndex === index) return;
+                        li.classList.add('ring-2', 'ring-emerald-500');
+                    });
+
+                    li.addEventListener('dragleave', () => {
+                        li.classList.remove('ring-2', 'ring-emerald-500');
+                    });
+
+                    li.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        li.classList.remove('ring-2', 'ring-emerald-500');
+                        const fromIndex = state.draggedIndex;
+                        const toIndex = index;
+                        if (fromIndex === null || fromIndex === toIndex) return;
+
+                        const [movedItem] = state.images.splice(fromIndex, 1);
+                        state.images.splice(toIndex, 0, movedItem);
+                        state.draggedIndex = null;
+
+                        renderImageList();
+                        renderCanvas();
+                    });
+
+                    el.imageList.appendChild(li);
+                });
+            }
+
+            function escapeHtml(str) {
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            }
+
+            // -------------------- 8. KONTROL TATA LETAK --------------------
+            function updateAutoResizeDescription() {
+                if (state.mode === 'vertical') {
+                    el.autoResizeDesc.textContent = 'Menyamakan lebar semua gambar mengikuti gambar pertama tanpa distorsi.';
+                } else if (state.mode === 'horizontal') {
+                    el.autoResizeDesc.textContent = 'Menyamakan tinggi semua gambar mengikuti gambar pertama tanpa distorsi.';
+                } else {
+                    el.autoResizeDesc.textContent = 'Menyamakan lebar tiap sel kolom mengikuti gambar pertama secara proporsional.';
+                }
+            }
+
+            el.modeBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    state.mode = btn.dataset.mode;
+
+                    // Perbarui gaya tombol aktif
+                    el.modeBtns.forEach(b => {
+                        const active = b.dataset.mode === state.mode;
+                        b.className = active
+                            ? 'mode-btn flex flex-col items-center justify-center gap-1.5 py-3 px-2 rounded-2xl border-2 text-xs font-semibold transition-all border-emerald-500 bg-emerald-50/70 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300'
+                            : 'mode-btn flex flex-col items-center justify-center gap-1.5 py-3 px-2 rounded-2xl border-2 text-xs font-semibold transition-all border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700';
+                    });
+
+                    // Tampilkan pilihan kolom jika mode Grid dipilih
+                    if (state.mode === 'grid') {
+                        el.gridColumnsContainer.classList.remove('hidden');
+                    } else {
+                        el.gridColumnsContainer.classList.add('hidden');
+                    }
+
+                    updateAutoResizeDescription();
+                    renderCanvas();
+                });
+            });
+
+            el.gridColBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    state.gridCols = parseInt(btn.dataset.cols, 10);
+
+                    el.gridColBtns.forEach(b => {
+                        const active = parseInt(b.dataset.cols, 10) === state.gridCols;
+                        b.className = active
+                            ? 'grid-col-btn py-2.5 px-3 rounded-xl border-2 text-xs font-bold transition-all border-emerald-500 bg-emerald-50/70 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300'
+                            : 'grid-col-btn py-2.5 px-3 rounded-xl border-2 text-xs font-bold transition-all border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700';
+                    });
+
+                    renderCanvas();
+                });
+            });
+
+            el.autoResizeToggle.addEventListener('change', (e) => {
+                state.autoResize = e.target.checked;
+                renderCanvas();
+            });
+
+            // -------------------- 9. KONTROL TEPIAN & WARNA --------------------
+            function setOuterBorder(val) {
+                const clamped = clampNumber(val, 0, 150, 0);
+                state.outerBorder = clamped;
+                el.outerBorderSlider.value = clamped;
+                el.outerBorderInput.value = clamped;
+
+                if (state.syncSpacing) {
+                    state.innerGap = clamped;
+                    el.innerGapSlider.value = clamped;
+                    el.innerGapInput.value = clamped;
+                }
+                renderCanvas();
+            }
+
+            function setInnerGap(val, breakSync = true) {
+                const clamped = clampNumber(val, 0, 150, 0);
+                state.innerGap = clamped;
+                el.innerGapSlider.value = clamped;
+                el.innerGapInput.value = clamped;
+
+                if (breakSync && state.syncSpacing && clamped !== state.outerBorder) {
+                    state.syncSpacing = false;
+                    el.syncSpacingCheckbox.checked = false;
+                }
+                renderCanvas();
+            }
+
+            el.outerBorderSlider.addEventListener('input', (e) => setOuterBorder(e.target.value));
+            el.outerBorderInput.addEventListener('input', (e) => {
+                if (e.target.value === '') return;
+                setOuterBorder(e.target.value);
+            });
+            el.outerBorderInput.addEventListener('blur', (e) => setOuterBorder(e.target.value));
+
+            el.innerGapSlider.addEventListener('input', (e) => setInnerGap(e.target.value, true));
+            el.innerGapInput.addEventListener('input', (e) => {
+                if (e.target.value === '') return;
+                setInnerGap(e.target.value, true);
+            });
+            el.innerGapInput.addEventListener('blur', (e) => setInnerGap(e.target.value, true));
+
+            el.syncSpacingCheckbox.addEventListener('change', (e) => {
+                state.syncSpacing = e.target.checked;
+                if (state.syncSpacing) {
+                    setInnerGap(state.outerBorder, false);
+                }
+            });
+
+            /**
+             * Mengatur warna tepian/latar (kode Hex atau 'transparent')
+             * dan menyinkronkan color picker, input teks Hex, preset, serta rekomendasi format PNG.
+             */
+            function applyBackgroundColor(colorValue) {
+                if (colorValue === 'transparent') {
+                    state.isTransparent = true;
+                    el.bgColorHex.value = 'TRANSPARAN';
+                    el.transparentBadge.classList.remove('hidden');
+                    el.transparentBadge.classList.add('inline-flex');
+                    el.pngSuggestNote.classList.remove('hidden');
+
+                    // Otomatis sarankan & ubah format ekspor ke PNG agar transparansi terjaga
+                    if (state.exportFormat === 'image/jpeg') {
+                        state.exportFormat = 'image/png';
+                        el.exportFormat.value = 'image/png';
+                        updateQualityControlState();
+                    }
+                } else {
+                    const normalized = normalizeHexColor(colorValue);
+                    if (!normalized) return;
+
+                    state.isTransparent = false;
+                    state.bgColor = normalized;
+                    el.bgColorPicker.value = normalized;
+                    el.bgColorHex.value = normalized;
+                    el.transparentBadge.classList.add('hidden');
+                    el.transparentBadge.classList.remove('inline-flex');
+                    el.pngSuggestNote.classList.add('hidden');
+                }
+
+                // Tandai tombol preset yang cocok
+                el.presetColorBtns.forEach(btn => {
+                    const preset = btn.dataset.preset;
+                    const isSelected = state.isTransparent
+                        ? preset === 'transparent'
+                        : (!state.isTransparent && preset.toUpperCase() === state.bgColor.toUpperCase());
+
+                    btn.classList.toggle('border-emerald-500', isSelected);
+                    btn.classList.toggle('border-transparent', !isSelected);
+                });
+
+                renderCanvas();
+            }
+
+            function normalizeHexColor(raw) {
+                if (!raw) return null;
+                let cleaned = raw.trim().replace(/^#/, '');
+                if (/^[0-9A-Fa-f]{3}$/.test(cleaned)) {
+                    cleaned = cleaned.split('').map(c => c + c).join('');
+                }
+                if (/^[0-9A-Fa-f]{6}$/.test(cleaned)) {
+                    return '#' + cleaned.toUpperCase();
+                }
+                return null;
+            }
+
+            // Sinkronisasi dua arah: Color Picker <-> Input Hex
+            el.bgColorPicker.addEventListener('input', (e) => {
+                applyBackgroundColor(e.target.value);
+            });
+
+            el.bgColorHex.addEventListener('focus', () => {
+                if (state.isTransparent) {
+                    el.bgColorHex.value = state.bgColor;
+                    el.bgColorHex.select();
+                }
+            });
+
+            el.bgColorHex.addEventListener('input', (e) => {
+                const validHex = normalizeHexColor(e.target.value);
+                if (validHex) {
+                    state.isTransparent = false;
+                    state.bgColor = validHex;
+                    el.bgColorPicker.value = validHex;
+                    el.transparentBadge.classList.add('hidden');
+                    el.transparentBadge.classList.remove('inline-flex');
+                    el.pngSuggestNote.classList.add('hidden');
+
+                    el.presetColorBtns.forEach(btn => {
+                        const isSelected = btn.dataset.preset.toUpperCase() === validHex;
+                        btn.classList.toggle('border-emerald-500', isSelected);
+                        btn.classList.toggle('border-transparent', !isSelected);
+                    });
+
+                    renderCanvas();
+                }
+            });
+
+            el.bgColorHex.addEventListener('blur', () => {
+                if (state.isTransparent) {
+                    el.bgColorHex.value = 'TRANSPARAN';
+                } else {
+                    const validHex = normalizeHexColor(el.bgColorHex.value);
+                    el.bgColorHex.value = validHex || state.bgColor;
+                }
+            });
+
+            // Tombol Preset Warna Cepat
+            el.presetColorBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    applyBackgroundColor(btn.dataset.preset);
+                });
+            });
+
+            // -------------------- 10. KALKULASI & RENDERING KANVAS --------------------
+            /**
+             * Menghitung dimensi & koordinat penempatan setiap gambar, lalu menggambar ke kanvas.
+             */
+            function renderCanvas() {
+                const count = state.images.length;
+
+                if (count === 0) {
+                    el.previewCanvas.classList.add('hidden');
+                    el.emptyPreviewState.classList.remove('hidden');
+                    el.dimensionDisplay.textContent = '0 × 0 px';
+                    el.sizeWarningBanner.classList.add('hidden');
+                    ctx.clearRect(0, 0, el.previewCanvas.width, el.previewCanvas.height);
+                    return;
+                }
+
+                el.emptyPreviewState.classList.add('hidden');
+                el.previewCanvas.classList.remove('hidden');
+
+                const B = state.outerBorder;
+                const G = state.innerGap;
+                const baseImg = state.images[0];
+
+                // Hitung dimensi terukur tiap gambar
+                const items = state.images.map(item => {
+                    let w = item.width;
+                    let h = item.height;
+
+                    if (state.autoResize) {
+                        if (state.mode === 'vertical' || state.mode === 'grid') {
+                            w = baseImg.width;
+                            h = Math.max(1, Math.round(item.height * (baseImg.width / item.width)));
+                        } else if (state.mode === 'horizontal') {
+                            h = baseImg.height;
+                            w = Math.max(1, Math.round(item.width * (baseImg.height / item.height)));
+                        }
+                    }
+
+                    return { img: item.img, w, h };
+                });
+
+                let totalWidth = 0;
+                let totalHeight = 0;
+                const placements = [];
+
+                if (state.mode === 'vertical') {
+                    const contentWidth = Math.max(...items.map(it => it.w));
+                    const contentHeight = items.reduce((sum, it) => sum + it.h, 0) + G * (count - 1);
+
+                    totalWidth = contentWidth + B * 2;
+                    totalHeight = contentHeight + B * 2;
+
+                    let currentY = B;
+                    items.forEach(it => {
+                        const drawX = B + Math.round((contentWidth - it.w) / 2);
+                        placements.push({ img: it.img, x: drawX, y: currentY, w: it.w, h: it.h });
+                        currentY += it.h + G;
+                    });
+
+                } else if (state.mode === 'horizontal') {
+                    const contentWidth = items.reduce((sum, it) => sum + it.w, 0) + G * (count - 1);
+                    const contentHeight = Math.max(...items.map(it => it.h));
+
+                    totalWidth = contentWidth + B * 2;
+                    totalHeight = contentHeight + B * 2;
+
+                    let currentX = B;
+                    items.forEach(it => {
+                        const drawY = B + Math.round((contentHeight - it.h) / 2);
+                        placements.push({ img: it.img, x: currentX, y: drawY, w: it.w, h: it.h });
+                        currentX += it.w + G;
+                    });
+
+                } else if (state.mode === 'grid') {
+                    const cols = state.gridCols;
+                    const rows = Math.ceil(count / cols);
+
+                    const colWidths = new Array(cols).fill(0);
+                    const rowHeights = new Array(rows).fill(0);
+
+                    items.forEach((it, idx) => {
+                        const r = Math.floor(idx / cols);
+                        const c = idx % cols;
+                        colWidths[c] = Math.max(colWidths[c], it.w);
+                        rowHeights[r] = Math.max(rowHeights[r], it.h);
+                    });
+
+                    // Pastikan kolom kosong (jika jumlah gambar < jumlah kolom) tetap memiliki lebar sel
+                    const fallbackColW = colWidths[0] || baseImg.width;
+                    for (let c = 0; c < cols; c++) {
+                        if (colWidths[c] === 0) colWidths[c] = fallbackColW;
+                    }
+
+                    const contentWidth = colWidths.reduce((s, w) => s + w, 0) + G * (cols - 1);
+                    const contentHeight = rowHeights.reduce((s, h) => s + h, 0) + G * (rows - 1);
+
+                    totalWidth = contentWidth + B * 2;
+                    totalHeight = contentHeight + B * 2;
+
+                    // Pre-kalkulasi offset X tiap kolom & Y tiap baris
+                    const colOffsets = [];
+                    let accX = B;
+                    for (let c = 0; c < cols; c++) {
+                        colOffsets.push(accX);
+                        accX += colWidths[c] + G;
+                    }
+
+                    const rowOffsets = [];
+                    let accY = B;
+                    for (let r = 0; r < rows; r++) {
+                        rowOffsets.push(accY);
+                        accY += rowHeights[r] + G;
+                    }
+
+                    items.forEach((it, idx) => {
+                        const r = Math.floor(idx / cols);
+                        const c = idx % cols;
+                        const drawX = colOffsets[c] + Math.round((colWidths[c] - it.w) / 2);
+                        const drawY = rowOffsets[r] + Math.round((rowHeights[r] - it.h) / 2);
+                        placements.push({ img: it.img, x: drawX, y: drawY, w: it.w, h: it.h });
+                    });
+                }
+
+                // Perbarui informasi dimensi akhir
+                el.dimensionDisplay.textContent = `${totalWidth.toLocaleString('id-ID')} × ${totalHeight.toLocaleString('id-ID')} px`;
+
+                // Cek peringatan batas ukuran maksimum browser (>16.000 px)
+                const MAX_SAFE_DIM = 16000;
+                if (totalWidth > MAX_SAFE_DIM || totalHeight > MAX_SAFE_DIM) {
+                    el.sizeWarningBanner.classList.remove('hidden');
+                    el.sizeWarningText.textContent = `Dimensi akhir (${totalWidth.toLocaleString('id-ID')} × ${totalHeight.toLocaleString('id-ID')} px) melebihi 16.000 px dan mendekati batas maksimum kanvas browser. Aktifkan Auto-Resize atau kurangi resolusi gambar jika gagal ekspor.`;
+                } else {
+                    el.sizeWarningBanner.classList.add('hidden');
+                }
+
+                // Gambar ke elemen <canvas> dengan penanganan error memori
+                try {
+                    el.previewCanvas.width = totalWidth;
+                    el.previewCanvas.height = totalHeight;
+
+                    ctx.clearRect(0, 0, totalWidth, totalHeight);
+
+                    if (!state.isTransparent) {
+                        ctx.fillStyle = state.bgColor;
+                        ctx.fillRect(0, 0, totalWidth, totalHeight);
+                    }
+
+                    ctx.imageSmoothingEnabled = true;
+                    ctx.imageSmoothingQuality = 'high';
+
+                    placements.forEach(p => {
+                        ctx.drawImage(p.img, p.x, p.y, p.w, p.h);
+                    });
+                } catch (err) {
+                    console.error('Kesalahan rendering kanvas:', err);
+                    showToast('Memori browser tidak mencukupi untuk merender dimensi sebesar ini.', 'error');
+                }
+            }
+
+            // -------------------- 11. PENGATURAN EKSPOR & UNDUH --------------------
+            function updateQualityControlState() {
+                const supportsQuality = state.exportFormat === 'image/jpeg' || state.exportFormat === 'image/webp';
+                if (supportsQuality) {
+                    el.qualityControlWrapper.classList.remove('opacity-50', 'pointer-events-none');
+                } else {
+                    el.qualityControlWrapper.classList.add('opacity-50', 'pointer-events-none');
+                }
+            }
+
+            el.exportFormat.addEventListener('change', (e) => {
+                state.exportFormat = e.target.value;
+                updateQualityControlState();
+
+                if (state.isTransparent && state.exportFormat === 'image/jpeg') {
+                    showToast('Format JPEG tidak mendukung transparansi. Area transparan akan diisi putih saat diunduh.', 'warning');
+                }
+            });
+
+            el.exportQualitySlider.addEventListener('input', (e) => {
+                const pct = clampNumber(e.target.value, 10, 100, 92);
+                state.exportQuality = pct / 100;
+                el.exportQualityValue.textContent = pct + '%';
+            });
+
+            el.downloadBtn.addEventListener('click', () => {
+                if (state.images.length === 0) return;
+
+                const format = state.exportFormat;
+                const extMap = {
+                    'image/png': 'png',
+                    'image/jpeg': 'jpg',
+                    'image/webp': 'webp'
+                };
+                const ext = extMap[format] || 'png';
+
+                // Ubah status tombol saat memproses Blob
+                const originalBtnHtml = el.downloadBtn.innerHTML;
+                el.downloadBtn.disabled = true;
+                el.downloadBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i><span>Memproses Gambar...</span>`;
+
+                setTimeout(() => {
+                    try {
+                        let targetCanvas = el.previewCanvas;
+
+                        // Jika latar transparan namun pengguna memaksa ekspor JPEG, beri latar putih agar tidak menjadi hitam pekat
+                        if (state.isTransparent && format === 'image/jpeg') {
+                            const tempCanvas = document.createElement('canvas');
+                            tempCanvas.width = el.previewCanvas.width;
+                            tempCanvas.height = el.previewCanvas.height;
+                            const tempCtx = tempCanvas.getContext('2d');
+                            tempCtx.fillStyle = '#FFFFFF';
+                            tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+                            tempCtx.drawImage(el.previewCanvas, 0, 0);
+                            targetCanvas = tempCanvas;
+                        }
+
+                        targetCanvas.toBlob((blob) => {
+                            el.downloadBtn.disabled = false;
+                            el.downloadBtn.innerHTML = originalBtnHtml;
+
+                            if (!blob) {
+                                showToast('Gagal membuat file gambar. Ukuran kanvas mungkin terlalu besar bagi browser.', 'error');
+                                return;
+                            }
+
+                            const now = new Date();
+                            const stamp = [
+                                now.getFullYear(),
+                                String(now.getMonth() + 1).padStart(2, '0'),
+                                String(now.getDate()).padStart(2, '0'),
+                                '-',
+                                String(now.getHours()).padStart(2, '0'),
+                                String(now.getMinutes()).padStart(2, '0')
+                            ].join('');
+
+                            const downloadUrl = URL.createObjectURL(blob);
+                            const link = document.createElement('a');
+                            link.href = downloadUrl;
+                            link.download = `utilitibox-merged-${stamp}.${ext}`;
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+
+                            setTimeout(() => URL.revokeObjectURL(downloadUrl), 1500);
+                            showToast(`Gambar berhasil diunduh (${formatFileSize(blob.size)})!`, 'success');
+                        }, format, state.exportQuality);
+
+                    } catch (err) {
+                        console.error('Gagal ekspor gambar:', err);
+                        el.downloadBtn.disabled = false;
+                        el.downloadBtn.innerHTML = originalBtnHtml;
+                        showToast('Terjadi kesalahan saat mengekspor gambar.', 'error');
+                    }
+                }, 40);
+            });
+        });
+    </script>
+</body>
+</html>
