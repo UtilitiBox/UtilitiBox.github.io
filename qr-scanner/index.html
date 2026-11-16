@@ -1,0 +1,1630 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Pemindai QR Code gratis berbasis browser dari UtilitiBox. Pindai lewat kamera, unggah gambar, atau tempel dari clipboard dengan deteksi URL, Wi-Fi, dan teks.">
+  <title>QR Code Scanner - UtilitiBox</title>
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js" crossorigin="anonymous"></script>
+  <style>
+    :root {
+      --bg-page: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-subtle: #f1f5f9;
+      --bg-hover: #e2e8f0;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --border-color: #cbd5e1;
+      --border-subtle: #e2e8f0;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --accent-soft: #eff6ff;
+      --success: #16a34a;
+      --success-soft: #f0fdf4;
+      --warning: #d97706;
+      --warning-soft: #fffbeb;
+      --danger: #dc2626;
+      --danger-soft: #fef2f2;
+      --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+      --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+      --radius-md: 10px;
+      --radius-lg: 14px;
+    }
+
+    [data-theme="dark"] {
+      --bg-page: #0b1120;
+      --bg-surface: #1e293b;
+      --bg-subtle: #0f172a;
+      --bg-hover: #334155;
+      --text-primary: #f1f5f9;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --border-color: #334155;
+      --border-subtle: #1e293b;
+      --accent: #3b82f6;
+      --accent-hover: #60a5fa;
+      --accent-soft: rgba(59, 130, 246, 0.15);
+      --success: #22c55e;
+      --success-soft: rgba(34, 197, 94, 0.15);
+      --warning: #f59e0b;
+      --warning-soft: rgba(245, 158, 11, 0.15);
+      --danger: #ef4444;
+      --danger-soft: rgba(239, 68, 68, 0.15);
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.4);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background-color: var(--bg-page);
+      color: var(--text-primary);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 16px;
+      flex: 1;
+    }
+
+    /* Header */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 16px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-md);
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      text-decoration: none;
+      transition: background-color 0.15s ease;
+    }
+
+    .back-link:hover {
+      background-color: var(--bg-hover);
+    }
+
+    .title-wrap h1 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .title-wrap p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .controls-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 36px;
+      padding: 0 12px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-surface);
+      color: var(--text-primary);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .icon-btn:hover {
+      background-color: var(--bg-hover);
+    }
+
+    .icon-btn:focus-visible,
+    .tab-btn:focus-visible,
+    .primary-btn:focus-visible,
+    .secondary-btn:focus-visible,
+    .back-link:focus-visible,
+    select:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    /* Privacy Pill */
+    .privacy-note {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      margin-bottom: 16px;
+    }
+
+    .privacy-note svg {
+      flex-shrink: 0;
+      color: var(--success);
+    }
+
+    /* Mode Switcher Tabs */
+    .tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      background-color: var(--bg-surface);
+      padding: 6px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-color);
+      margin-bottom: 16px;
+    }
+
+    .tab-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border: none;
+      border-radius: var(--radius-md);
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .tab-btn.active {
+      background-color: var(--accent);
+      color: #ffffff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .tab-btn:not(.active):hover {
+      background-color: var(--bg-subtle);
+      color: var(--text-primary);
+    }
+
+    /* Card Container */
+    .card {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 16px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Camera Viewport */
+    .camera-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .camera-select {
+      flex: 1;
+      min-width: 180px;
+      height: 38px;
+      padding: 0 10px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-subtle);
+      color: var(--text-primary);
+      font-size: 0.88rem;
+    }
+
+    .viewport-box {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      max-height: 400px;
+      background-color: #020617;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #cameraVideo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .scan-guide {
+      position: absolute;
+      width: 64%;
+      max-width: 240px;
+      aspect-ratio: 1 / 1;
+      pointer-events: none;
+      border: 2px solid rgba(255, 255, 255, 0.35);
+      border-radius: 16px;
+      box-shadow: 0 0 0 9999px rgba(2, 6, 23, 0.42);
+    }
+
+    .scan-guide::before,
+    .scan-guide::after {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      border: 3px solid #3b82f6;
+      border-radius: 16px;
+      clip-path: polygon(
+        0 0, 24% 0, 24% 6%, 6% 6%, 6% 24%, 0 24%,
+        0 76%, 6% 76%, 6% 94%, 24% 94%, 24% 100%, 0 100%,
+        76% 100%, 76% 94%, 94% 94%, 94% 76%, 100% 76%, 100% 100%,
+        100% 0, 76% 0, 76% 6%, 94% 6%, 94% 24%, 100% 24%
+      );
+    }
+
+    .camera-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+      color: #e2e8f0;
+      background-color: #0f172a;
+      gap: 12px;
+    }
+
+    .camera-placeholder p {
+      font-size: 0.9rem;
+      max-width: 320px;
+      color: #cbd5e1;
+    }
+
+    .camera-status {
+      margin-top: 12px;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      text-align: center;
+    }
+
+    /* Upload Dropzone */
+    .dropzone {
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-lg);
+      background-color: var(--bg-subtle);
+      padding: 32px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.15s ease, background-color 0.15s ease;
+    }
+
+    .dropzone:hover,
+    .dropzone.drag-over {
+      border-color: var(--accent);
+      background-color: var(--accent-soft);
+    }
+
+    .dropzone-icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 12px;
+      border-radius: 50%;
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+    }
+
+    .dropzone-title {
+      font-size: 0.98rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .dropzone-sub {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .kbd-hint {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 3px 8px;
+      font-size: 0.78rem;
+      border-radius: 6px;
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+    }
+
+    .preview-wrap {
+      margin-top: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .preview-wrap img {
+      max-width: 100%;
+      max-height: 240px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      object-fit: contain;
+      background-color: var(--bg-subtle);
+    }
+
+    /* Buttons */
+    .primary-btn,
+    .secondary-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: var(--radius-md);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .primary-btn {
+      background-color: var(--accent);
+      color: #ffffff;
+      border: 1px solid transparent;
+    }
+
+    .primary-btn:hover {
+      background-color: var(--accent-hover);
+    }
+
+    .secondary-btn {
+      background-color: var(--bg-subtle);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+    }
+
+    .secondary-btn:hover {
+      background-color: var(--bg-hover);
+    }
+
+    /* Alert Banner */
+    .alert-box {
+      padding: 12px 14px;
+      border-radius: var(--radius-md);
+      font-size: 0.88rem;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .alert-error {
+      background-color: var(--danger-soft);
+      border: 1px solid var(--danger);
+      color: var(--danger);
+    }
+
+    .alert-warning {
+      background-color: var(--warning-soft);
+      border: 1px solid var(--warning);
+      color: var(--warning);
+    }
+
+    /* Result Card */
+    .result-card {
+      border: 2px solid var(--accent);
+    }
+
+    .result-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .type-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      background-color: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .result-box {
+      background-color: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.9rem;
+      word-break: break-all;
+      white-space: pre-wrap;
+      color: var(--text-primary);
+      margin-bottom: 14px;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+
+    .wifi-grid {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .wifi-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background-color: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+    }
+
+    .wifi-meta {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .wifi-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      font-weight: 600;
+    }
+
+    .wifi-value {
+      font-size: 0.95rem;
+      font-weight: 600;
+      word-break: break-all;
+      margin-top: 2px;
+    }
+
+    .wifi-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .mini-btn {
+      padding: 6px 10px;
+      font-size: 0.8rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-surface);
+      color: var(--text-primary);
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .mini-btn:hover {
+      background-color: var(--bg-hover);
+    }
+
+    .result-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .raw-details {
+      margin-top: 12px;
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+    }
+
+    .raw-details summary {
+      cursor: pointer;
+      font-weight: 600;
+      user-select: none;
+    }
+
+    .raw-details pre {
+      margin-top: 8px;
+      padding: 10px;
+      border-radius: 8px;
+      background-color: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      white-space: pre-wrap;
+      word-break: break-all;
+      font-size: 0.8rem;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 16px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(16px);
+      background-color: #0f172a;
+      color: #f8fafc;
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-size: 0.86rem;
+      font-weight: 600;
+      box-shadow: var(--shadow-md);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 100;
+    }
+
+    [data-theme="dark"] .toast {
+      background-color: #f1f5f9;
+      color: #0f172a;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 480px) {
+      .title-wrap p {
+        display: none;
+      }
+      .result-actions .primary-btn,
+      .result-actions .secondary-btn {
+        flex: 1 1 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="topbar">
+      <div class="brand-group">
+        <a href="../" class="back-link" id="backHomeLink" aria-label="Kembali ke UtilitiBox">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+        </a>
+        <div class="title-wrap">
+          <h1 data-i18n="appTitle">QR Code Scanner</h1>
+          <p data-i18n="appSubtitle">Pindai QR via kamera, gambar, atau clipboard</p>
+        </div>
+      </div>
+
+      <div class="controls-group">
+        <button type="button" class="icon-btn" id="langToggleBtn" aria-label="Ganti Bahasa">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          <span id="langLabel">ID</span>
+        </button>
+        <button type="button" class="icon-btn" id="themeToggleBtn" aria-label="Ganti Tema">
+          <svg id="sunIcon" class="hidden" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg id="moonIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="privacy-note">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <span data-i18n="privacyBanner">100% diproses lokal di browser Anda. Gambar dan kamera tidak pernah dikirim ke server.</span>
+    </div>
+
+    <nav class="tabs" role="tablist">
+      <button type="button" class="tab-btn active" id="tabCamera" role="tab" aria-selected="true">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        <span data-i18n="tabCamera">Kamera</span>
+      </button>
+      <button type="button" class="tab-btn" id="tabUpload" role="tab" aria-selected="false">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <span data-i18n="tabUpload">Unggah Gambar</span>
+      </button>
+    </nav>
+
+    <div id="alertBanner" class="alert-box alert-error hidden" role="alert"></div>
+
+    <!-- Camera Panel -->
+    <section id="cameraPanel" class="card">
+      <div class="camera-toolbar">
+        <select id="cameraSelect" class="camera-select hidden" aria-label="Pilih Kamera"></select>
+        <button type="button" class="secondary-btn hidden" id="torchBtn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          <span data-i18n="torchOff">Senter: Mati</span>
+        </button>
+      </div>
+
+      <div class="viewport-box">
+        <video id="cameraVideo" playsinline muted></video>
+        <div class="scan-guide" id="scanGuide"></div>
+        <div class="camera-placeholder hidden" id="cameraPlaceholder">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          <p id="cameraPlaceholderText" data-i18n="cameraStopped">Kamera dijeda. Tekan tombol di bawah untuk mulai memindai.</p>
+          <button type="button" class="primary-btn" id="startCameraBtn">
+            <span data-i18n="startCamera">Mulai Kamera</span>
+          </button>
+        </div>
+      </div>
+
+      <p class="camera-status" id="cameraStatus" data-i18n="cameraScanning">Arahkan kamera ke QR Code...</p>
+    </section>
+
+    <!-- Upload Panel -->
+    <section id="uploadPanel" class="card hidden">
+      <input type="file" id="fileInput" accept="image/*" class="hidden">
+      <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Pilih atau jatuhkan gambar QR Code">
+        <div class="dropzone-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        </div>
+        <div class="dropzone-title" data-i18n="dropTitle">Klik untuk memilih gambar atau seret berkas ke sini</div>
+        <div class="dropzone-sub" data-i18n="dropSub">Mendukung format PNG, JPG, WebP, GIF, dan BMP</div>
+        <div class="kbd-hint" data-i18n="pasteHint">Tips: Anda juga bisa menempel gambar langsung dengan Ctrl+V</div>
+      </div>
+
+      <div id="previewWrap" class="preview-wrap hidden">
+        <img id="previewImg" alt="Pratinjau gambar QR Code">
+        <button type="button" class="secondary-btn" id="clearImageBtn">
+          <span data-i18n="clearImage">Hapus Gambar</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Result Panel -->
+    <section id="resultPanel" class="card result-card hidden" aria-live="polite">
+      <div class="result-header">
+        <span class="type-badge" id="resultTypeBadge"></span>
+        <button type="button" class="secondary-btn" id="scanAgainBtn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          <span data-i18n="scanAgain">Pindai Ulang</span>
+        </button>
+      </div>
+
+      <div id="securitySchemeNotice" class="alert-box alert-warning hidden"></div>
+
+      <!-- Standard Text / URL View -->
+      <div id="standardResultView">
+        <div class="result-box" id="resultTextOutput"></div>
+        <div class="result-actions">
+          <button type="button" class="primary-btn" id="copyResultBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            <span data-i18n="copyResult">Salin Hasil</span>
+          </button>
+          <a href="#" target="_blank" rel="noopener noreferrer" class="secondary-btn hidden" id="openUrlBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            <span data-i18n="openLink">Buka Tautan</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Wi-Fi Structured View -->
+      <div id="wifiResultView" class="hidden">
+        <div class="wifi-grid">
+          <div class="wifi-row">
+            <div class="wifi-meta">
+              <div class="wifi-label" data-i18n="wifiSsidLabel">Nama Jaringan (SSID)</div>
+              <div class="wifi-value" id="wifiSsidVal"></div>
+            </div>
+            <div class="wifi-actions">
+              <button type="button" class="mini-btn" id="copySsidBtn" data-i18n="copyShort">Salin</button>
+            </div>
+          </div>
+
+          <div class="wifi-row" id="wifiPassRow">
+            <div class="wifi-meta">
+              <div class="wifi-label" data-i18n="wifiPassLabel">Kata Sandi</div>
+              <div class="wifi-value" id="wifiPassVal"></div>
+            </div>
+            <div class="wifi-actions">
+              <button type="button" class="mini-btn" id="togglePassBtn" data-i18n="showPass">Tampilkan</button>
+              <button type="button" class="mini-btn" id="copyPassBtn" data-i18n="copyShort">Salin</button>
+            </div>
+          </div>
+
+          <div class="wifi-row">
+            <div class="wifi-meta">
+              <div class="wifi-label" data-i18n="wifiEncLabel">Keamanan & Status</div>
+              <div class="wifi-value" id="wifiMetaVal"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="result-actions">
+          <button type="button" class="primary-btn" id="copyWifiAllBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            <span data-i18n="copyWifiDetails">Salin Detail Wi-Fi</span>
+          </button>
+        </div>
+
+        <details class="raw-details">
+          <summary data-i18n="rawPayload">Lihat data mentah QR</summary>
+          <pre id="wifiRawVal"></pre>
+        </details>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    <a href="../">UtilitiBox</a> - <span data-i18n="footerTag">Alat Web Gratis Berbasis Privasi</span>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <canvas id="workCanvas" class="hidden"></canvas>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const I18N = {
+        id: {
+          appTitle: "QR Code Scanner",
+          appSubtitle: "Pindai QR via kamera, gambar, atau clipboard",
+          privacyBanner: "100% diproses lokal di browser Anda. Gambar dan kamera tidak pernah dikirim ke server.",
+          tabCamera: "Kamera",
+          tabUpload: "Unggah Gambar",
+          torchOff: "Senter: Mati",
+          torchOn: "Senter: Nyala",
+          cameraStopped: "Kamera dijeda. Tekan tombol di bawah untuk mulai memindai.",
+          cameraDone: "QR Code berhasil dipindai. Kamera dihentikan otomatis.",
+          startCamera: "Mulai Kamera",
+          cameraScanning: "Arahkan kamera ke QR Code...",
+          cameraStarting: "Mengaktifkan kamera...",
+          dropTitle: "Klik untuk memilih gambar atau seret berkas ke sini",
+          dropSub: "Mendukung format PNG, JPG, WebP, GIF, dan BMP",
+          pasteHint: "Tips: Anda juga bisa menempel gambar langsung dengan Ctrl+V",
+          clearImage: "Hapus Gambar",
+          scanAgain: "Pindai Ulang",
+          copyResult: "Salin Hasil",
+          openLink: "Buka Tautan",
+          wifiSsidLabel: "Nama Jaringan (SSID)",
+          wifiPassLabel: "Kata Sandi",
+          wifiEncLabel: "Keamanan & Status",
+          copyShort: "Salin",
+          showPass: "Tampilkan",
+          hidePass: "Sembunyikan",
+          copyWifiDetails: "Salin Detail Wi-Fi",
+          rawPayload: "Lihat data mentah QR",
+          footerTag: "Alat Web Gratis Berbasis Privasi",
+          typeUrl: "URL / Tautan",
+          typeWifi: "Jaringan Wi-Fi",
+          typeText: "Teks",
+          copiedToast: "Berhasil disalin ke clipboard!",
+          copyFailed: "Gagal menyalin ke clipboard.",
+          noQrFound: "QR Code tidak ditemukan pada gambar tersebut. Pastikan gambar jelas dan tidak terpotong.",
+          invalidFile: "Format berkas tidak valid. Harap pilih berkas gambar.",
+          decoderUnavailable: "Mesin pemindai tidak tersedia. Periksa koneksi internet untuk memuat pustaka decoder.",
+          camDenied: "Akses kamera ditolak atau tidak tersedia. Izinkan akses kamera di pengaturan browser atau gunakan tab Unggah Gambar.",
+          camNotFound: "Perangkat kamera tidak ditemukan.",
+          unsafeScheme: "Tautan menggunakan skema non-standar dan dinonaktifkan demi keamanan. Anda tetap dapat menyalin teksnya.",
+          wifiNoPass: "Tanpa Kata Sandi (Terbuka)",
+          wifiHiddenYes: "Jaringan Tersembunyi",
+          wifiHiddenNo: "Jaringan Terlihat",
+          cameraLabelDefault: "Kamera",
+          backHomeAria: "Kembali ke UtilitiBox"
+        },
+        en: {
+          appTitle: "QR Code Scanner",
+          appSubtitle: "Scan QR via camera, image, or clipboard",
+          privacyBanner: "100% processed locally in your browser. Images and camera feeds are never sent to any server.",
+          tabCamera: "Camera",
+          tabUpload: "Upload Image",
+          torchOff: "Torch: Off",
+          torchOn: "Torch: On",
+          cameraStopped: "Camera paused. Press the button below to start scanning.",
+          cameraDone: "QR Code scanned successfully. Camera stopped automatically.",
+          startCamera: "Start Camera",
+          cameraScanning: "Point your camera at a QR Code...",
+          cameraStarting: "Starting camera...",
+          dropTitle: "Click to choose an image or drag and drop a file here",
+          dropSub: "Supports PNG, JPG, WebP, GIF, and BMP formats",
+          pasteHint: "Tip: You can also paste an image directly with Ctrl+V",
+          clearImage: "Clear Image",
+          scanAgain: "Scan Again",
+          copyResult: "Copy Result",
+          openLink: "Open Link",
+          wifiSsidLabel: "Network Name (SSID)",
+          wifiPassLabel: "Password",
+          wifiEncLabel: "Security & Visibility",
+          copyShort: "Copy",
+          showPass: "Show",
+          hidePass: "Hide",
+          copyWifiDetails: "Copy Wi-Fi Details",
+          rawPayload: "View raw QR payload",
+          footerTag: "Free Privacy-First Web Utilities",
+          typeUrl: "URL / Link",
+          typeWifi: "Wi-Fi Network",
+          typeText: "Plain Text",
+          copiedToast: "Copied to clipboard!",
+          copyFailed: "Failed to copy to clipboard.",
+          noQrFound: "No QR Code found in that image. Make sure the code is sharp and uncropped.",
+          invalidFile: "Invalid file format. Please select an image file.",
+          decoderUnavailable: "QR decoder unavailable. Check your internet connection to load the decoder library.",
+          camDenied: "Camera access denied or unavailable. Allow camera permissions in your browser or use the Upload Image tab.",
+          camNotFound: "No camera device found.",
+          unsafeScheme: "This link uses a non-standard scheme and cannot be opened directly for safety. You can still copy the text.",
+          wifiNoPass: "No Password (Open)",
+          wifiHiddenYes: "Hidden Network",
+          wifiHiddenNo: "Visible Network",
+          cameraLabelDefault: "Camera",
+          backHomeAria: "Back to UtilitiBox"
+        }
+      };
+
+      // State
+      let currentLang = "id";
+      let currentTheme = "light";
+      let activeTab = "camera";
+      let mediaStream = null;
+      let scanRafId = null;
+      let isScanning = false;
+      let torchEnabled = false;
+      let nativeDetector = null;
+      let lastDecodedRaw = "";
+      let currentWifiData = null;
+      let isPasswordVisible = false;
+      let toastTimer = null;
+
+      // DOM Elements
+      const htmlEl = document.documentElement;
+      const langToggleBtn = document.getElementById("langToggleBtn");
+      const langLabel = document.getElementById("langLabel");
+      const themeToggleBtn = document.getElementById("themeToggleBtn");
+      const sunIcon = document.getElementById("sunIcon");
+      const moonIcon = document.getElementById("moonIcon");
+      const backHomeLink = document.getElementById("backHomeLink");
+
+      const tabCamera = document.getElementById("tabCamera");
+      const tabUpload = document.getElementById("tabUpload");
+      const cameraPanel = document.getElementById("cameraPanel");
+      const uploadPanel = document.getElementById("uploadPanel");
+      const alertBanner = document.getElementById("alertBanner");
+
+      const cameraSelect = document.getElementById("cameraSelect");
+      const torchBtn = document.getElementById("torchBtn");
+      const cameraVideo = document.getElementById("cameraVideo");
+      const scanGuide = document.getElementById("scanGuide");
+      const cameraPlaceholder = document.getElementById("cameraPlaceholder");
+      const cameraPlaceholderText = document.getElementById("cameraPlaceholderText");
+      const startCameraBtn = document.getElementById("startCameraBtn");
+      const cameraStatus = document.getElementById("cameraStatus");
+
+      const fileInput = document.getElementById("fileInput");
+      const dropzone = document.getElementById("dropzone");
+      const previewWrap = document.getElementById("previewWrap");
+      const previewImg = document.getElementById("previewImg");
+      const clearImageBtn = document.getElementById("clearImageBtn");
+
+      const resultPanel = document.getElementById("resultPanel");
+      const resultTypeBadge = document.getElementById("resultTypeBadge");
+      const scanAgainBtn = document.getElementById("scanAgainBtn");
+      const securitySchemeNotice = document.getElementById("securitySchemeNotice");
+
+      const standardResultView = document.getElementById("standardResultView");
+      const resultTextOutput = document.getElementById("resultTextOutput");
+      const copyResultBtn = document.getElementById("copyResultBtn");
+      const openUrlBtn = document.getElementById("openUrlBtn");
+
+      const wifiResultView = document.getElementById("wifiResultView");
+      const wifiSsidVal = document.getElementById("wifiSsidVal");
+      const wifiPassRow = document.getElementById("wifiPassRow");
+      const wifiPassVal = document.getElementById("wifiPassVal");
+      const wifiMetaVal = document.getElementById("wifiMetaVal");
+      const wifiRawVal = document.getElementById("wifiRawVal");
+      const copySsidBtn = document.getElementById("copySsidBtn");
+      const togglePassBtn = document.getElementById("togglePassBtn");
+      const copyPassBtn = document.getElementById("copyPassBtn");
+      const copyWifiAllBtn = document.getElementById("copyWifiAllBtn");
+
+      const workCanvas = document.getElementById("workCanvas");
+      const workCtx = workCanvas.getContext("2d", { willReadFrequently: true });
+      const toastEl = document.getElementById("toast");
+
+      // Safe Storage Helpers
+      function getStored(key) {
+        try {
+          return localStorage.getItem(key);
+        } catch (e) {
+          return null;
+        }
+      }
+
+      function setStored(key, val) {
+        try {
+          localStorage.setItem(key, val);
+        } catch (e) {
+          // Ignore storage restrictions
+        }
+      }
+
+      function t(key) {
+        return (I18N[currentLang] && I18N[currentLang][key]) || I18N.id[key] || key;
+      }
+
+      function showToast(message) {
+        toastEl.textContent = message;
+        toastEl.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          toastEl.classList.remove("show");
+        }, 2200);
+      }
+
+      function showAlert(message, type = "error") {
+        alertBanner.textContent = message;
+        alertBanner.className = "alert-box " + (type === "warning" ? "alert-warning" : "alert-error");
+        alertBanner.classList.remove("hidden");
+      }
+
+      function hideAlert() {
+        alertBanner.classList.add("hidden");
+        alertBanner.textContent = "";
+      }
+
+      // Theme & Language Initialization
+      function applyTheme(theme) {
+        currentTheme = theme === "dark" ? "dark" : "light";
+        htmlEl.setAttribute("data-theme", currentTheme);
+        if (currentTheme === "dark") {
+          sunIcon.classList.remove("hidden");
+          moonIcon.classList.add("hidden");
+        } else {
+          sunIcon.classList.add("hidden");
+          moonIcon.classList.remove("hidden");
+        }
+        setStored("utilitibox_theme", currentTheme);
+      }
+
+      function applyLanguage(lang) {
+        currentLang = lang === "en" ? "en" : "id";
+        htmlEl.setAttribute("lang", currentLang);
+        langLabel.textContent = currentLang.toUpperCase();
+        backHomeLink.setAttribute("aria-label", t("backHomeAria"));
+
+        document.querySelectorAll("[data-i18n]").forEach((el) => {
+          const key = el.getAttribute("data-i18n");
+          if (key === "torchOff" || key === "torchOn") {
+            el.textContent = torchEnabled ? t("torchOn") : t("torchOff");
+          } else {
+            el.textContent = t(key);
+          }
+        });
+
+        if (lastDecodedRaw) {
+          renderDecodedResult(lastDecodedRaw);
+        }
+
+        setStored("utilitibox_lang", currentLang);
+      }
+
+      async function copyTextToClipboard(text) {
+        if (!text) return;
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(text);
+          } else {
+            const ta = document.createElement("textarea");
+            ta.value = text;
+            ta.style.position = "fixed";
+            ta.style.opacity = "0";
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand("copy");
+            document.body.removeChild(ta);
+          }
+          showToast(t("copiedToast"));
+        } catch (err) {
+          showToast(t("copyFailed"));
+        }
+      }
+
+      // Initialize Native BarcodeDetector if supported
+      async function initBarcodeDetector() {
+        if ("BarcodeDetector" in window) {
+          try {
+            const formats = await window.BarcodeDetector.getSupportedFormats();
+            if (formats.includes("qr_code")) {
+              nativeDetector = new window.BarcodeDetector({ formats: ["qr_code"] });
+            }
+          } catch (e) {
+            nativeDetector = null;
+          }
+        }
+      }
+
+      // Decode from canvas
+      async function decodeCanvas(invertMode = "dontInvert") {
+        if (nativeDetector) {
+          try {
+            const barcodes = await nativeDetector.detect(workCanvas);
+            if (barcodes && barcodes.length > 0 && barcodes[0].rawValue) {
+              return barcodes[0].rawValue;
+            }
+          } catch (e) {
+            // Fall through to jsQR
+          }
+        }
+
+        if (typeof window.jsQR === "function") {
+          const imgData = workCtx.getImageData(0, 0, workCanvas.width, workCanvas.height);
+          const code = window.jsQR(imgData.data, workCanvas.width, workCanvas.height, {
+            inversionAttempts: invertMode
+          });
+          if (code && code.data) {
+            return code.data;
+          }
+        }
+
+        return null;
+      }
+
+      // Wi-Fi URI Parser (handles escaped \; \: \\ \,)
+      function parseWifiPayload(raw) {
+        if (!/^WIFI:/i.test(raw)) return null;
+        const body = raw.slice(5);
+        const fields = {};
+        let i = 0;
+
+        while (i < body.length) {
+          if (body[i] === ";") {
+            i++;
+            continue;
+          }
+          let key = "";
+          while (i < body.length && body[i] !== ":" && body[i] !== ";") {
+            key += body[i];
+            i++;
+          }
+          if (i >= body.length || body[i] !== ":") {
+            break;
+          }
+          i++; // skip ':'
+
+          let val = "";
+          while (i < body.length) {
+            if (body[i] === "\\" && i + 1 < body.length) {
+              val += body[i + 1];
+              i += 2;
+            } else if (body[i] === ";") {
+              i++; // consume terminating ';'
+              break;
+            } else {
+              val += body[i];
+              i++;
+            }
+          }
+
+          if (key) {
+            fields[key.toUpperCase()] = val;
+          }
+        }
+
+        if (!fields.S) return null;
+
+        return {
+          ssid: fields.S,
+          password: fields.P || "",
+          encryption: (fields.T || "nopass").toUpperCase(),
+          hidden: String(fields.H || "").toLowerCase() === "true"
+        };
+      }
+
+      // Classify Payload
+      function classifyPayload(raw) {
+        const trimmed = raw.trim();
+
+        const wifi = parseWifiPayload(trimmed);
+        if (wifi) {
+          return { type: "WIFI", wifi };
+        }
+
+        // Check if URI-like
+        if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(trimmed)) {
+          try {
+            const parsedUrl = new URL(trimmed);
+            if (parsedUrl.protocol === "http:" || parsedUrl.protocol === "https:") {
+              return { type: "URL", url: parsedUrl.href };
+            }
+            if (["javascript:", "data:", "vbscript:", "file:"].includes(parsedUrl.protocol)) {
+              return { type: "UNSAFE_URI", raw };
+            }
+          } catch (e) {
+            // Not a valid URL, treat as plain text
+          }
+        }
+
+        return { type: "TEXT", raw };
+      }
+
+      function renderDecodedResult(raw) {
+        lastDecodedRaw = raw;
+        const classified = classifyPayload(raw);
+
+        resultPanel.classList.remove("hidden");
+        securitySchemeNotice.classList.add("hidden");
+        standardResultView.classList.add("hidden");
+        wifiResultView.classList.add("hidden");
+        openUrlBtn.classList.add("hidden");
+
+        if (classified.type === "WIFI") {
+          currentWifiData = classified.wifi;
+          resultTypeBadge.textContent = t("typeWifi");
+          wifiResultView.classList.remove("hidden");
+
+          wifiSsidVal.textContent = classified.wifi.ssid;
+          wifiRawVal.textContent = raw;
+
+          if (classified.wifi.password) {
+            wifiPassRow.classList.remove("hidden");
+            updateWifiPasswordDisplay();
+          } else {
+            wifiPassRow.classList.add("hidden");
+          }
+
+          const encLabel = classified.wifi.encryption === "NOPASS" ? t("wifiNoPass") : classified.wifi.encryption;
+          const hiddenLabel = classified.wifi.hidden ? t("wifiHiddenYes") : t("wifiHiddenNo");
+          wifiMetaVal.textContent = encLabel + " - " + hiddenLabel;
+        } else if (classified.type === "URL") {
+          currentWifiData = null;
+          resultTypeBadge.textContent = t("typeUrl");
+          standardResultView.classList.remove("hidden");
+          resultTextOutput.textContent = classified.url;
+          openUrlBtn.href = classified.url;
+          openUrlBtn.classList.remove("hidden");
+        } else {
+          currentWifiData = null;
+          resultTypeBadge.textContent = t("typeText");
+          standardResultView.classList.remove("hidden");
+          resultTextOutput.textContent = raw;
+
+          if (classified.type === "UNSAFE_URI") {
+            securitySchemeNotice.textContent = t("unsafeScheme");
+            securitySchemeNotice.classList.remove("hidden");
+          }
+        }
+      }
+
+      function updateWifiPasswordDisplay() {
+        if (!currentWifiData || !currentWifiData.password) return;
+        if (isPasswordVisible) {
+          wifiPassVal.textContent = currentWifiData.password;
+          togglePassBtn.textContent = t("hidePass");
+        } else {
+          wifiPassVal.textContent = "*".repeat(Math.min(Math.max(currentWifiData.password.length, 8), 16));
+          togglePassBtn.textContent = t("showPass");
+        }
+      }
+
+      // Camera Management
+      function stopCamera(statusKey = "cameraStopped") {
+        isScanning = false;
+        if (scanRafId) {
+          cancelAnimationFrame(scanRafId);
+          scanRafId = null;
+        }
+        if (mediaStream) {
+          mediaStream.getTracks().forEach((track) => track.stop());
+          mediaStream = null;
+        }
+        cameraVideo.srcObject = null;
+        torchEnabled = false;
+        torchBtn.classList.add("hidden");
+        torchBtn.querySelector("span").textContent = t("torchOff");
+        scanGuide.classList.add("hidden");
+        cameraPlaceholder.classList.remove("hidden");
+        cameraPlaceholderText.textContent = t(statusKey);
+        cameraStatus.textContent = "";
+      }
+
+      async function populateCameraList(activeDeviceId) {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
+        try {
+          const devices = await navigator.mediaDevices.enumerateDevices();
+          const videoDevices = devices.filter((d) => d.kind === "videoinput");
+          if (videoDevices.length > 1) {
+            cameraSelect.innerHTML = "";
+            videoDevices.forEach((dev, idx) => {
+              const opt = document.createElement("option");
+              opt.value = dev.deviceId;
+              opt.textContent = dev.label || (t("cameraLabelDefault") + " " + (idx + 1));
+              if (activeDeviceId && dev.deviceId === activeDeviceId) {
+                opt.selected = true;
+              }
+              cameraSelect.appendChild(opt);
+            });
+            cameraSelect.classList.remove("hidden");
+          } else {
+            cameraSelect.classList.add("hidden");
+          }
+        } catch (e) {
+          cameraSelect.classList.add("hidden");
+        }
+      }
+
+      async function startCamera(deviceId = null) {
+        hideAlert();
+
+        if (!nativeDetector && typeof window.jsQR !== "function") {
+          showAlert(t("decoderUnavailable"), "error");
+          return;
+        }
+
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          stopCamera("camNotFound");
+          showAlert(t("camNotFound"), "error");
+          return;
+        }
+
+        stopCamera();
+        cameraPlaceholder.classList.add("hidden");
+        cameraStatus.textContent = t("cameraStarting");
+
+        const constraints = {
+          audio: false,
+          video: deviceId
+            ? { deviceId: { exact: deviceId } }
+            : { facingMode: { ideal: "environment" } }
+        };
+
+        try {
+          mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+          cameraVideo.srcObject = mediaStream;
+          await cameraVideo.play();
+
+          const videoTrack = mediaStream.getVideoTracks()[0];
+          const settings = videoTrack && videoTrack.getSettings ? videoTrack.getSettings() : {};
+          await populateCameraList(settings.deviceId || deviceId);
+
+          // Check torch capability
+          if (videoTrack && typeof videoTrack.getCapabilities === "function") {
+            const caps = videoTrack.getCapabilities();
+            if (caps && caps.torch) {
+              torchBtn.classList.remove("hidden");
+            }
+          }
+
+          scanGuide.classList.remove("hidden");
+          cameraStatus.textContent = t("cameraScanning");
+          isScanning = true;
+          scanCameraFrame();
+        } catch (err) {
+          stopCamera("cameraStopped");
+          if (err && (err.name === "NotFoundError" || err.name === "DevicesNotFoundError")) {
+            showAlert(t("camNotFound"), "error");
+          } else {
+            showAlert(t("camDenied"), "error");
+          }
+        }
+      }
+
+      async function scanCameraFrame() {
+        if (!isScanning || !mediaStream) return;
+
+        if (cameraVideo.readyState === cameraVideo.HAVE_ENOUGH_DATA) {
+          const vw = cameraVideo.videoWidth;
+          const vh = cameraVideo.videoHeight;
+          if (vw > 0 && vh > 0) {
+            const maxDim = 960;
+            const scale = Math.min(1, maxDim / Math.max(vw, vh));
+            workCanvas.width = Math.round(vw * scale);
+            workCanvas.height = Math.round(vh * scale);
+            workCtx.drawImage(cameraVideo, 0, 0, workCanvas.width, workCanvas.height);
+
+            const decoded = await decodeCanvas("dontInvert");
+            if (decoded) {
+              // Single-scan mode: immediately halt camera upon successful read
+              stopCamera("cameraDone");
+              isPasswordVisible = false;
+              renderDecodedResult(decoded);
+              return;
+            }
+          }
+        }
+
+        if (isScanning) {
+          scanRafId = requestAnimationFrame(scanCameraFrame);
+        }
+      }
+
+      // Image Processing (File / Drop / Clipboard)
+      function processImageFile(file) {
+        hideAlert();
+
+        if (!nativeDetector && typeof window.jsQR !== "function") {
+          showAlert(t("decoderUnavailable"), "error");
+          return;
+        }
+
+        if (!file || !file.type.startsWith("image/")) {
+          showAlert(t("invalidFile"), "error");
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function (ev) {
+          const dataUrl = ev.target.result;
+          const img = new Image();
+          img.onload = async function () {
+            previewImg.src = dataUrl;
+            previewWrap.classList.remove("hidden");
+
+            const maxDim = 1600;
+            const scale = Math.min(1, maxDim / Math.max(img.naturalWidth, img.naturalHeight));
+            workCanvas.width = Math.max(1, Math.round(img.naturalWidth * scale));
+            workCanvas.height = Math.max(1, Math.round(img.naturalHeight * scale));
+            workCtx.clearRect(0, 0, workCanvas.width, workCanvas.height);
+            workCtx.drawImage(img, 0, 0, workCanvas.width, workCanvas.height);
+
+            const decoded = await decodeCanvas("attemptBoth");
+            if (decoded) {
+              isPasswordVisible = false;
+              renderDecodedResult(decoded);
+            } else {
+              resultPanel.classList.add("hidden");
+              lastDecodedRaw = "";
+              showAlert(t("noQrFound"), "warning");
+            }
+          };
+          img.src = dataUrl;
+        };
+        reader.readAsDataURL(file);
+      }
+
+      // Switch Tabs
+      function switchTab(tab, autoStartCam = true) {
+        activeTab = tab;
+        hideAlert();
+
+        if (tab === "camera") {
+          tabCamera.classList.add("active");
+          tabCamera.setAttribute("aria-selected", "true");
+          tabUpload.classList.remove("active");
+          tabUpload.setAttribute("aria-selected", "false");
+          cameraPanel.classList.remove("hidden");
+          uploadPanel.classList.add("hidden");
+          if (autoStartCam) {
+            startCamera(cameraSelect.value || null);
+          }
+        } else {
+          stopCamera("cameraStopped");
+          tabUpload.classList.add("active");
+          tabUpload.setAttribute("aria-selected", "true");
+          tabCamera.classList.remove("active");
+          tabCamera.setAttribute("aria-selected", "false");
+          uploadPanel.classList.remove("hidden");
+          cameraPanel.classList.add("hidden");
+        }
+      }
+
+      // Event Bindings
+      langToggleBtn.addEventListener("click", () => {
+        applyLanguage(currentLang === "id" ? "en" : "id");
+      });
+
+      themeToggleBtn.addEventListener("click", () => {
+        applyTheme(currentTheme === "light" ? "dark" : "light");
+      });
+
+      tabCamera.addEventListener("click", () => switchTab("camera", true));
+      tabUpload.addEventListener("click", () => switchTab("upload", false));
+
+      startCameraBtn.addEventListener("click", () => {
+        startCamera(cameraSelect.value || null);
+      });
+
+      cameraSelect.addEventListener("change", () => {
+        if (activeTab === "camera") {
+          startCamera(cameraSelect.value);
+        }
+      });
+
+      torchBtn.addEventListener("click", async () => {
+        if (!mediaStream) return;
+        const track = mediaStream.getVideoTracks()[0];
+        if (!track) return;
+        try {
+          torchEnabled = !torchEnabled;
+          await track.applyConstraints({ advanced: [{ torch: torchEnabled }] });
+          torchBtn.querySelector("span").textContent = torchEnabled ? t("torchOn") : t("torchOff");
+        } catch (e) {
+          torchEnabled = false;
+        }
+      });
+
+      scanAgainBtn.addEventListener("click", () => {
+        resultPanel.classList.add("hidden");
+        lastDecodedRaw = "";
+        hideAlert();
+        if (activeTab === "camera") {
+          startCamera(cameraSelect.value || null);
+        } else {
+          fileInput.value = "";
+          previewWrap.classList.add("hidden");
+          previewImg.removeAttribute("src");
+        }
+      });
+
+      // Dropzone & File Input
+      dropzone.addEventListener("click", () => fileInput.click());
+      dropzone.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          fileInput.click();
+        }
+      });
+
+      fileInput.addEventListener("change", (e) => {
+        if (e.target.files && e.target.files[0]) {
+          processImageFile(e.target.files[0]);
+        }
+      });
+
+      ["dragenter", "dragover"].forEach((evtName) => {
+        dropzone.addEventListener(evtName, (e) => {
+          e.preventDefault();
+          dropzone.classList.add("drag-over");
+        });
+      });
+
+      ["dragleave", "drop"].forEach((evtName) => {
+        dropzone.addEventListener(evtName, (e) => {
+          e.preventDefault();
+          dropzone.classList.remove("drag-over");
+        });
+      });
+
+      dropzone.addEventListener("drop", (e) => {
+        const files = e.dataTransfer && e.dataTransfer.files;
+        if (files && files[0]) {
+          processImageFile(files[0]);
+        }
+      });
+
+      clearImageBtn.addEventListener("click", () => {
+        fileInput.value = "";
+        previewWrap.classList.add("hidden");
+        previewImg.removeAttribute("src");
+        resultPanel.classList.add("hidden");
+        lastDecodedRaw = "";
+        hideAlert();
+      });
+
+      // Global Clipboard Paste (Ctrl+V)
+      document.addEventListener("paste", (e) => {
+        const items = e.clipboardData && e.clipboardData.items;
+        if (!items) return;
+        for (let i = 0; i < items.length; i++) {
+          if (items[i].type.startsWith("image/")) {
+            const file = items[i].getAsFile();
+            if (file) {
+              e.preventDefault();
+              if (activeTab !== "upload") {
+                switchTab("upload", false);
+              }
+              processImageFile(file);
+              break;
+            }
+          }
+        }
+      });
+
+      // Result Copy Actions
+      copyResultBtn.addEventListener("click", () => {
+        copyTextToClipboard(lastDecodedRaw);
+      });
+
+      copySsidBtn.addEventListener("click", () => {
+        if (currentWifiData) copyTextToClipboard(currentWifiData.ssid);
+      });
+
+      togglePassBtn.addEventListener("click", () => {
+        isPasswordVisible = !isPasswordVisible;
+        updateWifiPasswordDisplay();
+      });
+
+      copyPassBtn.addEventListener("click", () => {
+        if (currentWifiData && currentWifiData.password) {
+          copyTextToClipboard(currentWifiData.password);
+        }
+      });
+
+      copyWifiAllBtn.addEventListener("click", () => {
+        if (!currentWifiData) return;
+        const lines = ["SSID: " + currentWifiData.ssid];
+        if (currentWifiData.password) {
+          lines.push("Password: " + currentWifiData.password);
+        }
+        lines.push("Security: " + currentWifiData.encryption);
+        copyTextToClipboard(lines.join("\n"));
+      });
+
+      // Stop camera when browser tab goes hidden
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden && isScanning) {
+          stopCamera("cameraStopped");
+        }
+      });
+
+      // Boot
+      (async function init() {
+        const savedTheme = getStored("utilitibox_theme");
+        if (savedTheme) {
+          applyTheme(savedTheme);
+        } else if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+          applyTheme("dark");
+        } else {
+          applyTheme("light");
+        }
+
+        const savedLang = getStored("utilitibox_lang");
+        applyLanguage(savedLang || "id");
+
+        await initBarcodeDetector();
+        startCamera();
+      })();
+    })();
+  </script>
+</body>
+</html>
