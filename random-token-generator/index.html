@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Random Token Generator - UtilitiBox</title>
+  <meta name="description" content="Generator token kriptografis berbasis Web Crypto API (Hexadecimal, UUID v4, Base64, Base64URL, Random Bytes). Berjalan 100% lokal di browser tanpa server." />
+  <link rel="canonical" href="https://utilitibox.github.io/random-token-generator/" />
+  <style>
+    :root {
+      --bg-page: #f4f6f9;
+      --bg-surface: #ffffff;
+      --bg-subtle: #eef1f6;
+      --bg-code: #f8fafc;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --border-color: #cbd5e1;
+      --border-subtle: #e2e8f0;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --accent-soft: rgba(37, 99, 235, 0.1);
+      --success: #059669;
+      --success-soft: rgba(5, 150, 105, 0.12);
+      --warning: #d97706;
+      --danger: #dc2626;
+      --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+      --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    [data-theme="dark"] {
+      --bg-page: #0b1120;
+      --bg-surface: #111827;
+      --bg-subtle: #1e293b;
+      --bg-code: #0f172a;
+      --text-primary: #f1f5f9;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --border-color: #334155;
+      --border-subtle: #1e293b;
+      --accent: #3b82f6;
+      --accent-hover: #60a5fa;
+      --accent-soft: rgba(59, 130, 246, 0.16);
+      --success: #10b981;
+      --success-soft: rgba(16, 185, 129, 0.16);
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-page);
+      color: var(--text-primary);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 1.25rem 1rem 3rem;
+      flex: 1;
+    }
+
+    /* Top Navigation Bar */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 0.45rem 0.8rem;
+      border-radius: var(--radius-sm);
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      transition: all 0.15s ease;
+    }
+
+    .back-link:hover {
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .top-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .icon-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 0.45rem 0.75rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-surface);
+      color: var(--text-primary);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .icon-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* Header */
+    .hero {
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--success);
+      background-color: var(--success-soft);
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      margin-bottom: 0.6rem;
+    }
+
+    .hero h1 {
+      font-size: 1.65rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.35rem;
+    }
+
+    .hero p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+
+    /* Mode Tabs (Option A) */
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.5rem;
+      background-color: var(--bg-subtle);
+      padding: 0.35rem;
+      border-radius: var(--radius-md);
+      margin-bottom: 1.25rem;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .tab-btn {
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 0.65rem 0.5rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-align: center;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .tab-btn.active {
+      background-color: var(--bg-surface);
+      color: var(--accent);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Main Card */
+    .card {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 1.25rem;
+    }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .form-group label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 0.4rem;
+      align-items: center;
+    }
+
+    input[type="number"],
+    select {
+      width: 100%;
+      padding: 0.55rem 0.75rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-code);
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 0.92rem;
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+
+    input[type="number"]:focus,
+    select:focus {
+      border-color: var(--accent);
+    }
+
+    .preset-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-top: 0.25rem;
+    }
+
+    .preset-btn {
+      padding: 0.22rem 0.55rem;
+      font-size: 0.76rem;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      border-radius: 4px;
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-subtle);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .preset-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .checkbox-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      padding-top: 0.35rem;
+    }
+
+    .checkbox-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.88rem;
+      color: var(--text-primary);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .checkbox-item input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    /* Metrics Bar */
+    .metrics-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0.75rem 0.9rem;
+      background-color: var(--bg-subtle);
+      border-radius: var(--radius-sm);
+      margin-bottom: 1.25rem;
+      font-size: 0.84rem;
+    }
+
+    .metric-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .metric-tag {
+      color: var(--text-secondary);
+    }
+
+    .metric-tag strong {
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+    }
+
+    .entropy-badge {
+      font-weight: 700;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.78rem;
+    }
+
+    .entropy-strong {
+      background-color: var(--success-soft);
+      color: var(--success);
+    }
+
+    .entropy-medium {
+      background-color: rgba(217, 119, 6, 0.15);
+      color: var(--warning);
+    }
+
+    .entropy-low {
+      background-color: rgba(220, 38, 38, 0.15);
+      color: var(--danger);
+    }
+
+    /* Primary Action Button */
+    .action-row {
+      display: flex;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      flex: 1;
+      min-width: 180px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.25rem;
+      background-color: var(--accent);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 0.96rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--accent-hover);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      padding: 0.7rem 1rem;
+      background-color: var(--bg-subtle);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* Results Section */
+    .results-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .results-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .bulk-actions {
+      display: flex;
+      gap: 0.45rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-sm {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.38rem 0.7rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-surface);
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-sm:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .btn-sm.copied {
+      border-color: var(--success);
+      color: var(--success);
+      background-color: var(--success-soft);
+    }
+
+    .token-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      max-height: 460px;
+      overflow-y: auto;
+      padding-right: 0.15rem;
+    }
+
+    .token-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0.65rem 0.85rem;
+      background-color: var(--bg-code);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+    }
+
+    .token-index {
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      min-width: 2rem;
+      user-select: none;
+    }
+
+    .token-value {
+      flex: 1;
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      color: var(--text-primary);
+      word-break: break-all;
+      line-height: 1.45;
+    }
+
+    .copy-item-btn {
+      flex-shrink: 0;
+      padding: 0.35rem 0.65rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      border-radius: 4px;
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-surface);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .copy-item-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .copy-item-btn.copied {
+      border-color: var(--success);
+      color: var(--success);
+      background-color: var(--success-soft);
+    }
+
+    /* Info Footer */
+    .info-box {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.15rem;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .info-box h2 {
+      font-size: 0.92rem;
+      color: var(--text-primary);
+      margin-bottom: 0.4rem;
+    }
+
+    .info-box ul {
+      padding-left: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1.25rem 1rem;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 600px) {
+      .tabs {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .hero h1 {
+        font-size: 1.4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Top Navigation -->
+    <nav class="topbar" aria-label="Navigasi Utama">
+      <a href="../" class="back-link" id="backLink">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        <span data-i18n="backHome">Kembali ke UtilitiBox</span>
+      </a>
+
+      <div class="top-controls">
+        <button type="button" class="icon-btn" id="langToggle" aria-label="Ganti Bahasa">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+          </svg>
+          <span id="langLabel">ID</span>
+        </button>
+
+        <button type="button" class="icon-btn" id="themeToggle" aria-label="Ganti Tema">
+          <svg id="themeIconSun" class="hidden" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg id="themeIconMoon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+          <span id="themeLabel" data-i18n="themeDark">Gelap</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="hero">
+      <div class="hero-badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+        <span data-i18n="localBadge">100% Lokal di Browser (Web Crypto API)</span>
+      </div>
+      <h1 data-i18n="appTitle">Random Token Generator</h1>
+      <p data-i18n="appSubtitle">Hasilkan token acak kriptografis yang aman untuk API key, secret, session ID, dan pengujian aplikasi secara offline.</p>
+    </header>
+
+    <!-- Mode Tabs -->
+    <div class="tabs" role="tablist" aria-label="Jenis Format Token">
+      <button type="button" class="tab-btn active" role="tab" aria-selected="true" data-mode="hex">Hexadecimal</button>
+      <button type="button" class="tab-btn" role="tab" aria-selected="false" data-mode="uuid">UUID v4</button>
+      <button type="button" class="tab-btn" role="tab" aria-selected="false" data-mode="base64">Base64</button>
+      <button type="button" class="tab-btn" role="tab" aria-selected="false" data-mode="bytes">Random Bytes</button>
+    </div>
+
+    <!-- Configuration Card -->
+    <section class="card" aria-label="Konfigurasi Token">
+      <div class="controls-grid">
+        <!-- Byte Length Control (Hidden on UUID v4) -->
+        <div class="form-group" id="byteLengthGroup">
+          <label for="byteLength">
+            <span data-i18n="labelByteLength">Panjang Byte (1 - 4096)</span>
+          </label>
+          <input type="number" id="byteLength" min="1" max="4096" value="32" />
+          <div class="preset-group">
+            <button type="button" class="preset-btn" data-byte="16">16 B</button>
+            <button type="button" class="preset-btn" data-byte="24">24 B</button>
+            <button type="button" class="preset-btn" data-byte="32">32 B</button>
+            <button type="button" class="preset-btn" data-byte="64">64 B</button>
+          </div>
+        </div>
+
+        <!-- Bulk Count Control -->
+        <div class="form-group">
+          <label for="tokenCount">
+            <span data-i18n="labelCount">Jumlah Token (Bulk 1 - 100)</span>
+          </label>
+          <input type="number" id="tokenCount" min="1" max="100" value="5" />
+          <div class="preset-group">
+            <button type="button" class="preset-btn" data-count="1">1</button>
+            <button type="button" class="preset-btn" data-count="5">5</button>
+            <button type="button" class="preset-btn" data-count="10">10</button>
+            <button type="button" class="preset-btn" data-count="25">25</button>
+            <button type="button" class="preset-btn" data-count="50">50</button>
+          </div>
+        </div>
+
+        <!-- Base64 Variant Control -->
+        <div class="form-group hidden" id="base64VariantGroup">
+          <label for="base64Variant" data-i18n="labelBase64Variant">Varian Base64</label>
+          <select id="base64Variant">
+            <option value="base64url">Base64URL (RFC 4648 - Aman URL/JWT, tanpa =)</option>
+            <option value="standard">Base64 Standar (RFC 4648 - Karakter + / =)</option>
+          </select>
+        </div>
+
+        <!-- Random Bytes Format Control -->
+        <div class="form-group hidden" id="bytesFormatGroup">
+          <label for="bytesFormat" data-i18n="labelBytesFormat">Format Output Byte</label>
+          <select id="bytesFormat">
+            <option value="dec-array">Array Desimal [142, 19, 255]</option>
+            <option value="hex-array">Hex Byte (0x8e, 0x13, 0xff)</option>
+            <option value="hex-space">Hex Spasi (8e 13 ff)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Mode Specific Checkboxes -->
+      <div class="checkbox-list" id="hexOptionsGroup">
+        <label class="checkbox-item">
+          <input type="checkbox" id="hexUppercase" />
+          <span data-i18n="optUppercase">Huruf Kapital (UPPERCASE)</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" id="hexPrefix" />
+          <span data-i18n="optHexPrefix">Sertakan awalan 0x</span>
+        </label>
+      </div>
+
+      <div class="checkbox-list hidden" id="uuidOptionsGroup">
+        <label class="checkbox-item">
+          <input type="checkbox" id="uuidUppercase" />
+          <span data-i18n="optUppercase">Huruf Kapital (UPPERCASE)</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" id="uuidNoHyphens" />
+          <span data-i18n="optNoHyphens">Hapus tanda hubung (-)</span>
+        </label>
+      </div>
+
+      <!-- Cryptographic Metrics -->
+      <div class="metrics-bar" style="margin-top: 1.15rem;">
+        <div class="metric-items">
+          <span class="metric-tag"><span data-i18n="metricEntropy">Entropi:</span> <strong id="entropyValue">256 bit</strong></span>
+          <span class="metric-tag"><span data-i18n="metricLength">Panjang Output:</span> <strong id="outputLengthValue">64 karakter</strong></span>
+        </div>
+        <span class="entropy-badge entropy-strong" id="entropyStrength" data-i18n="strengthStrong">Sangat Kuat</span>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-row">
+        <button type="button" class="btn-primary" id="generateBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <polyline points="1 20 1 14 7 14"></polyline>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+          </svg>
+          <span data-i18n="btnGenerate">Generate Token</span>
+        </button>
+        <button type="button" class="btn-secondary" id="clearBtn">
+          <span data-i18n="btnClear">Bersihkan</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Generated Results Card -->
+    <section class="card" aria-label="Hasil Token">
+      <div class="results-header">
+        <div class="results-title">
+          <span data-i18n="resultsHeading">Hasil Generasi</span> (<span id="generatedCountBadge">0</span>)
+        </div>
+        <div class="bulk-actions">
+          <button type="button" class="btn-sm" id="copyAllBtn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            <span data-i18n="btnCopyAll">Salin Semua</span>
+          </button>
+          <button type="button" class="btn-sm" id="downloadTxtBtn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <span data-i18n="btnDownload">Unduh .TXT</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="token-list" id="tokenList" role="list"></div>
+    </section>
+
+    <!-- Security & Technical Notes -->
+    <aside class="info-box">
+      <h2 data-i18n="secNoteTitle">Jaminan Keamanan & Privasi Lokal</h2>
+      <ul>
+        <li data-i18n="secNote1">Seluruh proses menggunakan CSPRNG bawaan browser (window.crypto.getRandomValues dan crypto.randomUUID), bukan Math.random().</li>
+        <li data-i18n="secNote2">Tidak ada permintaan jaringan atau pengiriman data ke server. Aplikasi tetap berfungsi penuh tanpa koneksi internet.</li>
+        <li data-i18n="secNote3">Token tidak disimpan di localStorage maupun cookie; memuat ulang halaman akan menghapus seluruh token dari memori.</li>
+      </ul>
+    </aside>
+  </div>
+
+  <footer>
+    <span>UtilitiBox - </span>
+    <a href="https://utilitibox.github.io/">https://utilitibox.github.io/</a>
+  </footer>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const i18n = {
+        id: {
+          backHome: "Kembali ke UtilitiBox",
+          themeDark: "Gelap",
+          themeLight: "Terang",
+          localBadge: "100% Lokal di Browser (Web Crypto API)",
+          appTitle: "Random Token Generator",
+          appSubtitle: "Hasilkan token acak kriptografis yang aman untuk API key, secret, session ID, dan pengujian aplikasi secara offline.",
+          labelByteLength: "Panjang Byte (1 - 4096)",
+          labelCount: "Jumlah Token (Bulk 1 - 100)",
+          labelBase64Variant: "Varian Base64",
+          labelBytesFormat: "Format Output Byte",
+          optUppercase: "Huruf Kapital (UPPERCASE)",
+          optHexPrefix: "Sertakan awalan 0x",
+          optNoHyphens: "Hapus tanda hubung (-)",
+          metricEntropy: "Entropi:",
+          metricLength: "Panjang Output:",
+          strengthStrong: "Sangat Kuat",
+          strengthMedium: "Menengah",
+          strengthLow: "Rendah (Hanya untuk ID pendek)",
+          btnGenerate: "Generate Token",
+          btnClear: "Bersihkan",
+          resultsHeading: "Hasil Generasi",
+          btnCopyAll: "Salin Semua",
+          btnDownload: "Unduh .TXT",
+          copy: "Salin",
+          copied: "Tersalin",
+          charsUnit: "karakter",
+          secNoteTitle: "Jaminan Keamanan & Privasi Lokal",
+          secNote1: "Seluruh proses menggunakan CSPRNG bawaan browser (window.crypto.getRandomValues dan crypto.randomUUID), bukan Math.random().",
+          secNote2: "Tidak ada permintaan jaringan atau pengiriman data ke server. Aplikasi tetap berfungsi penuh tanpa koneksi internet.",
+          secNote3: "Token tidak disimpan di localStorage maupun cookie; memuat ulang halaman akan menghapus seluruh token dari memori.",
+          emptyState: "Klik Generate Token untuk membuat token baru."
+        },
+        en: {
+          backHome: "Back to UtilitiBox",
+          themeDark: "Dark",
+          themeLight: "Light",
+          localBadge: "100% Local in Browser (Web Crypto API)",
+          appTitle: "Random Token Generator",
+          appSubtitle: "Generate cryptographically secure random tokens for API keys, secrets, session IDs, and offline application testing.",
+          labelByteLength: "Byte Length (1 - 4096)",
+          labelCount: "Token Count (Bulk 1 - 100)",
+          labelBase64Variant: "Base64 Variant",
+          labelBytesFormat: "Byte Output Format",
+          optUppercase: "Uppercase Letters (UPPERCASE)",
+          optHexPrefix: "Include 0x prefix",
+          optNoHyphens: "Remove hyphens (-)",
+          metricEntropy: "Entropy:",
+          metricLength: "Output Length:",
+          strengthStrong: "Very Strong",
+          strengthMedium: "Moderate",
+          strengthLow: "Low (Short IDs only)",
+          btnGenerate: "Generate Tokens",
+          btnClear: "Clear",
+          resultsHeading: "Generated Results",
+          btnCopyAll: "Copy All",
+          btnDownload: "Download .TXT",
+          copy: "Copy",
+          copied: "Copied",
+          charsUnit: "chars",
+          secNoteTitle: "Local Security & Privacy Guarantee",
+          secNote1: "All generation uses native browser CSPRNG (window.crypto.getRandomValues and crypto.randomUUID), never Math.random().",
+          secNote2: "Zero network requests or server transmissions. Works completely offline.",
+          secNote3: "Tokens are never saved to localStorage or cookies; reloading the page clears all tokens from memory.",
+          emptyState: "Click Generate Tokens to create new tokens."
+        }
+      };
+
+      const state = {
+        mode: "hex",
+        lang: localStorage.getItem("utilitibox_lang") || "id",
+        theme: localStorage.getItem("utilitibox_theme") || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"),
+        tokens: []
+      };
+
+      // DOM Elements
+      const tabButtons = document.querySelectorAll(".tab-btn");
+      const byteLengthGroup = document.getElementById("byteLengthGroup");
+      const byteLengthInput = document.getElementById("byteLength");
+      const tokenCountInput = document.getElementById("tokenCount");
+      const base64VariantGroup = document.getElementById("base64VariantGroup");
+      const base64VariantSelect = document.getElementById("base64Variant");
+      const bytesFormatGroup = document.getElementById("bytesFormatGroup");
+      const bytesFormatSelect = document.getElementById("bytesFormat");
+      const hexOptionsGroup = document.getElementById("hexOptionsGroup");
+      const hexUppercaseInput = document.getElementById("hexUppercase");
+      const hexPrefixInput = document.getElementById("hexPrefix");
+      const uuidOptionsGroup = document.getElementById("uuidOptionsGroup");
+      const uuidUppercaseInput = document.getElementById("uuidUppercase");
+      const uuidNoHyphensInput = document.getElementById("uuidNoHyphens");
+      const entropyValue = document.getElementById("entropyValue");
+      const outputLengthValue = document.getElementById("outputLengthValue");
+      const entropyStrength = document.getElementById("entropyStrength");
+      const generateBtn = document.getElementById("generateBtn");
+      const clearBtn = document.getElementById("clearBtn");
+      const copyAllBtn = document.getElementById("copyAllBtn");
+      const downloadTxtBtn = document.getElementById("downloadTxtBtn");
+      const tokenList = document.getElementById("tokenList");
+      const generatedCountBadge = document.getElementById("generatedCountBadge");
+      const langToggle = document.getElementById("langToggle");
+      const langLabel = document.getElementById("langLabel");
+      const themeToggle = document.getElementById("themeToggle");
+      const themeIconSun = document.getElementById("themeIconSun");
+      const themeIconMoon = document.getElementById("themeIconMoon");
+      const themeLabel = document.getElementById("themeLabel");
+
+      function clampNumber(val, min, max, fallback) {
+        const parsed = parseInt(val, 10);
+        if (Number.isNaN(parsed)) return fallback;
+        return Math.min(max, Math.max(min, parsed));
+      }
+
+      // Cryptographic Generators
+      function getRandomBytes(length) {
+        const array = new Uint8Array(length);
+        window.crypto.getRandomValues(array);
+        return array;
+      }
+
+      function generateHex(byteLen, uppercase, withPrefix) {
+        const bytes = getRandomBytes(byteLen);
+        let hex = "";
+        for (let i = 0; i < bytes.length; i++) {
+          hex += bytes[i].toString(16).padStart(2, "0");
+        }
+        if (uppercase) hex = hex.toUpperCase();
+        return withPrefix ? "0x" + hex : hex;
+      }
+
+      function generateUUIDv4(uppercase, noHyphens) {
+        let uuid = "";
+        if (typeof window.crypto.randomUUID === "function") {
+          uuid = window.crypto.randomUUID();
+        } else {
+          // RFC 4122 v4 fallback for non-secure contexts (e.g. file://)
+          const bytes = getRandomBytes(16);
+          bytes[6] = (bytes[6] & 0x0f) | 0x40;
+          bytes[8] = (bytes[8] & 0x3f) | 0x80;
+          const hex = [];
+          for (let i = 0; i < 16; i++) {
+            hex.push(bytes[i].toString(16).padStart(2, "0"));
+          }
+          uuid =
+            hex[0] + hex[1] + hex[2] + hex[3] + "-" +
+            hex[4] + hex[5] + "-" +
+            hex[6] + hex[7] + "-" +
+            hex[8] + hex[9] + "-" +
+            hex[10] + hex[11] + hex[12] + hex[13] + hex[14] + hex[15];
+        }
+        if (noHyphens) uuid = uuid.replace(/-/g, "");
+        return uppercase ? uuid.toUpperCase() : uuid.toLowerCase();
+      }
+
+      function generateBase64(byteLen, variant) {
+        const bytes = getRandomBytes(byteLen);
+        let binary = "";
+        for (let i = 0; i < bytes.length; i++) {
+          binary += String.fromCharCode(bytes[i]);
+        }
+        let b64 = window.btoa(binary);
+        if (variant === "base64url") {
+          b64 = b64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+        }
+        return b64;
+      }
+
+      function generateFormattedBytes(byteLen, format) {
+        const bytes = getRandomBytes(byteLen);
+        if (format === "dec-array") {
+          return "[" + Array.from(bytes).join(", ") + "]";
+        }
+        const hexParts = [];
+        for (let i = 0; i < bytes.length; i++) {
+          const h = bytes[i].toString(16).padStart(2, "0");
+          hexParts.push(format === "hex-array" ? "0x" + h : h);
+        }
+        return format === "hex-array" ? hexParts.join(", ") : hexParts.join(" ");
+      }
+
+      // Update Metrics Display
+      function updateMetrics() {
+        const dict = i18n[state.lang];
+        const byteLen = clampNumber(byteLengthInput.value, 1, 4096, 32);
+        let bits = byteLen * 8;
+        let outLen = 0;
+
+        if (state.mode === "uuid") {
+          bits = 122; // RFC 4122 v4 has 122 random bits
+          outLen = uuidNoHyphensInput.checked ? 32 : 36;
+        } else if (state.mode === "hex") {
+          outLen = byteLen * 2 + (hexPrefixInput.checked ? 2 : 0);
+        } else if (state.mode === "base64") {
+          if (base64VariantSelect.value === "standard") {
+            outLen = Math.ceil(byteLen / 3) * 4;
+          } else {
+            outLen = Math.ceil((byteLen * 4) / 3);
+          }
+        } else if (state.mode === "bytes") {
+          const fmt = bytesFormatSelect.value;
+          if (fmt === "hex-array") outLen = byteLen * 6 - 2;
+          else if (fmt === "hex-space") outLen = byteLen * 3 - 1;
+          else outLen = 0;
+        }
+
+        entropyValue.textContent = bits + " bit";
+        if (state.mode === "bytes" && bytesFormatSelect.value === "dec-array") {
+          outputLengthValue.textContent = byteLen + " byte";
+        } else {
+          outputLengthValue.textContent = outLen + " " + dict.charsUnit;
+        }
+
+        entropyStrength.className = "entropy-badge";
+        if (bits >= 122) {
+          entropyStrength.classList.add("entropy-strong");
+          entropyStrength.textContent = dict.strengthStrong;
+        } else if (bits >= 64) {
+          entropyStrength.classList.add("entropy-medium");
+          entropyStrength.textContent = dict.strengthMedium;
+        } else {
+          entropyStrength.classList.add("entropy-low");
+          entropyStrength.textContent = dict.strengthLow;
+        }
+      }
+
+      // Generate and Render Tokens
+      function runGeneration() {
+        const byteLen = clampNumber(byteLengthInput.value, 1, 4096, 32);
+        const count = clampNumber(tokenCountInput.value, 1, 100, 5);
+        byteLengthInput.value = byteLen;
+        tokenCountInput.value = count;
+
+        const results = [];
+        for (let i = 0; i < count; i++) {
+          if (state.mode === "hex") {
+            results.push(generateHex(byteLen, hexUppercaseInput.checked, hexPrefixInput.checked));
+          } else if (state.mode === "uuid") {
+            results.push(generateUUIDv4(uuidUppercaseInput.checked, uuidNoHyphensInput.checked));
+          } else if (state.mode === "base64") {
+            results.push(generateBase64(byteLen, base64VariantSelect.value));
+          } else if (state.mode === "bytes") {
+            results.push(generateFormattedBytes(byteLen, bytesFormatSelect.value));
+          }
+        }
+
+        state.tokens = results;
+        updateMetrics();
+        renderTokenList();
+      }
+
+      function renderTokenList() {
+        const dict = i18n[state.lang];
+        generatedCountBadge.textContent = state.tokens.length;
+        tokenList.innerHTML = "";
+
+        if (state.tokens.length === 0) {
+          const empty = document.createElement("div");
+          empty.style.padding = "1.25rem";
+          empty.style.textAlign = "center";
+          empty.style.color = "var(--text-muted)";
+          empty.style.fontSize = "0.9rem";
+          empty.textContent = dict.emptyState;
+          tokenList.appendChild(empty);
+          return;
+        }
+
+        const fragment = document.createDocumentFragment();
+        state.tokens.forEach((token, idx) => {
+          const item = document.createElement("div");
+          item.className = "token-item";
+          item.setAttribute("role", "listitem");
+
+          const indexSpan = document.createElement("span");
+          indexSpan.className = "token-index";
+          indexSpan.textContent = "#" + (idx + 1);
+
+          const valueCode = document.createElement("code");
+          valueCode.className = "token-value";
+          valueCode.textContent = token;
+
+          const copyBtn = document.createElement("button");
+          copyBtn.type = "button";
+          copyBtn.className = "copy-item-btn";
+          copyBtn.textContent = dict.copy;
+          copyBtn.addEventListener("click", () => {
+            copyToClipboard(token, copyBtn);
+          });
+
+          item.appendChild(indexSpan);
+          item.appendChild(valueCode);
+          item.appendChild(copyBtn);
+          fragment.appendChild(item);
+        });
+
+        tokenList.appendChild(fragment);
+      }
+
+      // Clipboard Helper with Offline Fallback
+      function copyToClipboard(text, buttonEl) {
+        const dict = i18n[state.lang];
+        const markCopied = () => {
+          const originalHTML = buttonEl.innerHTML;
+          buttonEl.classList.add("copied");
+          buttonEl.textContent = dict.copied;
+          setTimeout(() => {
+            buttonEl.classList.remove("copied");
+            buttonEl.innerHTML = originalHTML;
+          }, 1400);
+        };
+
+        if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+          navigator.clipboard.writeText(text).then(markCopied).catch(() => {
+            fallbackCopy(text, markCopied);
+          });
+        } else {
+          fallbackCopy(text, markCopied);
+        }
+      }
+
+      function fallbackCopy(text, callback) {
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+          document.execCommand("copy");
+          if (callback) callback();
+        } catch (err) {
+          // Silent fail if blocked by strict browser policy
+        }
+        document.body.removeChild(textarea);
+      }
+
+      // Switch Active Mode Tab
+      function setMode(mode) {
+        state.mode = mode;
+        tabButtons.forEach((btn) => {
+          const isActive = btn.dataset.mode === mode;
+          btn.classList.toggle("active", isActive);
+          btn.setAttribute("aria-selected", String(isActive));
+        });
+
+        byteLengthGroup.classList.toggle("hidden", mode === "uuid");
+        hexOptionsGroup.classList.toggle("hidden", mode !== "hex");
+        uuidOptionsGroup.classList.toggle("hidden", mode !== "uuid");
+        base64VariantGroup.classList.toggle("hidden", mode !== "base64");
+        bytesFormatGroup.classList.toggle("hidden", mode !== "bytes");
+
+        runGeneration();
+      }
+
+      // Apply Language & Theme
+      function applyLanguage() {
+        const dict = i18n[state.lang];
+        document.documentElement.lang = state.lang;
+        langLabel.textContent = state.lang.toUpperCase();
+
+        document.querySelectorAll("[data-i18n]").forEach((el) => {
+          const key = el.getAttribute("data-i18n");
+          if (dict[key]) {
+            el.textContent = dict[key];
+          }
+        });
+
+        themeLabel.textContent = state.theme === "dark" ? dict.themeDark : dict.themeLight;
+        updateMetrics();
+        renderTokenList();
+      }
+
+      function applyTheme() {
+        const dict = i18n[state.lang];
+        document.documentElement.setAttribute("data-theme", state.theme);
+        if (state.theme === "dark") {
+          themeIconMoon.classList.remove("hidden");
+          themeIconSun.classList.add("hidden");
+          themeLabel.textContent = dict.themeDark;
+        } else {
+          themeIconSun.classList.remove("hidden");
+          themeIconMoon.classList.add("hidden");
+          themeLabel.textContent = dict.themeLight;
+        }
+      }
+
+      // Event Listeners
+      tabButtons.forEach((btn) => {
+        btn.addEventListener("click", () => setMode(btn.dataset.mode));
+      });
+
+      document.querySelectorAll("[data-byte]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          byteLengthInput.value = btn.dataset.byte;
+          runGeneration();
+        });
+      });
+
+      document.querySelectorAll("[data-count]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          tokenCountInput.value = btn.dataset.count;
+          runGeneration();
+        });
+      });
+
+      [byteLengthInput, tokenCountInput, base64VariantSelect, bytesFormatSelect, hexUppercaseInput, hexPrefixInput, uuidUppercaseInput, uuidNoHyphensInput].forEach((el) => {
+        el.addEventListener("change", runGeneration);
+      });
+
+      generateBtn.addEventListener("click", runGeneration);
+
+      clearBtn.addEventListener("click", () => {
+        state.tokens = [];
+        renderTokenList();
+      });
+
+      copyAllBtn.addEventListener("click", () => {
+        if (state.tokens.length === 0) return;
+        copyToClipboard(state.tokens.join("\n"), copyAllBtn);
+      });
+
+      downloadTxtBtn.addEventListener("click", () => {
+        if (state.tokens.length === 0) return;
+        const blob = new Blob([state.tokens.join("\n") + "\n"], { type: "text/plain;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "tokens-" + state.mode + "-" + Date.now() + ".txt";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      });
+
+      langToggle.addEventListener("click", () => {
+        state.lang = state.lang === "id" ? "en" : "id";
+        localStorage.setItem("utilitibox_lang", state.lang);
+        applyLanguage();
+      });
+
+      themeToggle.addEventListener("click", () => {
+        state.theme = state.theme === "dark" ? "light" : "dark";
+        localStorage.setItem("utilitibox_theme", state.theme);
+        applyTheme();
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+          e.preventDefault();
+          runGeneration();
+        }
+      });
+
+      // Initialize
+      applyTheme();
+      applyLanguage();
+      runGeneration();
+    })();
+  </script>
+</body>
+</html>
