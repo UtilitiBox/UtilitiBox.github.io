@@ -26,9 +26,9 @@
       --warning-soft: rgba(245, 158, 11, 0.14);
       --danger: #ef4444;
       --danger-soft: rgba(239, 68, 68, 0.14);
-      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.35);
-      --radius-lg: 14px;
-      --radius-md: 10px;
+      --shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.35);
+      --radius-lg: 12px;
+      --radius-md: 9px;
       --radius-sm: 6px;
       --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
       --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
@@ -52,7 +52,7 @@
       --warning-soft: rgba(217, 119, 6, 0.12);
       --danger: #dc2626;
       --danger-soft: rgba(220, 38, 38, 0.12);
-      --shadow: 0 8px 20px -4px rgba(15, 23, 42, 0.08);
+      --shadow: 0 6px 16px -4px rgba(15, 23, 42, 0.08);
     }
 
     * {
@@ -61,11 +61,17 @@
       padding: 0;
     }
 
+    html,
+    body {
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
     body {
       font-family: var(--font-sans);
       background-color: var(--bg-primary);
       color: var(--text-primary);
-      line-height: 1.55;
+      line-height: 1.5;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -88,33 +94,36 @@
       position: sticky;
       top: 0;
       z-index: 40;
+      width: 100%;
     }
 
     .topbar-inner {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 0.85rem 1.25rem;
+      padding: 0.8rem 1.25rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 1rem;
+      gap: 0.75rem;
       flex-wrap: wrap;
     }
 
     .brand-group {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+      min-width: 0;
     }
 
     .back-link {
       display: inline-flex;
       align-items: center;
-      gap: 0.4rem;
-      font-size: 0.85rem;
+      gap: 0.35rem;
+      font-size: 0.84rem;
       font-weight: 600;
       color: var(--text-secondary);
-      padding: 0.4rem 0.7rem;
+      padding: 0.38rem 0.68rem;
       border-radius: var(--radius-sm);
       border: 1px solid var(--border-color);
       background: var(--bg-tertiary);
@@ -128,7 +137,7 @@
     }
 
     .app-title {
-      font-size: 1.15rem;
+      font-size: 1.1rem;
       font-weight: 700;
       letter-spacing: -0.01em;
     }
@@ -136,25 +145,26 @@
     .badge-local {
       font-size: 0.72rem;
       font-weight: 600;
-      padding: 0.2rem 0.55rem;
+      padding: 0.18rem 0.55rem;
       border-radius: 999px;
       background: var(--success-soft);
       color: var(--success);
       border: 1px solid rgba(16, 185, 129, 0.3);
+      white-space: nowrap;
     }
 
     .controls-group {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.45rem;
     }
 
     .btn-icon {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 0.4rem;
-      padding: 0.45rem 0.75rem;
+      gap: 0.38rem;
+      padding: 0.42rem 0.72rem;
       font-size: 0.82rem;
       font-weight: 600;
       color: var(--text-primary);
@@ -175,8 +185,9 @@
       width: 100%;
       max-width: 1200px;
       margin: 0 auto;
-      padding: 1.5rem 1.25rem 3rem;
+      padding: 1.25rem 1.25rem 2.75rem;
       flex: 1;
+      min-width: 0;
     }
 
     /* Dropzone */
@@ -184,7 +195,7 @@
       background: var(--bg-secondary);
       border: 2px dashed var(--border-color);
       border-radius: var(--radius-lg);
-      padding: 2.5rem 1.5rem;
+      padding: 2.4rem 1.5rem;
       text-align: center;
       cursor: pointer;
       transition: all 0.2s ease;
@@ -192,13 +203,12 @@
     }
 
     .dropzone.compact {
-      padding: 1.1rem 1.5rem;
+      padding: 0.9rem 1.2rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 1rem;
       text-align: left;
-      flex-wrap: wrap;
     }
 
     .dropzone:hover,
@@ -208,9 +218,9 @@
     }
 
     .dropzone-icon {
-      width: 48px;
-      height: 48px;
-      margin: 0 auto 0.9rem;
+      width: 46px;
+      height: 46px;
+      margin: 0 auto 0.85rem;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -220,8 +230,8 @@
     }
 
     .dropzone.compact .dropzone-icon {
-      width: 38px;
-      height: 38px;
+      width: 36px;
+      height: 36px;
       margin: 0;
       flex-shrink: 0;
     }
@@ -229,11 +239,8 @@
     .dropzone-main {
       display: flex;
       align-items: center;
-      gap: 0.9rem;
-    }
-
-    .dropzone.compact .dropzone-main {
-      flex: 1;
+      gap: 0.85rem;
+      min-width: 0;
     }
 
     .dropzone:not(.compact) .dropzone-main {
@@ -241,23 +248,23 @@
     }
 
     .dropzone h2 {
-      font-size: 1.15rem;
+      font-size: 1.1rem;
       font-weight: 700;
-      margin-bottom: 0.3rem;
+      margin-bottom: 0.25rem;
     }
 
     .dropzone.compact h2 {
-      font-size: 0.98rem;
+      font-size: 0.94rem;
       margin-bottom: 0.1rem;
     }
 
     .dropzone p {
       color: var(--text-secondary);
-      font-size: 0.9rem;
+      font-size: 0.88rem;
     }
 
     .dropzone.compact p {
-      font-size: 0.82rem;
+      font-size: 0.8rem;
     }
 
     .format-pills {
@@ -265,30 +272,31 @@
       justify-content: center;
       flex-wrap: wrap;
       gap: 0.4rem;
-      margin-top: 1rem;
+      margin-top: 0.95rem;
     }
 
     .dropzone.compact .format-pills {
-      margin-top: 0;
+      display: none;
     }
 
     .pill {
-      font-size: 0.75rem;
+      font-size: 0.74rem;
       font-family: var(--font-mono);
-      padding: 0.2rem 0.55rem;
+      padding: 0.18rem 0.52rem;
       border-radius: var(--radius-sm);
       background: var(--bg-tertiary);
       border: 1px solid var(--border-color);
       color: var(--text-secondary);
+      white-space: nowrap;
     }
 
     /* Batch File Selector */
     .batch-bar {
-      margin-top: 1rem;
+      margin-top: 0.95rem;
       background: var(--bg-secondary);
       border: 1px solid var(--border-color);
       border-radius: var(--radius-md);
-      padding: 0.75rem 1rem;
+      padding: 0.7rem 0.95rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -299,16 +307,17 @@
     .batch-tabs {
       display: flex;
       align-items: center;
-      gap: 0.45rem;
+      gap: 0.4rem;
       flex-wrap: wrap;
       flex: 1;
+      min-width: 0;
     }
 
     .batch-tab {
       display: inline-flex;
       align-items: center;
-      gap: 0.4rem;
-      padding: 0.38rem 0.7rem;
+      gap: 0.35rem;
+      padding: 0.36rem 0.68rem;
       font-size: 0.8rem;
       font-weight: 500;
       border-radius: var(--radius-sm);
@@ -316,7 +325,7 @@
       background: var(--bg-tertiary);
       color: var(--text-secondary);
       cursor: pointer;
-      max-width: 220px;
+      max-width: 210px;
     }
 
     .batch-tab span {
@@ -333,27 +342,28 @@
 
     /* Action Bar */
     .action-bar {
-      margin-top: 1.25rem;
+      margin-top: 1rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 0.75rem;
+      gap: 0.65rem;
       flex-wrap: wrap;
     }
 
     .action-buttons {
       display: flex;
       align-items: center;
-      gap: 0.55rem;
+      gap: 0.5rem;
       flex-wrap: wrap;
     }
 
     .btn {
       display: inline-flex;
       align-items: center;
-      gap: 0.45rem;
-      padding: 0.55rem 0.95rem;
-      font-size: 0.85rem;
+      justify-content: center;
+      gap: 0.42rem;
+      padding: 0.5rem 0.88rem;
+      font-size: 0.83rem;
       font-weight: 600;
       border-radius: var(--radius-sm);
       border: 1px solid var(--border-color);
@@ -361,6 +371,7 @@
       color: var(--text-primary);
       cursor: pointer;
       transition: all 0.15s ease;
+      white-space: nowrap;
     }
 
     .btn:hover {
@@ -395,14 +406,14 @@
 
     /* Privacy Alert Banner */
     .privacy-banner {
-      margin-top: 1.25rem;
-      padding: 1rem 1.2rem;
+      margin-top: 1rem;
+      padding: 0.9rem 1.1rem;
       border-radius: var(--radius-md);
       border: 1px solid var(--border-color);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 1rem;
+      gap: 0.9rem;
       flex-wrap: wrap;
     }
 
@@ -424,19 +435,19 @@
     .privacy-info {
       display: flex;
       align-items: flex-start;
-      gap: 0.75rem;
+      gap: 0.7rem;
       flex: 1;
-      min-width: 260px;
+      min-width: 240px;
     }
 
     .privacy-title {
       font-weight: 700;
-      font-size: 0.95rem;
-      margin-bottom: 0.2rem;
+      font-size: 0.92rem;
+      margin-bottom: 0.18rem;
     }
 
     .privacy-desc {
-      font-size: 0.84rem;
+      font-size: 0.83rem;
       color: var(--text-secondary);
     }
 
@@ -448,27 +459,32 @@
     }
 
     .privacy-tag {
-      font-size: 0.74rem;
+      font-size: 0.73rem;
       font-weight: 600;
-      padding: 0.15rem 0.5rem;
+      padding: 0.14rem 0.48rem;
       border-radius: 4px;
       background: var(--bg-secondary);
       border: 1px solid var(--border-color);
       color: var(--text-primary);
     }
 
-    /* Workspace Grid */
+    /* Workspace Grid - min-width: 0 prevents grid blowout */
     .workspace-grid {
-      margin-top: 1.25rem;
+      margin-top: 1.15rem;
       display: grid;
-      grid-template-columns: 340px 1fr;
-      gap: 1.25rem;
+      grid-template-columns: 330px minmax(0, 1fr);
+      gap: 1.15rem;
       align-items: start;
+      width: 100%;
     }
 
-    @media (max-width: 920px) {
+    .workspace-grid > * {
+      min-width: 0;
+    }
+
+    @media (max-width: 900px) {
       .workspace-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
       }
     }
 
@@ -478,27 +494,31 @@
       border-radius: var(--radius-lg);
       box-shadow: var(--shadow);
       overflow: hidden;
+      min-width: 0;
+      width: 100%;
     }
 
     .card-header {
-      padding: 0.9rem 1.15rem;
+      padding: 0.85rem 1.1rem;
       border-bottom: 1px solid var(--border-color);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 0.75rem;
+      gap: 0.65rem;
+      flex-wrap: wrap;
     }
 
     .card-title {
-      font-size: 0.95rem;
+      font-size: 0.94rem;
       font-weight: 700;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.48rem;
     }
 
     .card-body {
-      padding: 1.15rem;
+      padding: 1.05rem 1.1rem;
+      min-width: 0;
     }
 
     /* Preview Panel */
@@ -512,48 +532,50 @@
       background-position: 0 0, 0 8px, 8px -8px, -8px 0;
       border: 1px solid var(--border-color);
       border-radius: var(--radius-md);
-      padding: 0.75rem;
+      padding: 0.65rem;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 210px;
-      max-height: 310px;
+      min-height: 190px;
+      max-height: 270px;
       overflow: hidden;
-      margin-bottom: 1rem;
+      margin-bottom: 0.85rem;
     }
 
     .preview-box img {
       max-width: 100%;
-      max-height: 280px;
+      max-height: 250px;
       object-fit: contain;
       border-radius: 4px;
+      display: block;
     }
 
     .readonly-note {
-      font-size: 0.78rem;
+      font-size: 0.77rem;
       color: var(--text-secondary);
       background: var(--bg-tertiary);
       border: 1px solid var(--border-color);
       border-radius: var(--radius-sm);
-      padding: 0.55rem 0.75rem;
-      margin-bottom: 1rem;
+      padding: 0.5rem 0.7rem;
+      margin-bottom: 0.9rem;
     }
 
     /* Key-Value List */
     .kv-list {
       display: flex;
       flex-direction: column;
-      gap: 0.65rem;
+      gap: 0.55rem;
     }
 
     .kv-row {
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
+      align-items: baseline;
       gap: 0.75rem;
-      padding-bottom: 0.55rem;
+      padding-bottom: 0.5rem;
       border-bottom: 1px solid var(--border-color);
-      font-size: 0.85rem;
+      font-size: 0.83rem;
+      min-width: 0;
     }
 
     .kv-row:last-child {
@@ -564,80 +586,89 @@
     .kv-label {
       color: var(--text-secondary);
       flex-shrink: 0;
+      max-width: 45%;
     }
 
     .kv-value {
       font-weight: 600;
       text-align: right;
+      overflow-wrap: anywhere;
       word-break: break-word;
       font-family: var(--font-mono);
-      font-size: 0.82rem;
+      font-size: 0.8rem;
+      min-width: 0;
+      flex: 1;
     }
 
     /* Detail Panels Stack */
     .detail-stack {
       display: flex;
       flex-direction: column;
-      gap: 1.25rem;
+      gap: 1.15rem;
+      min-width: 0;
+      width: 100%;
     }
 
     /* Camera Grid */
     .specs-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
-      gap: 0.75rem;
+      grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
+      gap: 0.7rem;
     }
 
     .spec-tile {
       background: var(--bg-tertiary);
       border: 1px solid var(--border-color);
       border-radius: var(--radius-md);
-      padding: 0.75rem 0.9rem;
+      padding: 0.7rem 0.85rem;
+      min-width: 0;
     }
 
     .spec-tile-label {
-      font-size: 0.74rem;
+      font-size: 0.72rem;
       color: var(--text-secondary);
       text-transform: uppercase;
       letter-spacing: 0.03em;
-      margin-bottom: 0.25rem;
+      margin-bottom: 0.22rem;
     }
 
     .spec-tile-value {
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       font-weight: 700;
+      overflow-wrap: anywhere;
       word-break: break-word;
     }
 
     .spec-tile-sub {
-      font-size: 0.75rem;
+      font-size: 0.74rem;
       color: var(--text-muted);
       margin-top: 0.15rem;
+      overflow-wrap: anywhere;
     }
 
     /* GPS Section */
     .gps-box {
       display: flex;
       flex-direction: column;
-      gap: 0.9rem;
+      gap: 0.85rem;
     }
 
     .gps-coords-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-      gap: 0.75rem;
+      gap: 0.7rem;
     }
 
     .gps-actions {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.6rem;
+      gap: 0.55rem;
     }
 
     .empty-state {
       color: var(--text-secondary);
-      font-size: 0.88rem;
-      padding: 0.75rem;
+      font-size: 0.85rem;
+      padding: 0.75rem 0.9rem;
       background: var(--bg-tertiary);
       border-radius: var(--radius-sm);
       border: 1px dashed var(--border-color);
@@ -647,15 +678,15 @@
     .raw-controls {
       display: flex;
       align-items: center;
-      gap: 0.6rem;
+      gap: 0.55rem;
       flex-wrap: wrap;
-      margin-bottom: 0.9rem;
+      margin-bottom: 0.85rem;
     }
 
     .search-input,
     .filter-select {
-      padding: 0.5rem 0.75rem;
-      font-size: 0.85rem;
+      padding: 0.48rem 0.72rem;
+      font-size: 0.84rem;
       border-radius: var(--radius-sm);
       border: 1px solid var(--border-color);
       background: var(--bg-tertiary);
@@ -664,7 +695,7 @@
 
     .search-input {
       flex: 1;
-      min-width: 200px;
+      min-width: 180px;
     }
 
     .search-input:focus,
@@ -674,18 +705,27 @@
     }
 
     .table-wrap {
+      width: 100%;
       overflow-x: auto;
-      max-height: 480px;
+      max-height: 460px;
       border: 1px solid var(--border-color);
       border-radius: var(--radius-md);
     }
 
     table {
       width: 100%;
+      min-width: 620px;
+      table-layout: fixed;
       border-collapse: collapse;
-      font-size: 0.83rem;
+      font-size: 0.82rem;
       text-align: left;
     }
+
+    col.col-group { width: 14%; }
+    col.col-id { width: 11%; }
+    col.col-name { width: 23%; }
+    col.col-fmt { width: 28%; }
+    col.col-raw { width: 24%; }
 
     thead {
       background: var(--bg-tertiary);
@@ -695,7 +735,7 @@
     }
 
     th {
-      padding: 0.65rem 0.85rem;
+      padding: 0.6rem 0.75rem;
       font-weight: 700;
       color: var(--text-secondary);
       border-bottom: 1px solid var(--border-color);
@@ -703,9 +743,11 @@
     }
 
     td {
-      padding: 0.6rem 0.85rem;
+      padding: 0.55rem 0.75rem;
       border-bottom: 1px solid var(--border-color);
       vertical-align: top;
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
 
     tbody tr:last-child td {
@@ -718,20 +760,19 @@
 
     .tag-group-badge {
       display: inline-block;
-      font-size: 0.72rem;
+      font-size: 0.71rem;
       font-family: var(--font-mono);
-      padding: 0.15rem 0.45rem;
+      padding: 0.14rem 0.42rem;
       border-radius: 4px;
       background: var(--accent-soft);
       color: var(--accent);
       font-weight: 600;
+      max-width: 100%;
     }
 
     .mono-cell {
       font-family: var(--font-mono);
-      font-size: 0.8rem;
-      word-break: break-word;
-      max-width: 380px;
+      font-size: 0.78rem;
     }
 
     /* Toast */
@@ -741,9 +782,9 @@
       right: 1.5rem;
       background: var(--text-primary);
       color: var(--bg-primary);
-      padding: 0.7rem 1.1rem;
+      padding: 0.68rem 1.05rem;
       border-radius: var(--radius-md);
-      font-size: 0.86rem;
+      font-size: 0.85rem;
       font-weight: 600;
       box-shadow: var(--shadow);
       opacity: 0;
@@ -764,11 +805,12 @@
 
     footer {
       text-align: center;
-      padding: 1.25rem;
-      font-size: 0.82rem;
+      padding: 1.1rem;
+      font-size: 0.8rem;
       color: var(--text-muted);
       border-top: 1px solid var(--border-color);
       background: var(--bg-secondary);
+      margin-top: auto;
     }
   </style>
 </head>
@@ -803,7 +845,7 @@
       <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,image/*" multiple class="hidden">
       <div class="dropzone-main">
         <div class="dropzone-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
         </div>
         <div>
           <h2 data-i18n="dropTitle">Jatuhkan gambar di sini, tempel (Ctrl+V), atau klik untuk memilih</h2>
@@ -811,7 +853,7 @@
         </div>
       </div>
       <div class="format-pills">
-        <span class="pill">JPEG / JPG (EXIF, XMP, JFIF)</span>
+        <span class="pill">JPEG / JPG (EXIF, GPS, XMP)</span>
         <span class="pill">PNG (IHDR, eXIf, tEXt, iTXt, pHYs)</span>
         <span class="pill">WebP (VP8/VP8L/VP8X, EXIF, XMP)</span>
       </div>
@@ -853,8 +895,8 @@
       <!-- Privacy & Cross-Tool Integration Banner -->
       <div id="privacyBanner" class="privacy-banner risk-low">
         <div class="privacy-info">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:2px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          <div>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:2px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <div style="min-width:0;flex:1;">
             <div id="privacyTitle" class="privacy-title"></div>
             <div id="privacyDesc" class="privacy-desc"></div>
             <div id="privacyTags" class="privacy-tags"></div>
@@ -872,7 +914,7 @@
         <aside class="card">
           <div class="card-header">
             <div class="card-title">
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
               <span data-i18n="cardFile">File &amp; Resolusi</span>
             </div>
           </div>
@@ -887,26 +929,13 @@
           </div>
         </aside>
 
-        <!-- Right Column: Camera, GPS, Raw Tags -->
+        <!-- Right Column: GPS, Camera, Raw Tags -->
         <div class="detail-stack">
-          <!-- Camera & Exposure Card -->
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-                <span data-i18n="cardCamera">Kamera, Lensa &amp; Eksposur</span>
-              </div>
-            </div>
-            <div class="card-body">
-              <div id="cameraGrid" class="specs-grid"></div>
-            </div>
-          </div>
-
           <!-- GPS & Location Card -->
           <div class="card">
             <div class="card-header">
               <div class="card-title">
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                 <span data-i18n="cardGps">Lokasi &amp; Koordinat GPS</span>
               </div>
             </div>
@@ -915,11 +944,24 @@
             </div>
           </div>
 
+          <!-- Camera & Exposure Card -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                <span data-i18n="cardCamera">Kamera, Lensa &amp; Eksposur</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <div id="cameraGrid" class="specs-grid"></div>
+            </div>
+          </div>
+
           <!-- Raw Tags Explorer Card -->
           <div class="card">
             <div class="card-header">
               <div class="card-title">
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
                 <span data-i18n="cardRaw">Semua Tag Metadata (Raw Explorer)</span>
               </div>
               <span id="tagCountBadge" class="pill">0 tags</span>
@@ -933,6 +975,13 @@
               </div>
               <div class="table-wrap">
                 <table>
+                  <colgroup>
+                    <col class="col-group">
+                    <col class="col-id">
+                    <col class="col-name">
+                    <col class="col-fmt">
+                    <col class="col-raw">
+                  </colgroup>
                   <thead>
                     <tr>
                       <th data-i18n="colGroup">Grup</th>
@@ -1012,6 +1061,7 @@
           camProgram: "Program Eksposur",
           camWhiteBalance: "White Balance",
           camSoftware: "Software / Firmware",
+          cameraEmpty: "Tidak ada metadata kamera atau pengaturan eksposur yang ditemukan pada gambar ini.",
           notAvailable: "Tidak tersedia",
           gpsEmpty: "Tidak ada koordinat GPS yang ditemukan dalam metadata gambar ini.",
           gpsDecimal: "Koordinat Desimal (Lat, Lon)",
@@ -1019,8 +1069,10 @@
           gpsAltitude: "Ketinggian (Altitude)",
           gpsDirection: "Arah Kompas",
           gpsTimestamp: "Waktu Satelit (UTC)",
+          gpsSource: "Sumber Tag GPS",
           openGoogleMaps: "Buka di Google Maps",
           openOsm: "Buka di OpenStreetMap",
+          copyCoords: "Salin Koordinat",
           privacyHighTitle: "Data Sensitif Terdeteksi (Lokasi GPS / Nomor Seri Perangkat)",
           privacyHighDesc: "Gambar ini menyimpan koordinat lokasi atau nomor seri perangkat yang dapat melacak tempat dan identitas perangkat Anda.",
           privacyMedTitle: "Metadata Identitas & Perangkat Terdeteksi",
@@ -1029,6 +1081,7 @@
           privacyLowDesc: "Tidak ada koordinat GPS, nomor seri kamera, atau informasi pemilik yang terdeteksi dalam file ini.",
           toastCopiedSummary: "Ringkasan metadata disalin ke clipboard.",
           toastCopiedJson: "JSON metadata disalin ke clipboard.",
+          toastCopiedCoords: "Koordinat GPS disalin ke clipboard.",
           toastDownloadedJson: "File JSON metadata berhasil diunduh.",
           toastCleared: "Sesi dibersihkan.",
           noRawTags: "Tidak ada tag metadata biner yang cocok dengan filter."
@@ -1079,6 +1132,7 @@
           camProgram: "Exposure Program",
           camWhiteBalance: "White Balance",
           camSoftware: "Software / Firmware",
+          cameraEmpty: "No camera or exposure settings metadata found in this image.",
           notAvailable: "Not available",
           gpsEmpty: "No GPS coordinates were found in this image's metadata.",
           gpsDecimal: "Decimal Coordinates (Lat, Lon)",
@@ -1086,8 +1140,10 @@
           gpsAltitude: "Altitude",
           gpsDirection: "Compass Direction",
           gpsTimestamp: "Satellite Timestamp (UTC)",
+          gpsSource: "GPS Tag Source",
           openGoogleMaps: "Open in Google Maps",
           openOsm: "Open in OpenStreetMap",
+          copyCoords: "Copy Coordinates",
           privacyHighTitle: "Sensitive Data Detected (GPS Location / Device Serial Number)",
           privacyHighDesc: "This image contains location coordinates or hardware serial numbers that can identify where and with what device it was captured.",
           privacyMedTitle: "Device & Timestamp Metadata Detected",
@@ -1096,6 +1152,7 @@
           privacyLowDesc: "No GPS coordinates, serial numbers, or personal author metadata were found in this file.",
           toastCopiedSummary: "Metadata summary copied to clipboard.",
           toastCopiedJson: "Metadata JSON copied to clipboard.",
+          toastCopiedCoords: "GPS coordinates copied to clipboard.",
           toastDownloadedJson: "Metadata JSON downloaded.",
           toastCleared: "Session cleared.",
           noRawTags: "No metadata tags match the current filter."
@@ -1361,7 +1418,6 @@
         const sliceLen = end - offset;
         if (sliceLen <= 0) return "";
 
-        // ExifVersion (0x9000), FlashpixVersion (0xA000), InteropVersion (0x0002)
         if (tagId === 0x9000 || tagId === 0xA000 || tagId === 0x0002) {
           const raw = decodeAscii(view, offset, sliceLen);
           if (/^\d{4}$/.test(raw)) {
@@ -1370,7 +1426,6 @@
           return raw;
         }
 
-        // ComponentsConfiguration (0x9101)
         if (tagId === 0x9101 && sliceLen >= 4) {
           const map = { 0: "-", 1: "Y", 2: "Cb", 3: "Cr", 4: "R", 5: "G", 6: "B" };
           const parts = [];
@@ -1380,7 +1435,6 @@
           return parts.join(" ");
         }
 
-        // UserComment (0x9286)
         if (tagId === 0x9286 && sliceLen > 8) {
           const prefix = decodeAscii(view, offset, 8);
           if (prefix.startsWith("ASCII")) {
@@ -1391,7 +1445,6 @@
           }
         }
 
-        // Printable text check
         let printable = 0;
         const inspectLen = Math.min(sliceLen, 128);
         for (let i = 0; i < inspectLen; i++) {
@@ -1421,7 +1474,6 @@
           return null;
         }
 
-        // Windows XP UTF-16LE tags
         if ((tagId >= 0x9C9B && tagId <= 0x9C9F) && type === 1) {
           return decodeUtf16Le(view, valueOffset, totalBytes);
         }
@@ -1514,8 +1566,13 @@
           return (rawVal >= 0 ? "+" : "") + Number(rawVal.toFixed(2)) + " EV";
         }
 
-        if (group === "GPSIFD" && (tagId === 0x0002 || tagId === 0x0004) && Array.isArray(rawVal) && rawVal.length >= 3) {
-          return rawVal[0] + " deg " + rawVal[1] + "' " + Number(rawVal[2]).toFixed(2) + '"';
+        if (group === "GPSIFD" && (tagId === 0x0002 || tagId === 0x0004) && Array.isArray(rawVal)) {
+          if (rawVal.length >= 3) {
+            return rawVal[0] + " deg " + rawVal[1] + "' " + Number(rawVal[2]).toFixed(2) + '"';
+          }
+          if (rawVal.length === 2) {
+            return rawVal[0] + " deg " + Number(rawVal[1]).toFixed(4) + "'";
+          }
         }
 
         if (group === "GPSIFD" && tagId === 0x0006 && typeof rawVal === "number") {
@@ -1540,21 +1597,27 @@
         return String(rawVal);
       }
 
-      function parseTiffExif(view, tiffStart, result) {
-        if (tiffStart + 8 > view.byteLength) return;
+      /* Locate exact TIFF header signature (II*\0 or MM\0*) within EXIF payload */
+      function findTiffStart(view, startOffset, maxScan) {
+        const limit = Math.min(view.byteLength - 8, startOffset + (maxScan || 24));
+        for (let pos = startOffset; pos <= limit; pos++) {
+          const byteOrder = view.getUint16(pos, false);
+          if (byteOrder === 0x4949 && view.getUint16(pos + 2, true) === 42) {
+            return pos;
+          }
+          if (byteOrder === 0x4D4D && view.getUint16(pos + 2, false) === 42) {
+            return pos;
+          }
+        }
+        return -1;
+      }
+
+      function parseTiffExif(view, payloadStart, result) {
+        const tiffStart = findTiffStart(view, payloadStart, 24);
+        if (tiffStart < 0) return;
 
         const endianTag = view.getUint16(tiffStart, false);
-        let littleEndian;
-        if (endianTag === 0x4949) {
-          littleEndian = true;
-        } else if (endianTag === 0x4D4D) {
-          littleEndian = false;
-        } else {
-          return;
-        }
-
-        const magic = view.getUint16(tiffStart + 2, littleEndian);
-        if (magic !== 42) return;
+        const littleEndian = (endianTag === 0x4949);
 
         const firstIfdOffset = view.getUint32(tiffStart + 4, littleEndian);
         const visited = new Set();
@@ -1579,16 +1642,20 @@
             const type = view.getUint16(entryOffset + 2, littleEndian);
             const count = view.getUint32(entryOffset + 4, littleEndian);
 
+            /* Read pointer tags via readTagValue so SHORT (type 3) in Big-Endian works accurately */
             if (tagId === 0x8769) {
-              exifPointer = view.getUint32(entryOffset + 8, littleEndian);
+              const ptr = readTagValue(view, tiffStart, entryOffset, tagId, type, count, littleEndian);
+              if (typeof ptr === "number") exifPointer = ptr;
               continue;
             }
             if (tagId === 0x8825) {
-              gpsPointer = view.getUint32(entryOffset + 8, littleEndian);
+              const ptr = readTagValue(view, tiffStart, entryOffset, tagId, type, count, littleEndian);
+              if (typeof ptr === "number") gpsPointer = ptr;
               continue;
             }
             if (tagId === 0xA005) {
-              interopPointer = view.getUint32(entryOffset + 8, littleEndian);
+              const ptr = readTagValue(view, tiffStart, entryOffset, tagId, type, count, littleEndian);
+              if (typeof ptr === "number") interopPointer = ptr;
               continue;
             }
 
@@ -1643,10 +1710,32 @@
           for (let i = 0; i < allNodes.length; i++) {
             const node = allNodes[i];
             const name = node.nodeName || "";
+
+            /* Also check attributes on rdf:Description (many editors write exif:GPSLatitude as XML attribute) */
+            if (node.attributes) {
+              for (let a = 0; a < node.attributes.length; a++) {
+                const attr = node.attributes[a];
+                const attrName = attr.name || "";
+                if (interestedPrefixes.some(function (p) { return attrName.startsWith(p); })) {
+                  const attrVal = (attr.value || "").trim();
+                  if (attrVal && !result.kv[attrName]) {
+                    result.tags.push({
+                      group: "XMP",
+                      tagIdHex: "-",
+                      name: attrName,
+                      formatted: attrVal,
+                      raw: attrVal
+                    });
+                    result.kv[attrName] = attrVal;
+                    result.kvFormatted[attrName] = attrVal;
+                  }
+                }
+              }
+            }
+
             const isTarget = interestedPrefixes.some(function (p) { return name.startsWith(p); });
             if (!isTarget) continue;
 
-            // Collect leaf text or rdf:li items
             let textVal = "";
             if (node.children.length === 0) {
               textVal = (node.textContent || "").trim();
@@ -1681,6 +1770,18 @@
         }
       }
 
+      /* Parse ImageMagick / GIMP hex-encoded EXIF text profile inside PNG */
+      function parsePngRawExifProfile(hexText, result) {
+        const cleaned = hexText.replace(/^\s*exif\s*\d+\s*/i, "").replace(/[^0-9a-fA-F]/g, "");
+        if (cleaned.length < 16) return;
+        const byteLen = Math.floor(cleaned.length / 2);
+        const bytes = new Uint8Array(byteLen);
+        for (let i = 0; i < byteLen; i++) {
+          bytes[i] = parseInt(cleaned.substr(i * 2, 2), 16);
+        }
+        parseTiffExif(new DataView(bytes.buffer), 0, result);
+      }
+
       function parseJpeg(view, result) {
         result.container = "JPEG (JFIF / EXIF)";
         let offset = 2;
@@ -1696,8 +1797,8 @@
           if (offset >= view.byteLength) break;
 
           const marker = view.getUint8(offset++);
-          if (marker === 0xD9 || marker === 0xDA) break; // EOI or SOS
-          if (marker === 0x01 || (marker >= 0xD0 && marker <= 0xD7)) continue;
+          if (marker === 0xD9 || marker === 0xDA) break;
+          if (marker === 0x00 || marker === 0x01 || marker === 0xD8 || (marker >= 0xD0 && marker <= 0xD7)) continue;
 
           if (offset + 2 > view.byteLength) break;
           const segLen = view.getUint16(offset, false);
@@ -1706,7 +1807,6 @@
           const dataStart = offset + 2;
           const dataLen = segLen - 2;
 
-          // APP1 (EXIF or XMP)
           if (marker === 0xE1 && dataLen > 6) {
             const header6 = decodeAscii(view, dataStart, 6);
             if (header6 === "Exif") {
@@ -1720,7 +1820,6 @@
             }
           }
 
-          // SOF0, SOF1, SOF2 (Frame Header for exact pixel dimensions & bit depth)
           if ((marker === 0xC0 || marker === 0xC1 || marker === 0xC2) && dataLen >= 6) {
             const bitDepth = view.getUint8(dataStart);
             const height = view.getUint16(dataStart + 1, false);
@@ -1732,7 +1831,6 @@
             result.colorSummary = bitDepth + "-bit " + compName;
           }
 
-          // COM (JPEG Comment)
           if (marker === 0xFE && dataLen > 0) {
             const comment = decodeAscii(view, dataStart, dataLen);
             if (comment) {
@@ -1815,6 +1913,8 @@
               const val = decodeAscii(view, dataStart + nullPos + 1, chunkLen - nullPos - 1);
               if (key === "XML:com.adobe.xmp") {
                 parseXmpXml(val, result);
+              } else if (key.toLowerCase() === "raw profile type exif") {
+                parsePngRawExifProfile(val, result);
               } else if (val) {
                 result.tags.push({ group: "PNG-Text", tagIdHex: "tEXt", name: key, formatted: val, raw: val });
                 result.kv[key] = val;
@@ -1831,10 +1931,10 @@
 
             if (cursor + 2 <= end) {
               const compFlag = view.getUint8(cursor);
-              cursor += 2; // skip compFlag + compMethod
-              while (cursor < end && view.getUint8(cursor) !== 0) cursor++; // langTag
+              cursor += 2;
+              while (cursor < end && view.getUint8(cursor) !== 0) cursor++;
               cursor++;
-              while (cursor < end && view.getUint8(cursor) !== 0) cursor++; // translatedKey
+              while (cursor < end && view.getUint8(cursor) !== 0) cursor++;
               cursor++;
 
               if (compFlag === 0 && cursor < end) {
@@ -1889,12 +1989,7 @@
               result.colorSummary = "8-bit RGBA (Lossless)";
             }
           } else if (fourCC === "EXIF" && chunkSize >= 8) {
-            const maybeHeader = decodeAscii(view, dataStart, 6);
-            if (maybeHeader === "Exif") {
-              parseTiffExif(view, dataStart + 6, result);
-            } else {
-              parseTiffExif(view, dataStart, result);
-            }
+            parseTiffExif(view, dataStart, result);
           } else if (fourCC === "XMP " && chunkSize > 0) {
             const xmpStr = decodeAscii(view, dataStart, chunkSize);
             parseXmpXml(xmpStr, result);
@@ -1904,42 +1999,112 @@
         }
       }
 
-      function computeGpsInfo(kv) {
-        const latArr = kv.GPSLatitude;
-        const latRef = kv.GPSLatitudeRef;
-        const lonArr = kv.GPSLongitude;
-        const lonRef = kv.GPSLongitudeRef;
+      /* Normalize Ref value whether string ("S") or ASCII byte code (83) */
+      function normalizeRef(refVal) {
+        if (typeof refVal === "number") {
+          return String.fromCharCode(refVal).toUpperCase();
+        }
+        return String(refVal || "").trim().toUpperCase();
+      }
 
-        if (!Array.isArray(latArr) || latArr.length < 3 || !Array.isArray(lonArr) || lonArr.length < 3) {
+      /* Parse XMP GPS string formats like "1,8.4521N", "1,8,27.12N", or "-6.2088" */
+      function parseXmpGpsCoord(str) {
+        if (!str) return null;
+        const s = String(str).trim();
+        const dirMatch = s.match(/([NSEW])$/i);
+        const dir = dirMatch ? dirMatch[1].toUpperCase() : "";
+        const numPart = dir ? s.slice(0, -1).trim() : s;
+
+        if (numPart.includes(",")) {
+          const parts = numPart.split(",").map(Number);
+          if (parts.some(function (n) { return !Number.isFinite(n); })) return null;
+          let deg = Math.abs(parts[0] || 0) + (parts[1] || 0) / 60 + (parts[2] || 0) / 3600;
+          if (parts[0] < 0 || dir === "S" || dir === "W") deg = -Math.abs(deg);
+          return deg;
+        }
+
+        const val = Number(numPart);
+        if (!Number.isFinite(val)) return null;
+        if (dir === "S" || dir === "W") return -Math.abs(val);
+        return val;
+      }
+
+      function decimalToDms(val, posChar, negChar) {
+        const dir = val < 0 ? negChar : posChar;
+        const abs = Math.abs(val);
+        const deg = Math.floor(abs);
+        const minFloat = (abs - deg) * 60;
+        const min = Math.floor(minFloat);
+        const sec = (minFloat - min) * 60;
+        return deg + " deg " + min + "' " + sec.toFixed(2) + '" ' + dir;
+      }
+
+      function computeGpsInfo(kv) {
+        let lat = null;
+        let lon = null;
+        let sourceLabel = "EXIF GPSIFD";
+
+        const latRaw = kv.GPSLatitude;
+        const lonRaw = kv.GPSLongitude;
+        const latRef = normalizeRef(kv.GPSLatitudeRef);
+        const lonRef = normalizeRef(kv.GPSLongitudeRef);
+
+        if (latRaw !== undefined && lonRaw !== undefined) {
+          if (Array.isArray(latRaw)) {
+            const d = Number(latRaw[0] || 0);
+            const m = Number(latRaw[1] || 0);
+            const s = Number(latRaw[2] || 0);
+            lat = Math.abs(d) + m / 60 + s / 3600;
+            if (d < 0 || latRef.startsWith("S")) lat = -Math.abs(lat);
+          } else if (typeof latRaw === "number") {
+            lat = latRef.startsWith("S") ? -Math.abs(latRaw) : latRaw;
+          }
+
+          if (Array.isArray(lonRaw)) {
+            const d = Number(lonRaw[0] || 0);
+            const m = Number(lonRaw[1] || 0);
+            const s = Number(lonRaw[2] || 0);
+            lon = Math.abs(d) + m / 60 + s / 3600;
+            if (d < 0 || lonRef.startsWith("W")) lon = -Math.abs(lon);
+          } else if (typeof lonRaw === "number") {
+            lon = lonRef.startsWith("W") ? -Math.abs(lonRaw) : lonRaw;
+          }
+        } else if (kv["exif:GPSLatitude"] && kv["exif:GPSLongitude"]) {
+          lat = parseXmpGpsCoord(kv["exif:GPSLatitude"]);
+          lon = parseXmpGpsCoord(kv["exif:GPSLongitude"]);
+          sourceLabel = "XMP Metadata";
+        }
+
+        if (lat === null || lon === null || !Number.isFinite(lat) || !Number.isFinite(lon)) {
           return null;
         }
 
-        let lat = Number(latArr[0]) + Number(latArr[1]) / 60 + Number(latArr[2]) / 3600;
-        let lon = Number(lonArr[0]) + Number(lonArr[1]) / 60 + Number(lonArr[2]) / 3600;
+        if (Math.abs(lat) > 90 || Math.abs(lon) > 180) {
+          return null;
+        }
 
-        if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
-
-        if (String(latRef).toUpperCase().startsWith("S")) lat = -Math.abs(lat);
-        if (String(lonRef).toUpperCase().startsWith("W")) lon = -Math.abs(lon);
-
-        const latDir = lat < 0 ? "S" : "N";
-        const lonDir = lon < 0 ? "W" : "E";
-
-        const dmsStr =
-          Math.abs(latArr[0]) + "° " + Math.abs(latArr[1]) + "' " + Number(Math.abs(latArr[2])).toFixed(2) + '" ' + latDir + ", " +
-          Math.abs(lonArr[0]) + "° " + Math.abs(lonArr[1]) + "' " + Number(Math.abs(lonArr[2])).toFixed(2) + '" ' + lonDir;
+        const dmsStr = decimalToDms(lat, "N", "S") + ", " + decimalToDms(lon, "E", "W");
 
         let altitude = null;
         if (typeof kv.GPSAltitude === "number") {
-          const belowSea = kv.GPSAltitudeRef === 1;
+          const belowSea = Number(kv.GPSAltitudeRef) === 1;
           const altVal = belowSea ? -Math.abs(kv.GPSAltitude) : kv.GPSAltitude;
           altitude = Number(altVal.toFixed(1)) + " m";
+        } else if (kv["exif:GPSAltitude"]) {
+          const parts = String(kv["exif:GPSAltitude"]).split("/");
+          const altNum = parts.length === 2 && Number(parts[1]) !== 0
+            ? Number(parts[0]) / Number(parts[1])
+            : Number(parts[0]);
+          if (Number.isFinite(altNum)) {
+            const belowSea = Number(kv["exif:GPSAltitudeRef"]) === 1;
+            altitude = Number((belowSea ? -Math.abs(altNum) : altNum).toFixed(1)) + " m";
+          }
         }
 
         let direction = null;
         if (typeof kv.GPSImgDirection === "number") {
-          const dirRef = kv.GPSImgDirectionRef === "M" ? "Magnetic" : "True North";
-          direction = Number(kv.GPSImgDirection.toFixed(1)) + "° (" + dirRef + ")";
+          const dirRef = normalizeRef(kv.GPSImgDirectionRef) === "M" ? "Magnetic" : "True North";
+          direction = Number(kv.GPSImgDirection.toFixed(1)) + " deg (" + dirRef + ")";
         }
 
         let timestamp = null;
@@ -1964,6 +2129,7 @@
           altitude: altitude,
           direction: direction,
           timestamp: timestamp,
+          source: sourceLabel,
           googleMapsUrl: "https://www.google.com/maps?q=" + latFixed + "," + lonFixed,
           osmUrl: "https://www.openstreetmap.org/?mlat=" + latFixed + "&mlon=" + lonFixed + "#map=17/" + latFixed + "/" + lonFixed
         };
@@ -1973,7 +2139,7 @@
         const highItems = [];
         const medItems = [];
 
-        if (gpsInfo) highItems.push("GPS Coordinates (" + gpsInfo.decimalStr + ")");
+        if (gpsInfo) highItems.push("GPS (" + gpsInfo.decimalStr + ")");
         if (kv.BodySerialNumber) highItems.push("BodySerialNumber");
         if (kv.CameraSerialNumber) highItems.push("CameraSerialNumber");
         if (kv.LensSerialNumber) highItems.push("LensSerialNumber");
@@ -2027,7 +2193,6 @@
           objectUrl: URL.createObjectURL(file)
         };
 
-        // Magic byte detection
         if (view.byteLength >= 2 && view.getUint16(0, false) === 0xFFD8) {
           parseJpeg(view, result);
         } else if (
@@ -2046,7 +2211,6 @@
           result.container = file.type || "Generic Image";
         }
 
-        // Compute DPI from EXIF if not already set from PNG pHYs
         if (!result.dpiSummary && result.kv.XResolution && result.kv.YResolution) {
           const unit = result.kv.ResolutionUnit === 3 ? "DPCM" : "DPI";
           result.dpiSummary = Math.round(result.kv.XResolution) + " x " + Math.round(result.kv.YResolution) + " " + unit;
@@ -2249,7 +2413,6 @@
         el.dropzone.classList.add("compact");
         el.inspectorSection.classList.remove("hidden");
 
-        // 1. Preview & File Info
         el.imagePreview.onload = function () {
           rec.naturalWidth = el.imagePreview.naturalWidth;
           rec.naturalHeight = el.imagePreview.naturalHeight;
@@ -2258,16 +2421,9 @@
         el.imagePreview.src = rec.objectUrl;
         renderFileMetadataList(rec);
 
-        // 2. Privacy Banner
         renderPrivacyBanner(rec);
-
-        // 3. Camera & Exposure
-        renderCameraGrid(rec);
-
-        // 4. GPS Section
         renderGpsSection(rec);
-
-        // 5. Raw Tags Explorer
+        renderCameraGrid(rec);
         populateGroupFilter(rec);
         renderRawTable(rec);
       }
@@ -2321,46 +2477,6 @@
         });
       }
 
-      function renderCameraGrid(rec) {
-        clearChildren(el.cameraGrid);
-        const kv = rec.kv;
-        const kvf = rec.kvFormatted;
-
-        const make = kv.Make ? String(kv.Make).trim() : "";
-        const model = kv.Model ? String(kv.Model).trim() : "";
-        let deviceName = "";
-        if (make && model) {
-          deviceName = model.toLowerCase().startsWith(make.toLowerCase()) ? model : (make + " " + model);
-        } else {
-          deviceName = model || make || t("notAvailable");
-        }
-
-        const lens = kv.LensModel || kv["aux:Lens"] || t("notAvailable");
-        const lensSub = kv.LensMake || "";
-
-        const captureDate = kv.DateTimeOriginal || kv.DateTime || kv["xmp:CreateDate"] || t("notAvailable");
-        const offsetSub = kv.OffsetTimeOriginal || kv.OffsetTime || "";
-
-        const focal = kvf.FocalLength || t("notAvailable");
-        const focal35 = kvf.FocalLengthIn35mmFilm || "";
-
-        const iso = kv.ISOSpeedRatings ? ("ISO " + kv.ISOSpeedRatings) : t("notAvailable");
-        const software = kv.Software || kv["xmp:CreatorTool"] || t("notAvailable");
-
-        el.cameraGrid.appendChild(createSpecTile(t("camDevice"), deviceName, kv.BodySerialNumber ? "S/N: " + kv.BodySerialNumber : ""));
-        el.cameraGrid.appendChild(createSpecTile(t("camLens"), lens, lensSub));
-        el.cameraGrid.appendChild(createSpecTile(t("camCaptureDate"), captureDate, offsetSub));
-        el.cameraGrid.appendChild(createSpecTile(t("camExposure"), kvf.ExposureTime || t("notAvailable"), kvf.ExposureBiasValue || ""));
-        el.cameraGrid.appendChild(createSpecTile(t("camAperture"), kvf.FNumber || t("notAvailable"), ""));
-        el.cameraGrid.appendChild(createSpecTile(t("camIso"), iso, ""));
-        el.cameraGrid.appendChild(createSpecTile(t("camFocal"), focal, focal35));
-        el.cameraGrid.appendChild(createSpecTile(t("camFlash"), kvf.Flash || t("notAvailable"), ""));
-        el.cameraGrid.appendChild(createSpecTile(t("camMetering"), kvf.MeteringMode || t("notAvailable"), ""));
-        el.cameraGrid.appendChild(createSpecTile(t("camProgram"), kvf.ExposureProgram || t("notAvailable"), ""));
-        el.cameraGrid.appendChild(createSpecTile(t("camWhiteBalance"), kvf.WhiteBalance || t("notAvailable"), ""));
-        el.cameraGrid.appendChild(createSpecTile(t("camSoftware"), software, ""));
-      }
-
       function renderGpsSection(rec) {
         clearChildren(el.gpsContainer);
         if (!rec.gps) {
@@ -2377,10 +2493,18 @@
 
         const grid = document.createElement("div");
         grid.className = "gps-coords-grid";
-        grid.appendChild(createSpecTile(t("gpsDecimal"), g.decimalStr, ""));
+        grid.appendChild(createSpecTile(t("gpsDecimal"), g.decimalStr, g.source));
         grid.appendChild(createSpecTile(t("gpsDms"), g.dmsStr, ""));
-        grid.appendChild(createSpecTile(t("gpsAltitude"), g.altitude || t("notAvailable"), ""));
-        grid.appendChild(createSpecTile(t("gpsDirection"), g.direction || t("notAvailable"), g.timestamp || ""));
+        if (g.altitude) {
+          grid.appendChild(createSpecTile(t("gpsAltitude"), g.altitude, ""));
+        }
+        if (g.direction || g.timestamp) {
+          grid.appendChild(createSpecTile(
+            g.direction ? t("gpsDirection") : t("gpsTimestamp"),
+            g.direction || g.timestamp,
+            g.direction && g.timestamp ? g.timestamp : ""
+          ));
+        }
 
         const actions = document.createElement("div");
         actions.className = "gps-actions";
@@ -2399,12 +2523,67 @@
         osmLink.className = "btn";
         osmLink.textContent = t("openOsm");
 
+        const copyBtn = document.createElement("button");
+        copyBtn.type = "button";
+        copyBtn.className = "btn";
+        copyBtn.textContent = t("copyCoords");
+        copyBtn.addEventListener("click", function () {
+          copyTextToClipboard(g.decimalStr, t("toastCopiedCoords"));
+        });
+
         actions.appendChild(gmapLink);
         actions.appendChild(osmLink);
+        actions.appendChild(copyBtn);
 
         box.appendChild(grid);
         box.appendChild(actions);
         el.gpsContainer.appendChild(box);
+      }
+
+      function renderCameraGrid(rec) {
+        clearChildren(el.cameraGrid);
+        const kv = rec.kv;
+        const kvf = rec.kvFormatted;
+
+        const make = kv.Make ? String(kv.Make).trim() : "";
+        const model = kv.Model ? String(kv.Model).trim() : "";
+        let deviceName = "";
+        if (make && model) {
+          deviceName = model.toLowerCase().startsWith(make.toLowerCase()) ? model : (make + " " + model);
+        } else {
+          deviceName = model || make || "";
+        }
+
+        const tiles = [];
+        if (deviceName) tiles.push(createSpecTile(t("camDevice"), deviceName, kv.BodySerialNumber ? "S/N: " + kv.BodySerialNumber : ""));
+        const lens = kv.LensModel || kv["aux:Lens"] || "";
+        if (lens) tiles.push(createSpecTile(t("camLens"), lens, kv.LensMake || ""));
+        const captureDate = kv.DateTimeOriginal || kv.DateTime || kv["xmp:CreateDate"] || "";
+        if (captureDate) tiles.push(createSpecTile(t("camCaptureDate"), captureDate, kv.OffsetTimeOriginal || kv.OffsetTime || ""));
+        if (kvf.ExposureTime) tiles.push(createSpecTile(t("camExposure"), kvf.ExposureTime, kvf.ExposureBiasValue || ""));
+        if (kvf.FNumber) tiles.push(createSpecTile(t("camAperture"), kvf.FNumber, ""));
+        if (kv.ISOSpeedRatings) tiles.push(createSpecTile(t("camIso"), "ISO " + kv.ISOSpeedRatings, ""));
+        if (kvf.FocalLength) tiles.push(createSpecTile(t("camFocal"), kvf.FocalLength, kvf.FocalLengthIn35mmFilm || ""));
+        if (kvf.Flash) tiles.push(createSpecTile(t("camFlash"), kvf.Flash, ""));
+        if (kvf.MeteringMode) tiles.push(createSpecTile(t("camMetering"), kvf.MeteringMode, ""));
+        if (kvf.ExposureProgram) tiles.push(createSpecTile(t("camProgram"), kvf.ExposureProgram, ""));
+        if (kvf.WhiteBalance) tiles.push(createSpecTile(t("camWhiteBalance"), kvf.WhiteBalance, ""));
+        const software = kv.Software || kv["xmp:CreatorTool"] || "";
+        if (software) tiles.push(createSpecTile(t("camSoftware"), software, ""));
+
+        if (tiles.length === 0) {
+          el.cameraGrid.style.display = "block";
+          const empty = document.createElement("div");
+          empty.className = "empty-state";
+          empty.textContent = t("cameraEmpty");
+          el.cameraGrid.appendChild(empty);
+          return;
+        }
+
+        el.cameraGrid.style.display = "grid";
+        tiles.forEach(function (tile) {
+          el.cameraGrid.appendChild(tile);
+        });
       }
 
       function populateGroupFilter(rec) {
@@ -2427,6 +2606,12 @@
         if (groups.includes(currentVal)) {
           el.tagGroupFilter.value = currentVal;
         }
+      }
+
+      function truncateCellText(val, maxLen) {
+        const str = Array.isArray(val) ? JSON.stringify(val) : String(val);
+        if (str.length <= maxLen) return str;
+        return str.slice(0, maxLen) + "... (" + str.length + " chars)";
       }
 
       function renderRawTable(rec) {
@@ -2453,7 +2638,7 @@
           td.colSpan = 5;
           td.style.textAlign = "center";
           td.style.color = "var(--text-secondary)";
-          td.style.padding = "1.25rem";
+          td.style.padding = "1.1rem";
           td.textContent = t("noRawTags");
           tr.appendChild(td);
           el.rawTagsBody.appendChild(tr);
@@ -2479,12 +2664,12 @@
 
           const tdFmt = document.createElement("td");
           tdFmt.className = "mono-cell";
-          tdFmt.textContent = tag.formatted;
+          tdFmt.textContent = truncateCellText(tag.formatted, 220);
 
           const tdRaw = document.createElement("td");
           tdRaw.className = "mono-cell";
           tdRaw.style.color = "var(--text-secondary)";
-          tdRaw.textContent = Array.isArray(tag.raw) ? JSON.stringify(tag.raw) : String(tag.raw);
+          tdRaw.textContent = truncateCellText(tag.raw, 180);
 
           tr.appendChild(tdGroup);
           tr.appendChild(tdId);
@@ -2721,7 +2906,6 @@
         applyTheme();
       });
 
-      // Initialize UI preferences
       applyTheme();
       applyLanguage();
     })();
