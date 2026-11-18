@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="UtilitiBox - Kumpulan alat utilitas web praktis untuk keamanan kata sandi, token acak, hash file, konversi dan perbesaran gambar, penggabungan foto, pengelolaan metadata, serta pembuat dan pemindai kode QR.">
+  <meta name="description" content="UtilitiBox - Kumpulan alat utilitas web praktis untuk keamanan kata sandi, token acak, hash file, konversi, perbesaran, pemotongan dan penggabungan gambar, pengelolaan metadata, serta pembuat dan pemindai kode QR.">
   <meta name="theme-color" content="#0f172a">
   <title>UtilitiBox - Kumpulan Alat Utilitas Web Praktis</title>
   <link rel="canonical" href="https://utilitibox.github.io/">
@@ -230,7 +230,7 @@
     }
 
     .hero p {
-      max-width: 660px;
+      max-width: 670px;
       margin: 0 auto 28px;
       color: var(--text-secondary);
       font-size: 1.02rem;
@@ -611,7 +611,7 @@
     <section class="hero">
       <div class="hero-badge" id="heroBadge">Utilitas Web Cepat & Praktis</div>
       <h1 id="heroTitle">Satu Tempat untuk Alat Digital Harian Anda</h1>
-      <p id="heroSubtitle">Akses kumpulan utilitas web ringan untuk keamanan kata sandi, token kriptografi, verifikasi hash file, konversi dan perbesaran gambar, pengelolaan metadata, hingga pembuat dan pemindai kode QR langsung dari browser.</p>
+      <p id="heroSubtitle">Akses kumpulan utilitas web ringan untuk keamanan kata sandi, token kriptografi, verifikasi hash file, pengolahan gambar lengkap, inspeksi dan pengelolaan metadata, hingga pembuat dan pemindai kode QR langsung dari browser.</p>
     </section>
 
     <section aria-label="Daftar Utilitas">
@@ -621,7 +621,7 @@
             <circle cx="11" cy="11" r="8"></circle>
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
-          <input type="search" id="searchInput" class="search-input" placeholder="Cari alat (misal: password, gambar, WebP, upscale, QR)..." autocomplete="off">
+          <input type="search" id="searchInput" class="search-input" placeholder="Cari alat (misal: password, split, EXIF, WebP, QR)..." autocomplete="off">
           <span class="kbd-hint" aria-hidden="true">/</span>
         </div>
 
@@ -635,7 +635,7 @@
       </div>
 
       <div class="status-bar">
-        <span id="toolsCount">Menampilkan 10 dari 10 alat</span>
+        <span id="toolsCount">Menampilkan 12 dari 12 alat</span>
       </div>
 
       <div class="tools-grid" id="toolsGrid"></div>
@@ -656,9 +656,9 @@
 
   <script>
     (function () {
-      // Konfigurasi terpusat seluruh 10 tools UtilitiBox dikelompokkan berdasarkan kategori fungsional
+      // Konfigurasi terpusat seluruh 12 tools UtilitiBox dikelompokkan berdasarkan alur kerja
       const TOOLS_DATA = [
-        // 1. Kelompok Keamanan & Kriptografi
+        // 1. Kelompok Keamanan & Kriptografi (3 alat)
         {
           id: 'pass-generator',
           url: './pass-generator/',
@@ -708,7 +708,7 @@
           }
         },
 
-        // 2. Kelompok Pengolahan Gambar
+        // 2. Kelompok Pengolahan Gambar (4 alat)
         {
           id: 'image-converter',
           url: './image-converter/',
@@ -742,6 +742,22 @@
           }
         },
         {
+          id: 'image-splitter',
+          url: './image-splitter/',
+          slugDisplay: '/image-splitter/',
+          category: 'image',
+          tags: ['image', 'gambar', 'split', 'splitter', 'potong', 'bagi', 'grid', 'instagram', 'slice', 'zip', 'kolom', 'baris'],
+          icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line><line x1="15" y1="3" x2="15" y2="21"></line><line x1="3" y1="9" x2="21" y2="9"></line><line x1="3" y1="15" x2="21" y2="15"></line></svg>',
+          title: {
+            id: 'Image Splitter',
+            en: 'Image Splitter'
+          },
+          description: {
+            id: 'Potong dan bagi gambar menjadi beberapa bagian berdasarkan baris dan kolom, ukuran piksel khusus, atau preset grid Instagram (3x3, 3x4, 3x2) dengan ekspor ZIP.',
+            en: 'Split images into multiple tiles by rows and columns, custom pixel dimensions, or Instagram grid presets (3x3, 3x4, 3x2) with bulk ZIP export.'
+          }
+        },
+        {
           id: 'image-merger',
           url: './Image-Merger-Utility/',
           slugDisplay: '/Image-Merger-Utility/',
@@ -758,7 +774,23 @@
           }
         },
 
-        // 3. Kelompok Manajemen Metadata Gambar
+        // 3. Kelompok Manajemen Metadata Gambar (3 alat)
+        {
+          id: 'image-metadata-viewer',
+          url: './image-metadata-viewer/',
+          slugDisplay: '/image-metadata-viewer/',
+          category: 'metadata',
+          tags: ['exif', 'metadata', 'viewer', 'lihat', 'baca', 'inspeksi', 'gps', 'kamera', 'camera', 'resolusi', 'foto', 'image'],
+          icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>',
+          title: {
+            id: 'Image Metadata Viewer',
+            en: 'Image Metadata Viewer'
+          },
+          description: {
+            id: 'Periksa dan baca data EXIF, lokasi GPS, informasi kamera, tanggal pengambilan, dan resolusi gambar secara read-only tanpa mengubah file asli.',
+            en: 'Inspect and read EXIF tags, GPS coordinates, camera details, capture dates, and image resolution read-only without modifying your files.'
+          }
+        },
         {
           id: 'metadata-remover',
           url: './metadata-remover/',
@@ -792,7 +824,7 @@
           }
         },
 
-        // 4. Kelompok Ekosistem Kode QR
+        // 4. Kelompok Ekosistem Kode QR (2 alat)
         {
           id: 'qr-generator',
           url: './qr-generator/',
@@ -831,11 +863,11 @@
       const UI_TEXT = {
         id: {
           pageTitle: 'UtilitiBox - Kumpulan Alat Utilitas Web Praktis',
-          metaDesc: 'UtilitiBox - Kumpulan alat utilitas web praktis untuk keamanan kata sandi, token acak, hash file, konversi dan perbesaran gambar, penggabungan foto, pengelolaan metadata, serta pembuat dan pemindai kode QR.',
+          metaDesc: 'UtilitiBox - Kumpulan alat utilitas web praktis untuk keamanan kata sandi, token acak, hash file, pengolahan gambar lengkap, inspeksi dan pengelolaan metadata, serta pembuat dan pemindai kode QR.',
           heroBadge: 'Utilitas Web Cepat & Praktis',
           heroTitle: 'Satu Tempat untuk Alat Digital Harian Anda',
-          heroSubtitle: 'Akses kumpulan utilitas web ringan untuk keamanan kata sandi, token kriptografi, verifikasi hash file, konversi dan perbesaran gambar, pengelolaan metadata, hingga pembuat dan pemindai kode QR langsung dari browser.',
-          searchPlaceholder: 'Cari alat (misal: password, gambar, WebP, upscale, QR)...',
+          heroSubtitle: 'Akses kumpulan utilitas web ringan untuk keamanan kata sandi, token kriptografi, verifikasi hash file, pengolahan gambar, inspeksi dan pengelolaan metadata, hingga pembuat dan pemindai kode QR langsung dari browser.',
+          searchPlaceholder: 'Cari alat (misal: password, split, EXIF, WebP, QR)...',
           filterAll: 'Semua',
           filterSecurity: 'Keamanan',
           filterImage: 'Gambar',
@@ -860,11 +892,11 @@
         },
         en: {
           pageTitle: 'UtilitiBox - Practical Web Utility Tools Collection',
-          metaDesc: 'UtilitiBox - A collection of practical web utilities for password security, random tokens, file hashing, image conversion and upscaling, photo merging, metadata management, and QR code tools.',
+          metaDesc: 'UtilitiBox - A collection of practical web utilities for password security, random tokens, file hashing, image processing, metadata inspection and management, and QR code tools.',
           heroBadge: 'Fast & Practical Web Utilities',
           heroTitle: 'One Place for Your Daily Digital Tools',
-          heroSubtitle: 'Access lightweight browser utilities for password security, cryptographic tokens, file hash verification, image conversion and upscaling, metadata management, and QR code tools directly in your browser.',
-          searchPlaceholder: 'Search tools (e.g., password, image, WebP, upscale, QR)...',
+          heroSubtitle: 'Access lightweight browser utilities for password security, cryptographic tokens, file hash verification, image processing, metadata inspection and management, and QR code tools directly in your browser.',
+          searchPlaceholder: 'Search tools (e.g., password, split, EXIF, WebP, QR)...',
           filterAll: 'All',
           filterSecurity: 'Security',
           filterImage: 'Image',
