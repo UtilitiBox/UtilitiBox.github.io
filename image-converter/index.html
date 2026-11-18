@@ -1,0 +1,1729 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Converter - UtilitiBox</title>
+  <meta name="description" content="Konversi gambar massal ke format JPG, PNG, WebP, dan AVIF langsung di browser tanpa unggah ke server. Mendukung pengaturan kualitas dan transparansi.">
+  <link rel="canonical" href="https://utilitibox.github.io/image-converter/">
+  <meta property="og:title" content="Image Converter - UtilitiBox">
+  <meta property="og:description" content="Konversi massal JPG, PNG, WebP, dan AVIF 100% client-side dengan privasi penuh.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://utilitibox.github.io/image-converter/">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='3' width='18' height='18' rx='3'/%3E%3Ccircle cx='8.5' cy='8.5' r='1.5'/%3E%3Cpath d='M21 15l-5-5L5 21'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      --bg-body: #0f172a;
+      --bg-surface: #1e293b;
+      --bg-surface-alt: #0b1120;
+      --bg-hover: #334155;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --border-color: #334155;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --primary-soft: rgba(59, 130, 246, 0.14);
+      --success: #10b981;
+      --success-soft: rgba(16, 185, 129, 0.14);
+      --warning: #f59e0b;
+      --warning-soft: rgba(245, 158, 11, 0.14);
+      --danger: #ef4444;
+      --danger-soft: rgba(239, 68, 68, 0.14);
+      --checker-a: #1e293b;
+      --checker-b: #334155;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+    }
+
+    [data-theme="light"] {
+      --bg-body: #f1f5f9;
+      --bg-surface: #ffffff;
+      --bg-surface-alt: #f8fafc;
+      --bg-hover: #e2e8f0;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --border-color: #cbd5e1;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-soft: rgba(37, 99, 235, 0.1);
+      --success: #059669;
+      --success-soft: rgba(5, 150, 105, 0.12);
+      --warning: #d97706;
+      --warning-soft: rgba(217, 119, 6, 0.12);
+      --danger: #dc2626;
+      --danger-soft: rgba(220, 38, 38, 0.1);
+      --checker-a: #e2e8f0;
+      --checker-b: #ffffff;
+      --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+      --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background-color: var(--bg-body);
+      color: var(--text-primary);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    /* Header */
+    header {
+      background-color: var(--bg-surface);
+      border-bottom: 1px solid var(--border-color);
+      padding: 14px 0;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      color: var(--text-secondary);
+      background-color: var(--bg-surface-alt);
+      border: 1px solid var(--border-color);
+      padding: 7px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all 0.15s ease;
+    }
+
+    .back-link:hover {
+      color: var(--text-primary);
+      border-color: var(--primary);
+    }
+
+    .title-block h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .title-block p {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background-color: var(--bg-surface-alt);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 7px 11px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .icon-btn:hover {
+      border-color: var(--primary);
+      background-color: var(--primary-soft);
+    }
+
+    /* Main Content */
+    main {
+      flex: 1;
+      padding: 24px 0 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .card {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .section-label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-secondary);
+      margin-bottom: 10px;
+    }
+
+    /* Settings Grid */
+    .settings-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 720px) {
+      .settings-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .format-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .format-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      padding: 10px 6px;
+      background-color: var(--bg-surface-alt);
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-md);
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      position: relative;
+    }
+
+    .format-btn:hover:not(:disabled) {
+      border-color: var(--primary);
+    }
+
+    .format-btn.active {
+      background-color: var(--primary-soft);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .format-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .format-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .format-tag {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+    }
+
+    .format-btn.active .format-tag {
+      color: var(--primary);
+    }
+
+    /* Quality Control */
+    .quality-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .quality-header .section-label {
+      margin-bottom: 0;
+    }
+
+    .quality-badge {
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 2px 10px;
+      border-radius: 999px;
+      background-color: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    .quality-badge.lossless {
+      background-color: var(--success-soft);
+      color: var(--success);
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--primary);
+      cursor: pointer;
+      height: 6px;
+      margin: 6px 0 10px;
+    }
+
+    input[type="range"]:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .preset-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .preset-btn {
+      flex: 1;
+      padding: 4px 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background-color: var(--bg-surface-alt);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .preset-btn:hover:not(:disabled) {
+      border-color: var(--primary);
+      color: var(--text-primary);
+    }
+
+    .preset-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* Transparency / Matte Bar */
+    .matte-panel {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .matte-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .alpha-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      background-color: var(--success-soft);
+      color: var(--success);
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .color-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .swatch-btn {
+      width: 26px;
+      height: 26px;
+      border-radius: 6px;
+      border: 2px solid var(--border-color);
+      cursor: pointer;
+      transition: transform 0.1s ease, border-color 0.15s ease;
+    }
+
+    .swatch-btn:hover {
+      transform: scale(1.08);
+    }
+
+    .swatch-btn.active {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px var(--primary-soft);
+    }
+
+    .color-picker-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background-color: var(--bg-surface-alt);
+      border: 1px solid var(--border-color);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    input[type="color"] {
+      width: 22px;
+      height: 22px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    /* Dropzone */
+    .dropzone {
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-lg);
+      background-color: var(--bg-surface);
+      padding: 36px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dropzone:hover,
+    .dropzone.dragover {
+      border-color: var(--primary);
+      background-color: var(--primary-soft);
+    }
+
+    .drop-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background-color: var(--primary-soft);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .drop-title {
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .drop-sub {
+      font-size: 0.84rem;
+      color: var(--text-secondary);
+      max-width: 480px;
+    }
+
+    .privacy-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 4px;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      background-color: var(--bg-surface-alt);
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border-color);
+    }
+
+    /* Batch Bar */
+    .batch-bar {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 14px;
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 16px 20px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .batch-bar.visible {
+      display: flex;
+    }
+
+    .batch-stats {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .stat-value {
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .batch-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 9px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background-color: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      background-color: var(--bg-surface-alt);
+      color: var(--text-primary);
+      border-color: var(--border-color);
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      border-color: var(--primary);
+    }
+
+    .btn-danger {
+      background-color: var(--danger-soft);
+      color: var(--danger);
+    }
+
+    .btn-danger:hover:not(:disabled) {
+      background-color: var(--danger);
+      color: #ffffff;
+    }
+
+    /* File List */
+    .file-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .file-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      transition: border-color 0.15s ease;
+    }
+
+    .file-card:hover {
+      border-color: var(--primary);
+    }
+
+    .file-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .thumb-box {
+      width: 56px;
+      height: 56px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+      flex-shrink: 0;
+      background-image:
+        linear-gradient(45deg, var(--checker-a) 25%, transparent 25%),
+        linear-gradient(-45deg, var(--checker-a) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, var(--checker-a) 75%),
+        linear-gradient(-45deg, transparent 75%, var(--checker-a) 75%);
+      background-color: var(--checker-b);
+      background-size: 12px 12px;
+      background-position: 0 0, 0 6px, 6px -6px, -6px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .thumb-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .file-meta {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .file-name {
+      font-size: 0.92rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 4px;
+    }
+
+    .file-details {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+    }
+
+    .badge {
+      padding: 2px 7px;
+      border-radius: 5px;
+      font-weight: 600;
+      font-size: 0.72rem;
+    }
+
+    .badge-neutral {
+      background-color: var(--bg-surface-alt);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+    }
+
+    .badge-save {
+      background-color: var(--success-soft);
+      color: var(--success);
+    }
+
+    .badge-grow {
+      background-color: var(--warning-soft);
+      color: var(--warning);
+    }
+
+    .badge-error {
+      background-color: var(--danger-soft);
+      color: var(--danger);
+    }
+
+    .file-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .btn-sm {
+      padding: 6px 11px;
+      font-size: 0.8rem;
+    }
+
+    .btn-icon-only {
+      padding: 6px 8px;
+    }
+
+    @media (max-width: 600px) {
+      .file-card {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .file-right {
+        justify-content: flex-end;
+        border-top: 1px solid var(--border-color);
+        padding-top: 10px;
+      }
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border-color);
+      background-color: var(--bg-surface);
+      padding: 16px 0;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    footer a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container header-inner">
+      <div class="brand-group">
+        <a href="../" class="back-link" id="backHomeLink" title="Kembali ke UtilitiBox">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+          <span data-i18n="navHome">Beranda</span>
+        </a>
+        <div class="title-block">
+          <h1>Image Converter</h1>
+          <p data-i18n="subtitle">Konversi massal JPG, PNG, WebP &amp; AVIF secara lokal</p>
+        </div>
+      </div>
+      <div class="header-controls">
+        <button type="button" class="icon-btn" id="langToggle" aria-label="Ganti Bahasa">ID</button>
+        <button type="button" class="icon-btn" id="themeToggle" aria-label="Ganti Tema">
+          <svg id="themeIconSun" class="hidden" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg id="themeIconMoon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Global Settings Card -->
+    <section class="card" aria-label="Pengaturan Konversi">
+      <div class="settings-grid">
+        <div>
+          <span class="section-label" data-i18n="targetFormatLabel">Format Tujuan</span>
+          <div class="format-grid" role="radiogroup" aria-label="Format Tujuan">
+            <button type="button" class="format-btn active" data-format="image/webp" data-ext="webp">
+              <span class="format-name">WebP</span>
+              <span class="format-tag" data-i18n="tagModern">Modern</span>
+            </button>
+            <button type="button" class="format-btn" data-format="image/jpeg" data-ext="jpg">
+              <span class="format-name">JPG</span>
+              <span class="format-tag" data-i18n="tagUniversal">Universal</span>
+            </button>
+            <button type="button" class="format-btn" data-format="image/png" data-ext="png">
+              <span class="format-name">PNG</span>
+              <span class="format-tag">Lossless</span>
+            </button>
+            <button type="button" class="format-btn" id="avifBtn" data-format="image/avif" data-ext="avif">
+              <span class="format-name">AVIF</span>
+              <span class="format-tag" id="avifTag" data-i18n="tagChecking">Memeriksa...</span>
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <div class="quality-header">
+            <span class="section-label" data-i18n="qualityLabel">Kualitas Kompresi</span>
+            <span class="quality-badge" id="qualityValueBadge">85%</span>
+          </div>
+          <input type="range" id="qualitySlider" min="1" max="100" value="85" aria-label="Kualitas Kompresi">
+          <div class="preset-row">
+            <button type="button" class="preset-btn" data-quality="60">60%</button>
+            <button type="button" class="preset-btn" data-quality="75">75%</button>
+            <button type="button" class="preset-btn" data-quality="85">85%</button>
+            <button type="button" class="preset-btn" data-quality="95">95%</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Transparency Handling Bar -->
+      <div class="matte-panel">
+        <div class="matte-info">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+          <span data-i18n="transparencyLabel">Penanganan Transparansi:</span>
+        </div>
+
+        <div id="alphaPreservedBadge" class="alpha-pill">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <span data-i18n="alphaPreserved">Transparansi (Alpha) Dipertahankan</span>
+        </div>
+
+        <div id="jpgMatteControls" class="color-controls hidden">
+          <span style="font-size: 0.8rem; color: var(--text-secondary);" data-i18n="jpgBgLabel">Warna Latar JPG:</span>
+          <button type="button" class="swatch-btn active" data-color="#ffffff" style="background-color: #ffffff;" title="Putih (#FFFFFF)"></button>
+          <button type="button" class="swatch-btn" data-color="#000000" style="background-color: #000000;" title="Hitam (#000000)"></button>
+          <button type="button" class="swatch-btn" data-color="#f1f5f9" style="background-color: #f1f5f9;" title="Abu Terang (#F1F5F9)"></button>
+          <label class="color-picker-wrap" title="Pilih warna kustom">
+            <input type="color" id="bgColorPicker" value="#ffffff">
+            <span id="bgColorHex">#FFFFFF</span>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dropzone -->
+    <section class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Pilih atau seret gambar ke sini">
+      <input type="file" id="fileInput" accept="image/*" multiple class="hidden">
+      <div class="drop-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      </div>
+      <div class="drop-title" data-i18n="dropTitle">Klik, seret gambar ke sini, atau tempel (Ctrl+V)</div>
+      <div class="drop-sub" data-i18n="dropSub">Mendukung konversi massal dari JPG, PNG, WebP, AVIF, GIF, BMP, dan SVG.</div>
+      <div class="privacy-note">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span data-i18n="privacyNote">100% diproses di browser Anda. Gambar tidak pernah diunggah ke server.</span>
+      </div>
+    </section>
+
+    <!-- Batch Summary & Actions -->
+    <section class="batch-bar" id="batchBar">
+      <div class="batch-stats">
+        <div class="stat-item">
+          <span class="stat-label" data-i18n="statFiles">Jumlah File</span>
+          <span class="stat-value" id="statFileCount">0</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label" data-i18n="statOriginal">Ukuran Awal</span>
+          <span class="stat-value" id="statOriginalSize">0 B</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label" data-i18n="statConverted">Ukuran Hasil</span>
+          <span class="stat-value" id="statConvertedSize">0 B</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label" data-i18n="statDiff">Selisih Total</span>
+          <span class="stat-value" id="statTotalDiff">0%</span>
+        </div>
+      </div>
+
+      <div class="batch-actions">
+        <button type="button" class="btn btn-secondary" id="addMoreBtn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span data-i18n="btnAddMore">Tambah</span>
+        </button>
+        <button type="button" class="btn btn-danger" id="clearAllBtn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+          <span data-i18n="btnClearAll">Hapus Semua</span>
+        </button>
+        <button type="button" class="btn btn-primary" id="downloadZipBtn" disabled>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span data-i18n="btnDownloadZip">Unduh Semua (.ZIP)</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- File Queue List -->
+    <section class="file-list" id="fileList" aria-live="polite"></section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <span data-i18n="footerPart">Bagian dari ekosistem utilitas offline</span>
+      <a href="../">UtilitiBox</a>.
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      "use strict";
+
+      /* =========================================================
+       * 1. Internationalization (ID / EN)
+       * ========================================================= */
+      const I18N = {
+        id: {
+          navHome: "Beranda",
+          subtitle: "Konversi massal JPG, PNG, WebP & AVIF secara lokal",
+          targetFormatLabel: "Format Tujuan",
+          tagModern: "Modern",
+          tagUniversal: "Universal",
+          tagChecking: "Memeriksa...",
+          tagSupported: "Didukung",
+          tagUnsupported: "Tidak didukung",
+          qualityLabel: "Kualitas Kompresi",
+          transparencyLabel: "Penanganan Transparansi:",
+          alphaPreserved: "Transparansi (Alpha) Dipertahankan",
+          jpgBgLabel: "Warna Latar JPG:",
+          dropTitle: "Klik, seret gambar ke sini, atau tempel (Ctrl+V)",
+          dropSub: "Mendukung konversi massal dari JPG, PNG, WebP, AVIF, GIF, BMP, dan SVG.",
+          privacyNote: "100% diproses di browser Anda. Gambar tidak pernah diunggah ke server.",
+          statFiles: "Jumlah File",
+          statOriginal: "Ukuran Awal",
+          statConverted: "Ukuran Hasil",
+          statDiff: "Selisih Total",
+          btnAddMore: "Tambah",
+          btnClearAll: "Hapus Semua",
+          btnDownloadZip: "Unduh Semua (.ZIP)",
+          btnBuildingZip: "Membuat ZIP...",
+          btnDownloadSingle: "Unduh",
+          statusPending: "Menunggu...",
+          statusProcessing: "Mengonversi...",
+          statusError: "Gagal mengonversi",
+          footerPart: "Bagian dari ekosistem utilitas offline"
+        },
+        en: {
+          navHome: "Home",
+          subtitle: "Bulk convert JPG, PNG, WebP & AVIF locally in your browser",
+          targetFormatLabel: "Target Format",
+          tagModern: "Modern",
+          tagUniversal: "Universal",
+          tagChecking: "Checking...",
+          tagSupported: "Supported",
+          tagUnsupported: "Unsupported",
+          qualityLabel: "Compression Quality",
+          transparencyLabel: "Transparency Handling:",
+          alphaPreserved: "Transparency (Alpha) Preserved",
+          jpgBgLabel: "JPG Background Color:",
+          dropTitle: "Click, drag images here, or paste (Ctrl+V)",
+          dropSub: "Supports bulk conversion from JPG, PNG, WebP, AVIF, GIF, BMP, and SVG.",
+          privacyNote: "100% processed locally in your browser. Images are never uploaded.",
+          statFiles: "Total Files",
+          statOriginal: "Original Size",
+          statConverted: "Output Size",
+          statDiff: "Net Change",
+          btnAddMore: "Add More",
+          btnClearAll: "Clear All",
+          btnDownloadZip: "Download All (.ZIP)",
+          btnBuildingZip: "Building ZIP...",
+          btnDownloadSingle: "Download",
+          statusPending: "Queued...",
+          statusProcessing: "Converting...",
+          statusError: "Conversion failed",
+          footerPart: "Part of the offline utility suite"
+        }
+      };
+
+      /* =========================================================
+       * 2. Application State
+       * ========================================================= */
+      const state = {
+        lang: localStorage.getItem("utilitibox_lang") || "id",
+        theme: localStorage.getItem("utilitibox_theme") || (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"),
+        format: "image/webp",
+        ext: "webp",
+        quality: 85,
+        bgColor: "#ffffff",
+        avifSupported: false,
+        files: [],
+        runId: 0,
+        isProcessing: false,
+        debounceTimer: null
+      };
+
+      /* =========================================================
+       * 3. DOM References
+       * ========================================================= */
+      const dom = {
+        langToggle: document.getElementById("langToggle"),
+        themeToggle: document.getElementById("themeToggle"),
+        themeIconSun: document.getElementById("themeIconSun"),
+        themeIconMoon: document.getElementById("themeIconMoon"),
+        formatBtns: Array.from(document.querySelectorAll(".format-btn")),
+        avifBtn: document.getElementById("avifBtn"),
+        avifTag: document.getElementById("avifTag"),
+        qualitySlider: document.getElementById("qualitySlider"),
+        qualityValueBadge: document.getElementById("qualityValueBadge"),
+        presetBtns: Array.from(document.querySelectorAll(".preset-btn")),
+        alphaPreservedBadge: document.getElementById("alphaPreservedBadge"),
+        jpgMatteControls: document.getElementById("jpgMatteControls"),
+        swatchBtns: Array.from(document.querySelectorAll(".swatch-btn")),
+        bgColorPicker: document.getElementById("bgColorPicker"),
+        bgColorHex: document.getElementById("bgColorHex"),
+        dropzone: document.getElementById("dropzone"),
+        fileInput: document.getElementById("fileInput"),
+        batchBar: document.getElementById("batchBar"),
+        statFileCount: document.getElementById("statFileCount"),
+        statOriginalSize: document.getElementById("statOriginalSize"),
+        statConvertedSize: document.getElementById("statConvertedSize"),
+        statTotalDiff: document.getElementById("statTotalDiff"),
+        addMoreBtn: document.getElementById("addMoreBtn"),
+        clearAllBtn: document.getElementById("clearAllBtn"),
+        downloadZipBtn: document.getElementById("downloadZipBtn"),
+        fileList: document.getElementById("fileList")
+      };
+
+      function t(key) {
+        return (I18N[state.lang] && I18N[state.lang][key]) || I18N.id[key] || key;
+      }
+
+      /* =========================================================
+       * 4. Theme & Language Management
+       * ========================================================= */
+      function applyTheme() {
+        document.documentElement.setAttribute("data-theme", state.theme);
+        if (state.theme === "dark") {
+          dom.themeIconSun.classList.remove("hidden");
+          dom.themeIconMoon.classList.add("hidden");
+        } else {
+          dom.themeIconSun.classList.add("hidden");
+          dom.themeIconMoon.classList.remove("hidden");
+        }
+      }
+
+      function applyLanguage() {
+        document.documentElement.lang = state.lang;
+        dom.langToggle.textContent = state.lang.toUpperCase();
+        document.querySelectorAll("[data-i18n]").forEach(function (el) {
+          const key = el.getAttribute("data-i18n");
+          if (key === "tagChecking") return;
+          el.textContent = t(key);
+        });
+        dom.avifTag.textContent = state.avifSupported ? t("tagSupported") : t("tagUnsupported");
+        updateQualityUI();
+        renderFileList();
+        updateBatchStats();
+      }
+
+      /* =========================================================
+       * 5. Browser Encoder Detection (AVIF)
+       * ========================================================= */
+      function detectAvifEncoding() {
+        return new Promise(function (resolve) {
+          try {
+            const canvas = document.createElement("canvas");
+            canvas.width = 2;
+            canvas.height = 2;
+            const ctx = canvas.getContext("2d");
+            ctx.fillStyle = "#3b82f6";
+            ctx.fillRect(0, 0, 2, 2);
+            canvas.toBlob(function (blob) {
+              resolve(Boolean(blob && blob.type === "image/avif"));
+            }, "image/avif", 0.8);
+          } catch (e) {
+            resolve(false);
+          }
+        });
+      }
+
+      /* =========================================================
+       * 6. Formatting & Helper Utilities
+       * ========================================================= */
+      function formatBytes(bytes) {
+        if (!Number.isFinite(bytes) || bytes <= 0) return "0 B";
+        const units = ["B", "KB", "MB", "GB"];
+        const idx = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
+        const val = bytes / Math.pow(1024, idx);
+        return (idx === 0 ? val : val.toFixed(val >= 100 ? 0 : val >= 10 ? 1 : 2)) + " " + units[idx];
+      }
+
+      function getBaseName(filename) {
+        const lastDot = filename.lastIndexOf(".");
+        return lastDot > 0 ? filename.substring(0, lastDot) : filename;
+      }
+
+      function generateId() {
+        return Date.now().toString(36) + "-" + Math.random().toString(36).substring(2, 8);
+      }
+
+      function escapeHtml(str) {
+        return str
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      /* =========================================================
+       * 7. Controls UI Sync
+       * ========================================================= */
+      function updateQualityUI() {
+        const isPng = state.format === "image/png";
+        dom.qualitySlider.disabled = isPng;
+        dom.presetBtns.forEach(function (btn) {
+          btn.disabled = isPng;
+        });
+
+        if (isPng) {
+          dom.qualityValueBadge.textContent = "Lossless";
+          dom.qualityValueBadge.classList.add("lossless");
+        } else {
+          dom.qualityValueBadge.textContent = state.quality + "%";
+          dom.qualityValueBadge.classList.remove("lossless");
+        }
+      }
+
+      function updateTransparencyUI() {
+        const isJpg = state.format === "image/jpeg";
+        if (isJpg) {
+          dom.alphaPreservedBadge.classList.add("hidden");
+          dom.jpgMatteControls.classList.remove("hidden");
+        } else {
+          dom.alphaPreservedBadge.classList.remove("hidden");
+          dom.jpgMatteControls.classList.add("hidden");
+        }
+      }
+
+      function scheduleReconvertAll(immediate) {
+        state.runId += 1;
+        state.files.forEach(function (item) {
+          item.status = "pending";
+          item.outputBlob = null;
+          item.outputSize = null;
+          item.errorMsg = null;
+          item.outputExt = state.ext;
+        });
+        renderFileList();
+        updateBatchStats();
+
+        if (state.debounceTimer) {
+          clearTimeout(state.debounceTimer);
+          state.debounceTimer = null;
+        }
+
+        if (immediate) {
+          processQueue();
+        } else {
+          state.debounceTimer = setTimeout(function () {
+            processQueue();
+          }, 220);
+        }
+      }
+
+      /* =========================================================
+       * 8. Image Loading & Canvas Conversion Pipeline
+       * ========================================================= */
+      function loadImageElement(objectUrl) {
+        return new Promise(function (resolve, reject) {
+          const img = new Image();
+          img.onload = function () {
+            resolve(img);
+          };
+          img.onerror = function () {
+            reject(new Error("Image decode failed"));
+          };
+          img.src = objectUrl;
+        });
+      }
+
+      async function convertSingleItem(item, targetFormat, qualityVal, bgColor) {
+        const img = await loadImageElement(item.previewUrl);
+        const width = img.naturalWidth || img.width || 1024;
+        const height = img.naturalHeight || img.height || 1024;
+        item.width = width;
+        item.height = height;
+
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+
+        if (targetFormat === "image/jpeg") {
+          ctx.fillStyle = bgColor;
+          ctx.fillRect(0, 0, width, height);
+        }
+
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const qualityArg = targetFormat === "image/png" ? undefined : qualityVal / 100;
+
+        const blob = await new Promise(function (resolve, reject) {
+          try {
+            canvas.toBlob(function (resultBlob) {
+              if (!resultBlob) {
+                reject(new Error("Canvas toBlob returned null"));
+                return;
+              }
+              if (targetFormat === "image/avif" && resultBlob.type !== "image/avif") {
+                reject(new Error("AVIF encoding unsupported"));
+                return;
+              }
+              resolve(resultBlob);
+            }, targetFormat, qualityArg);
+          } catch (err) {
+            reject(err);
+          }
+        });
+
+        /* Release canvas backing store promptly */
+        canvas.width = 0;
+        canvas.height = 0;
+
+        return blob;
+      }
+
+      async function processQueue() {
+        const currentRun = state.runId;
+        const targetFormat = state.format;
+        const targetExt = state.ext;
+        const qualityVal = state.quality;
+        const bgColor = state.bgColor;
+
+        for (let i = 0; i < state.files.length; i += 1) {
+          if (currentRun !== state.runId) return;
+          const item = state.files[i];
+          if (item.status === "done" || item.status === "error") continue;
+
+          item.status = "processing";
+          item.outputExt = targetExt;
+          updateSingleCardUI(item);
+
+          try {
+            const blob = await convertSingleItem(item, targetFormat, qualityVal, bgColor);
+            if (currentRun !== state.runId) return;
+
+            item.outputBlob = blob;
+            item.outputSize = blob.size;
+            item.status = "done";
+          } catch (err) {
+            if (currentRun !== state.runId) return;
+            item.status = "error";
+            item.errorMsg = err && err.message ? err.message : t("statusError");
+          }
+
+          updateSingleCardUI(item);
+          updateBatchStats();
+
+          /* Yield briefly to keep UI responsive during large batches */
+          await new Promise(function (r) { setTimeout(r, 8); });
+        }
+      }
+
+      /* =========================================================
+       * 9. File Management & UI Rendering
+       * ========================================================= */
+      function addFiles(fileList) {
+        const validExtPattern = /\.(jpe?g|png|webp|avif|gif|bmp|svg|ico)$/i;
+        let addedCount = 0;
+
+        Array.from(fileList).forEach(function (file) {
+          const isImageMime = file.type && file.type.startsWith("image/");
+          const isImageExt = validExtPattern.test(file.name);
+          if (!isImageMime && !isImageExt) return;
+
+          const item = {
+            id: generateId(),
+            file: file,
+            name: file.name || "pasted-image.png",
+            baseName: getBaseName(file.name || "pasted-image.png"),
+            originalSize: file.size,
+            previewUrl: URL.createObjectURL(file),
+            width: 0,
+            height: 0,
+            status: "pending",
+            errorMsg: null,
+            outputBlob: null,
+            outputSize: null,
+            outputExt: state.ext
+          };
+          state.files.push(item);
+          addedCount += 1;
+        });
+
+        if (addedCount > 0) {
+          renderFileList();
+          updateBatchStats();
+          processQueue();
+        }
+      }
+
+      function removeFile(id) {
+        const idx = state.files.findIndex(function (f) { return f.id === id; });
+        if (idx === -1) return;
+        const removed = state.files.splice(idx, 1)[0];
+        if (removed && removed.previewUrl) {
+          URL.revokeObjectURL(removed.previewUrl);
+        }
+        renderFileList();
+        updateBatchStats();
+      }
+
+      function clearAllFiles() {
+        state.runId += 1;
+        state.files.forEach(function (item) {
+          if (item.previewUrl) {
+            URL.revokeObjectURL(item.previewUrl);
+          }
+        });
+        state.files = [];
+        renderFileList();
+        updateBatchStats();
+      }
+
+      function triggerBlobDownload(blob, filename) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(function () {
+          URL.revokeObjectURL(url);
+        }, 1500);
+      }
+
+      function buildCardInnerHtml(item) {
+        const outFilename = item.baseName + "." + item.outputExt;
+        const dimsText = item.width && item.height ? item.width + "x" + item.height + " px" : "";
+        let statusHtml = "";
+
+        if (item.status === "pending") {
+          statusHtml = '<span class="badge badge-neutral">' + escapeHtml(t("statusPending")) + "</span>";
+        } else if (item.status === "processing") {
+          statusHtml = '<span class="badge badge-neutral">' + escapeHtml(t("statusProcessing")) + "</span>";
+        } else if (item.status === "error") {
+          statusHtml = '<span class="badge badge-error">' + escapeHtml(t("statusError")) + "</span>";
+        } else if (item.status === "done" && item.outputSize !== null) {
+          const diffPct = item.originalSize > 0
+            ? Math.round(((item.outputSize - item.originalSize) / item.originalSize) * 100)
+            : 0;
+          const sign = diffPct > 0 ? "+" : "";
+          const badgeClass = diffPct <= 0 ? "badge-save" : "badge-grow";
+          statusHtml =
+            "<span>" + formatBytes(item.originalSize) + " &rarr; <strong>" + formatBytes(item.outputSize) + "</strong></span>" +
+            '<span class="badge ' + badgeClass + '">' + sign + diffPct + "%</span>";
+        }
+
+        const downloadDisabled = item.status === "done" && item.outputBlob ? "" : "disabled";
+
+        return (
+          '<div class="file-left">' +
+            '<div class="thumb-box"><img src="' + item.previewUrl + '" alt=""></div>' +
+            '<div class="file-meta">' +
+              '<div class="file-name" title="' + escapeHtml(outFilename) + '">' + escapeHtml(outFilename) + "</div>" +
+              '<div class="file-details">' +
+                '<span class="badge badge-neutral">' + escapeHtml(item.outputExt.toUpperCase()) + "</span>" +
+                (dimsText ? "<span>" + escapeHtml(dimsText) + "</span>" : "") +
+                statusHtml +
+              "</div>" +
+            "</div>" +
+          "</div>" +
+          '<div class="file-right">' +
+            '<button type="button" class="btn btn-primary btn-sm" data-action="download" data-id="' + item.id + '" ' + downloadDisabled + ">" +
+              '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' +
+              "<span>" + escapeHtml(t("btnDownloadSingle")) + "</span>" +
+            "</button>" +
+            '<button type="button" class="btn btn-secondary btn-sm btn-icon-only" data-action="remove" data-id="' + item.id + '" aria-label="Hapus">' +
+              '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
+            "</button>" +
+          "</div>"
+        );
+      }
+
+      function renderFileList() {
+        if (state.files.length === 0) {
+          dom.fileList.innerHTML = "";
+          return;
+        }
+        dom.fileList.innerHTML = state.files.map(function (item) {
+          return '<article class="file-card" id="card-' + item.id + '">' + buildCardInnerHtml(item) + "</article>";
+        }).join("");
+      }
+
+      function updateSingleCardUI(item) {
+        const card = document.getElementById("card-" + item.id);
+        if (card) {
+          card.innerHTML = buildCardInnerHtml(item);
+        }
+      }
+
+      function updateBatchStats() {
+        if (state.files.length === 0) {
+          dom.batchBar.classList.remove("visible");
+          return;
+        }
+        dom.batchBar.classList.add("visible");
+
+        let totalOrig = 0;
+        let totalConv = 0;
+        let completedOrig = 0;
+        let completedCount = 0;
+
+        state.files.forEach(function (item) {
+          totalOrig += item.originalSize;
+          if (item.status === "done" && item.outputSize !== null) {
+            totalConv += item.outputSize;
+            completedOrig += item.originalSize;
+            completedCount += 1;
+          }
+        });
+
+        dom.statFileCount.textContent = completedCount + " / " + state.files.length;
+        dom.statOriginalSize.textContent = formatBytes(totalOrig);
+        dom.statConvertedSize.textContent = formatBytes(totalConv);
+
+        if (completedOrig > 0) {
+          const pct = Math.round(((totalConv - completedOrig) / completedOrig) * 100);
+          const sign = pct > 0 ? "+" : "";
+          dom.statTotalDiff.textContent = sign + pct + "%";
+          dom.statTotalDiff.style.color = pct <= 0 ? "var(--success)" : "var(--warning)";
+        } else {
+          dom.statTotalDiff.textContent = "0%";
+          dom.statTotalDiff.style.color = "var(--text-primary)";
+        }
+
+        dom.downloadZipBtn.disabled = completedCount === 0;
+      }
+
+      /* =========================================================
+       * 10. Zero-Dependency Client-Side PKZIP (STORE) Generator
+       * ========================================================= */
+      const CRC32_TABLE = (function () {
+        const table = new Uint32Array(256);
+        for (let i = 0; i < 256; i += 1) {
+          let c = i;
+          for (let k = 0; k < 8; k += 1) {
+            c = (c & 1) ? (0xedb88320 ^ (c >>> 1)) : (c >>> 1);
+          }
+          table[i] = c >>> 0;
+        }
+        return table;
+      })();
+
+      function computeCrc32(uint8Arr) {
+        let crc = 0xffffffff;
+        for (let i = 0; i < uint8Arr.length; i += 1) {
+          crc = CRC32_TABLE[(crc ^ uint8Arr[i]) & 0xff] ^ (crc >>> 8);
+        }
+        return (crc ^ 0xffffffff) >>> 0;
+      }
+
+      function getDosDateTime(date) {
+        const year = Math.max(1980, date.getFullYear());
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+        const hours = date.getHours();
+        const minutes = date.getMinutes();
+        const seconds = Math.floor(date.getSeconds() / 2);
+
+        const dosDate = ((year - 1980) << 9) | (month << 5) | day;
+        const dosTime = (hours << 11) | (minutes << 5) | seconds;
+        return { dosDate: dosDate, dosTime: dosTime };
+      }
+
+      function createZipBlob(entries) {
+        const encoder = new TextEncoder();
+        const now = getDosDateTime(new Date());
+        const prepared = [];
+        let localSectionSize = 0;
+        let centralDirSize = 0;
+
+        entries.forEach(function (entry) {
+          const nameBytes = encoder.encode(entry.filename);
+          const dataBytes = entry.data;
+          const crc = computeCrc32(dataBytes);
+          const localOffset = localSectionSize;
+
+          prepared.push({
+            nameBytes: nameBytes,
+            dataBytes: dataBytes,
+            crc: crc,
+            localOffset: localOffset
+          });
+
+          localSectionSize += 30 + nameBytes.length + dataBytes.length;
+          centralDirSize += 46 + nameBytes.length;
+        });
+
+        const totalSize = localSectionSize + centralDirSize + 22;
+        const buffer = new ArrayBuffer(totalSize);
+        const view = new DataView(buffer);
+        const bytes = new Uint8Array(buffer);
+        let offset = 0;
+
+        /* Write Local File Headers + File Data */
+        prepared.forEach(function (item) {
+          view.setUint32(offset, 0x04034b50, true);
+          view.setUint16(offset + 4, 20, true);
+          view.setUint16(offset + 6, 0x0800, true); /* UTF-8 filename flag */
+          view.setUint16(offset + 8, 0, true);      /* STORE (uncompressed) */
+          view.setUint16(offset + 10, now.dosTime, true);
+          view.setUint16(offset + 12, now.dosDate, true);
+          view.setUint32(offset + 14, item.crc, true);
+          view.setUint32(offset + 18, item.dataBytes.length, true);
+          view.setUint32(offset + 22, item.dataBytes.length, true);
+          view.setUint16(offset + 26, item.nameBytes.length, true);
+          view.setUint16(offset + 28, 0, true);
+          offset += 30;
+
+          bytes.set(item.nameBytes, offset);
+          offset += item.nameBytes.length;
+
+          bytes.set(item.dataBytes, offset);
+          offset += item.dataBytes.length;
+        });
+
+        const centralDirStart = offset;
+
+        /* Write Central Directory Headers */
+        prepared.forEach(function (item) {
+          view.setUint32(offset, 0x02014b50, true);
+          view.setUint16(offset + 4, 20, true);
+          view.setUint16(offset + 6, 20, true);
+          view.setUint16(offset + 8, 0x0800, true);
+          view.setUint16(offset + 10, 0, true);
+          view.setUint16(offset + 12, now.dosTime, true);
+          view.setUint16(offset + 14, now.dosDate, true);
+          view.setUint32(offset + 16, item.crc, true);
+          view.setUint32(offset + 20, item.dataBytes.length, true);
+          view.setUint32(offset + 24, item.dataBytes.length, true);
+          view.setUint16(offset + 28, item.nameBytes.length, true);
+          view.setUint16(offset + 30, 0, true);
+          view.setUint16(offset + 32, 0, true);
+          view.setUint16(offset + 34, 0, true);
+          view.setUint16(offset + 36, 0, true);
+          view.setUint32(offset + 38, 0, true);
+          view.setUint32(offset + 42, item.localOffset, true);
+          offset += 46;
+
+          bytes.set(item.nameBytes, offset);
+          offset += item.nameBytes.length;
+        });
+
+        /* Write End of Central Directory Record (EOCD) */
+        view.setUint32(offset, 0x06054b50, true);
+        view.setUint16(offset + 4, 0, true);
+        view.setUint16(offset + 6, 0, true);
+        view.setUint16(offset + 8, prepared.length, true);
+        view.setUint16(offset + 10, prepared.length, true);
+        view.setUint32(offset + 12, centralDirSize, true);
+        view.setUint32(offset + 16, centralDirStart, true);
+        view.setUint16(offset + 20, 0, true);
+
+        return new Blob([buffer], { type: "application/zip" });
+      }
+
+      async function downloadAllAsZip() {
+        const doneItems = state.files.filter(function (f) {
+          return f.status === "done" && f.outputBlob;
+        });
+        if (doneItems.length === 0) return;
+
+        const btnSpan = dom.downloadZipBtn.querySelector("span");
+        dom.downloadZipBtn.disabled = true;
+        btnSpan.textContent = t("btnBuildingZip");
+
+        try {
+          const usedNames = new Set();
+          const entries = [];
+
+          for (let i = 0; i < doneItems.length; i += 1) {
+            const item = doneItems[i];
+            let candidate = item.baseName + "." + item.outputExt;
+            let counter = 1;
+            while (usedNames.has(candidate.toLowerCase())) {
+              candidate = item.baseName + " (" + counter + ")." + item.outputExt;
+              counter += 1;
+            }
+            usedNames.add(candidate.toLowerCase());
+
+            const arrayBuffer = await item.outputBlob.arrayBuffer();
+            entries.push({
+              filename: candidate,
+              data: new Uint8Array(arrayBuffer)
+            });
+          }
+
+          const zipBlob = createZipBlob(entries);
+          triggerBlobDownload(zipBlob, "utilitibox-converted-images.zip");
+        } finally {
+          btnSpan.textContent = t("btnDownloadZip");
+          dom.downloadZipBtn.disabled = false;
+        }
+      }
+
+      /* =========================================================
+       * 11. Event Bindings & Bootstrap
+       * ========================================================= */
+      dom.langToggle.addEventListener("click", function () {
+        state.lang = state.lang === "id" ? "en" : "id";
+        localStorage.setItem("utilitibox_lang", state.lang);
+        applyLanguage();
+      });
+
+      dom.themeToggle.addEventListener("click", function () {
+        state.theme = state.theme === "dark" ? "light" : "dark";
+        localStorage.setItem("utilitibox_theme", state.theme);
+        applyTheme();
+      });
+
+      dom.formatBtns.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          if (btn.disabled) return;
+          const nextFormat = btn.getAttribute("data-format");
+          const nextExt = btn.getAttribute("data-ext");
+          if (nextFormat === state.format) return;
+
+          state.format = nextFormat;
+          state.ext = nextExt;
+
+          dom.formatBtns.forEach(function (b) {
+            b.classList.toggle("active", b === btn);
+          });
+
+          updateQualityUI();
+          updateTransparencyUI();
+          if (state.files.length > 0) {
+            scheduleReconvertAll(true);
+          }
+        });
+      });
+
+      dom.qualitySlider.addEventListener("input", function () {
+        state.quality = parseInt(dom.qualitySlider.value, 10);
+        updateQualityUI();
+        if (state.files.length > 0) {
+          scheduleReconvertAll(false);
+        }
+      });
+
+      dom.presetBtns.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          if (btn.disabled) return;
+          state.quality = parseInt(btn.getAttribute("data-quality"), 10);
+          dom.qualitySlider.value = String(state.quality);
+          updateQualityUI();
+          if (state.files.length > 0) {
+            scheduleReconvertAll(true);
+          }
+        });
+      });
+
+      function setBgColor(hex) {
+        state.bgColor = hex.toLowerCase();
+        dom.bgColorPicker.value = state.bgColor;
+        dom.bgColorHex.textContent = state.bgColor.toUpperCase();
+        dom.swatchBtns.forEach(function (btn) {
+          btn.classList.toggle("active", btn.getAttribute("data-color") === state.bgColor);
+        });
+        if (state.format === "image/jpeg" && state.files.length > 0) {
+          scheduleReconvertAll(false);
+        }
+      }
+
+      dom.swatchBtns.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          setBgColor(btn.getAttribute("data-color"));
+        });
+      });
+
+      dom.bgColorPicker.addEventListener("input", function () {
+        setBgColor(dom.bgColorPicker.value);
+      });
+
+      dom.dropzone.addEventListener("click", function () {
+        dom.fileInput.click();
+      });
+
+      dom.dropzone.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          dom.fileInput.click();
+        }
+      });
+
+      dom.dropzone.addEventListener("dragover", function (e) {
+        e.preventDefault();
+        dom.dropzone.classList.add("dragover");
+      });
+
+      dom.dropzone.addEventListener("dragleave", function () {
+        dom.dropzone.classList.remove("dragover");
+      });
+
+      dom.dropzone.addEventListener("drop", function (e) {
+        e.preventDefault();
+        dom.dropzone.classList.remove("dragover");
+        if (e.dataTransfer && e.dataTransfer.files) {
+          addFiles(e.dataTransfer.files);
+        }
+      });
+
+      document.addEventListener("paste", function (e) {
+        if (e.clipboardData && e.clipboardData.files && e.clipboardData.files.length > 0) {
+          addFiles(e.clipboardData.files);
+        }
+      });
+
+      dom.fileInput.addEventListener("change", function () {
+        if (dom.fileInput.files && dom.fileInput.files.length > 0) {
+          addFiles(dom.fileInput.files);
+          dom.fileInput.value = "";
+        }
+      });
+
+      dom.addMoreBtn.addEventListener("click", function () {
+        dom.fileInput.click();
+      });
+
+      dom.clearAllBtn.addEventListener("click", clearAllFiles);
+      dom.downloadZipBtn.addEventListener("click", downloadAllAsZip);
+
+      dom.fileList.addEventListener("click", function (e) {
+        const btn = e.target.closest("button[data-action]");
+        if (!btn) return;
+        const action = btn.getAttribute("data-action");
+        const id = btn.getAttribute("data-id");
+        const item = state.files.find(function (f) { return f.id === id; });
+        if (!item) return;
+
+        if (action === "download" && item.status === "done" && item.outputBlob) {
+          triggerBlobDownload(item.outputBlob, item.baseName + "." + item.outputExt);
+        } else if (action === "remove") {
+          removeFile(id);
+        }
+      });
+
+      /* Initialize */
+      applyTheme();
+      updateQualityUI();
+      updateTransparencyUI();
+
+      detectAvifEncoding().then(function (supported) {
+        state.avifSupported = supported;
+        dom.avifBtn.disabled = !supported;
+        applyLanguage();
+      });
+    })();
+  </script>
+</body>
+</html>
