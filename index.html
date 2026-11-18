@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="UtilitiBox - Kumpulan alat utilitas web praktis untuk keamanan kata sandi, token acak, hash file, pembuat dan pemindai kode QR, serta pengelolaan metadata dan penggabungan gambar.">
+  <meta name="description" content="UtilitiBox - Kumpulan alat utilitas web praktis untuk keamanan kata sandi, token acak, hash file, konversi dan perbesaran gambar, penggabungan foto, pengelolaan metadata, serta pembuat dan pemindai kode QR.">
   <meta name="theme-color" content="#0f172a">
   <title>UtilitiBox - Kumpulan Alat Utilitas Web Praktis</title>
   <link rel="canonical" href="https://utilitibox.github.io/">
@@ -38,10 +38,12 @@
       --accent-soft: rgba(37, 99, 235, 0.1);
       --badge-security-bg: rgba(16, 185, 129, 0.12);
       --badge-security-text: #047857;
+      --badge-image-bg: rgba(37, 99, 235, 0.12);
+      --badge-image-text: #1d4ed8;
       --badge-metadata-bg: rgba(245, 158, 11, 0.14);
       --badge-metadata-text: #b45309;
-      --badge-utility-bg: rgba(37, 99, 235, 0.12);
-      --badge-utility-text: #1d4ed8;
+      --badge-qr-bg: rgba(139, 92, 246, 0.12);
+      --badge-qr-text: #6d28d9;
       --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
       --shadow-md: 0 8px 24px -4px rgba(15, 23, 42, 0.08);
       --radius-md: 10px;
@@ -65,10 +67,12 @@
       --accent-soft: rgba(59, 130, 246, 0.15);
       --badge-security-bg: rgba(16, 185, 129, 0.16);
       --badge-security-text: #34d399;
+      --badge-image-bg: rgba(59, 130, 246, 0.18);
+      --badge-image-text: #60a5fa;
       --badge-metadata-bg: rgba(245, 158, 11, 0.16);
       --badge-metadata-text: #fbbf24;
-      --badge-utility-bg: rgba(59, 130, 246, 0.18);
-      --badge-utility-text: #60a5fa;
+      --badge-qr-bg: rgba(167, 139, 250, 0.16);
+      --badge-qr-text: #a78bfa;
       --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
       --shadow-md: 0 10px 28px -4px rgba(0, 0, 0, 0.45);
     }
@@ -226,7 +230,7 @@
     }
 
     .hero p {
-      max-width: 650px;
+      max-width: 660px;
       margin: 0 auto 28px;
       color: var(--text-secondary);
       font-size: 1.02rem;
@@ -240,7 +244,7 @@
       margin-bottom: 24px;
     }
 
-    @media (min-width: 768px) {
+    @media (min-width: 820px) {
       .toolbar {
         flex-direction: row;
         align-items: center;
@@ -251,7 +255,7 @@
     .search-box {
       position: relative;
       flex: 1;
-      max-width: 420px;
+      max-width: 400px;
     }
 
     .search-icon {
@@ -416,14 +420,19 @@
       color: var(--badge-security-text);
     }
 
+    .badge-image {
+      background-color: var(--badge-image-bg);
+      color: var(--badge-image-text);
+    }
+
     .badge-metadata {
       background-color: var(--badge-metadata-bg);
       color: var(--badge-metadata-text);
     }
 
-    .badge-utility {
-      background-color: var(--badge-utility-bg);
-      color: var(--badge-utility-text);
+    .badge-qr {
+      background-color: var(--badge-qr-bg);
+      color: var(--badge-qr-text);
     }
 
     .tool-title {
@@ -602,7 +611,7 @@
     <section class="hero">
       <div class="hero-badge" id="heroBadge">Utilitas Web Cepat & Praktis</div>
       <h1 id="heroTitle">Satu Tempat untuk Alat Digital Harian Anda</h1>
-      <p id="heroSubtitle">Akses kumpulan utilitas web ringan untuk keamanan kata sandi, token kriptografi, verifikasi hash file, pembuat dan pemindai kode QR, hingga pengelolaan metadata dan penggabungan gambar langsung dari browser.</p>
+      <p id="heroSubtitle">Akses kumpulan utilitas web ringan untuk keamanan kata sandi, token kriptografi, verifikasi hash file, konversi dan perbesaran gambar, pengelolaan metadata, hingga pembuat dan pemindai kode QR langsung dari browser.</p>
     </section>
 
     <section aria-label="Daftar Utilitas">
@@ -612,20 +621,21 @@
             <circle cx="11" cy="11" r="8"></circle>
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
-          <input type="search" id="searchInput" class="search-input" placeholder="Cari alat (misal: password, token, QR, metadata, hash)..." autocomplete="off">
+          <input type="search" id="searchInput" class="search-input" placeholder="Cari alat (misal: password, gambar, WebP, upscale, QR)..." autocomplete="off">
           <span class="kbd-hint" aria-hidden="true">/</span>
         </div>
 
         <div class="filter-group" role="tablist" aria-label="Kategori Alat">
           <button type="button" class="filter-btn active" data-category="all" id="filterAll">Semua</button>
           <button type="button" class="filter-btn" data-category="security" id="filterSecurity">Keamanan</button>
-          <button type="button" class="filter-btn" data-category="utility" id="filterUtility">Gambar & QR</button>
+          <button type="button" class="filter-btn" data-category="image" id="filterImage">Gambar</button>
           <button type="button" class="filter-btn" data-category="metadata" id="filterMetadata">Metadata</button>
+          <button type="button" class="filter-btn" data-category="qr" id="filterQr">Kode QR</button>
         </div>
       </div>
 
       <div class="status-bar">
-        <span id="toolsCount">Menampilkan 8 dari 8 alat</span>
+        <span id="toolsCount">Menampilkan 10 dari 10 alat</span>
       </div>
 
       <div class="tools-grid" id="toolsGrid"></div>
@@ -646,7 +656,7 @@
 
   <script>
     (function () {
-      // Konfigurasi terpusat seluruh 8 tools UtilitiBox dikelompokkan berdasarkan kedekatan fungsi
+      // Konfigurasi terpusat seluruh 10 tools UtilitiBox dikelompokkan berdasarkan kategori fungsional
       const TOOLS_DATA = [
         // 1. Kelompok Keamanan & Kriptografi
         {
@@ -698,44 +708,44 @@
           }
         },
 
-        // 2. Kelompok Ekosistem QR & Pengolahan Gambar
+        // 2. Kelompok Pengolahan Gambar
         {
-          id: 'qr-generator',
-          url: './qr-generator/',
-          slugDisplay: '/qr-generator/',
-          category: 'utility',
-          tags: ['qr', 'qrcode', 'barcode', 'wifi', 'url', 'tautan', 'generator'],
-          icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><path d="M14 14h3v3h-3z"></path><path d="M18 18h3v3h-3z"></path><path d="M14 20h2"></path><path d="M20 14v2"></path></svg>',
+          id: 'image-converter',
+          url: './image-converter/',
+          slugDisplay: '/image-converter/',
+          category: 'image',
+          tags: ['image', 'gambar', 'convert', 'konversi', 'jpg', 'jpeg', 'png', 'webp', 'avif', 'batch', 'format'],
+          icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>',
           title: {
-            id: 'QR Generator',
-            en: 'QR Generator'
+            id: 'Image Converter',
+            en: 'Image Converter'
           },
           description: {
-            id: 'Buat kode QR instan untuk tautan URL, akses jaringan Wi-Fi, teks biasa, alamat email, dan nomor telepon.',
-            en: 'Generate instant QR codes for website URLs, Wi-Fi networks, plain text, email addresses, and phone numbers.'
+            id: 'Ubah format gambar antar JPG, PNG, WebP, dan AVIF secara massal (batch) dengan pengaturan kualitas kompresi dan transparansi.',
+            en: 'Convert images in bulk between JPG, PNG, WebP, and AVIF formats with customizable compression quality and transparency settings.'
           }
         },
         {
-          id: 'qr-scanner',
-          url: './qr-scanner/',
-          slugDisplay: '/qr-scanner/',
-          category: 'utility',
-          tags: ['qr', 'scanner', 'pindai', 'scan', 'kamera', 'camera', 'barcode', 'wifi', 'url', 'baca'],
-          icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"></path><path d="M17 3h2a2 2 0 0 1 2 2v2"></path><path d="M21 17v2a2 2 0 0 1-2 2h-2"></path><path d="M7 21H5a2 2 0 0 1-2-2v-2"></path><line x1="7" y1="12" x2="17" y2="12"></line></svg>',
+          id: 'image-upscaler',
+          url: './image-upscaler/',
+          slugDisplay: '/image-upscaler/',
+          category: 'image',
+          tags: ['image', 'gambar', 'upscale', 'upscaler', 'perbesar', 'resolusi', '2x', '3x', '4x', 'lanczos', 'bicubic', 'hd'],
+          icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>',
           title: {
-            id: 'QR Scanner',
-            en: 'QR Scanner'
+            id: 'Image Upscaler',
+            en: 'Image Upscaler'
           },
           description: {
-            id: 'Pindai dan baca kode QR secara instan menggunakan kamera perangkat atau unggahan gambar untuk mendeteksi tautan URL, teks, dan konfigurasi Wi-Fi.',
-            en: 'Scan and decode QR codes instantly using your device camera or uploaded images to detect URLs, plain text, and Wi-Fi configurations.'
+            id: 'Perbesar dimensi dan ketajaman gambar hingga 2x, 3x, atau 4x menggunakan algoritma interpolasi Lanczos dan Bicubic langsung di browser.',
+            en: 'Enlarge image dimensions up to 2x, 3x, or 4x using precision Lanczos and Bicubic interpolation algorithms directly in your browser.'
           }
         },
         {
           id: 'image-merger',
           url: './Image-Merger-Utility/',
           slugDisplay: '/Image-Merger-Utility/',
-          category: 'utility',
+          category: 'image',
           tags: ['image', 'gambar', 'merge', 'gabung', 'collage', 'kolase', 'border', 'bingkai'],
           icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="12" y1="3" x2="12" y2="21"></line><line x1="3" y1="12" x2="12" y2="12"></line></svg>',
           title: {
@@ -780,6 +790,40 @@
             id: 'Salin dan tempel metadata antar file gambar dengan cepat untuk mempertahankan informasi teknis atau kredit pembuat karya.',
             en: 'Quickly copy and paste metadata between image files to preserve technical details or creator attribution.'
           }
+        },
+
+        // 4. Kelompok Ekosistem Kode QR
+        {
+          id: 'qr-generator',
+          url: './qr-generator/',
+          slugDisplay: '/qr-generator/',
+          category: 'qr',
+          tags: ['qr', 'qrcode', 'barcode', 'wifi', 'url', 'tautan', 'generator'],
+          icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><path d="M14 14h3v3h-3z"></path><path d="M18 18h3v3h-3z"></path><path d="M14 20h2"></path><path d="M20 14v2"></path></svg>',
+          title: {
+            id: 'QR Generator',
+            en: 'QR Generator'
+          },
+          description: {
+            id: 'Buat kode QR instan untuk tautan URL, akses jaringan Wi-Fi, teks biasa, alamat email, dan nomor telepon.',
+            en: 'Generate instant QR codes for website URLs, Wi-Fi networks, plain text, email addresses, and phone numbers.'
+          }
+        },
+        {
+          id: 'qr-scanner',
+          url: './qr-scanner/',
+          slugDisplay: '/qr-scanner/',
+          category: 'qr',
+          tags: ['qr', 'scanner', 'pindai', 'scan', 'kamera', 'camera', 'barcode', 'wifi', 'url', 'baca'],
+          icon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"></path><path d="M17 3h2a2 2 0 0 1 2 2v2"></path><path d="M21 17v2a2 2 0 0 1-2 2h-2"></path><path d="M7 21H5a2 2 0 0 1-2-2v-2"></path><line x1="7" y1="12" x2="17" y2="12"></line></svg>',
+          title: {
+            id: 'QR Scanner',
+            en: 'QR Scanner'
+          },
+          description: {
+            id: 'Pindai dan baca kode QR secara instan menggunakan kamera perangkat atau unggahan gambar untuk mendeteksi tautan URL, teks, dan konfigurasi Wi-Fi.',
+            en: 'Scan and decode QR codes instantly using your device camera or uploaded images to detect URLs, plain text, and Wi-Fi configurations.'
+          }
         }
       ];
 
@@ -787,19 +831,21 @@
       const UI_TEXT = {
         id: {
           pageTitle: 'UtilitiBox - Kumpulan Alat Utilitas Web Praktis',
-          metaDesc: 'UtilitiBox - Kumpulan alat utilitas web praktis untuk keamanan kata sandi, token acak, hash file, pembuat dan pemindai kode QR, serta pengelolaan metadata dan penggabungan gambar.',
+          metaDesc: 'UtilitiBox - Kumpulan alat utilitas web praktis untuk keamanan kata sandi, token acak, hash file, konversi dan perbesaran gambar, penggabungan foto, pengelolaan metadata, serta pembuat dan pemindai kode QR.',
           heroBadge: 'Utilitas Web Cepat & Praktis',
           heroTitle: 'Satu Tempat untuk Alat Digital Harian Anda',
-          heroSubtitle: 'Akses kumpulan utilitas web ringan untuk keamanan kata sandi, token kriptografi, verifikasi hash file, pembuat dan pemindai kode QR, hingga pengelolaan metadata dan penggabungan gambar langsung dari browser.',
-          searchPlaceholder: 'Cari alat (misal: password, token, QR, metadata, hash)...',
+          heroSubtitle: 'Akses kumpulan utilitas web ringan untuk keamanan kata sandi, token kriptografi, verifikasi hash file, konversi dan perbesaran gambar, pengelolaan metadata, hingga pembuat dan pemindai kode QR langsung dari browser.',
+          searchPlaceholder: 'Cari alat (misal: password, gambar, WebP, upscale, QR)...',
           filterAll: 'Semua',
           filterSecurity: 'Keamanan',
-          filterUtility: 'Gambar & QR',
+          filterImage: 'Gambar',
           filterMetadata: 'Metadata',
+          filterQr: 'Kode QR',
           categoryLabels: {
             security: 'Keamanan',
+            image: 'Gambar',
             metadata: 'Metadata',
-            utility: 'Gambar & QR'
+            qr: 'Kode QR'
           },
           openTool: 'Buka Alat',
           countText: function (shown, total) {
@@ -814,19 +860,21 @@
         },
         en: {
           pageTitle: 'UtilitiBox - Practical Web Utility Tools Collection',
-          metaDesc: 'UtilitiBox - A collection of practical web utilities for password security, random tokens, file hashing, QR generation and scanning, image merging, and metadata management.',
+          metaDesc: 'UtilitiBox - A collection of practical web utilities for password security, random tokens, file hashing, image conversion and upscaling, photo merging, metadata management, and QR code tools.',
           heroBadge: 'Fast & Practical Web Utilities',
           heroTitle: 'One Place for Your Daily Digital Tools',
-          heroSubtitle: 'Access lightweight browser utilities for password security, cryptographic tokens, file hash verification, QR code generation and scanning, image merging, and metadata management directly in your browser.',
-          searchPlaceholder: 'Search tools (e.g., password, token, QR, metadata, hash)...',
+          heroSubtitle: 'Access lightweight browser utilities for password security, cryptographic tokens, file hash verification, image conversion and upscaling, metadata management, and QR code tools directly in your browser.',
+          searchPlaceholder: 'Search tools (e.g., password, image, WebP, upscale, QR)...',
           filterAll: 'All',
           filterSecurity: 'Security',
-          filterUtility: 'Image & QR',
+          filterImage: 'Image',
           filterMetadata: 'Metadata',
+          filterQr: 'QR Code',
           categoryLabels: {
             security: 'Security',
+            image: 'Image',
             metadata: 'Metadata',
-            utility: 'Image & QR'
+            qr: 'QR Code'
           },
           openTool: 'Open Tool',
           countText: function (shown, total) {
@@ -912,8 +960,9 @@
 
         document.getElementById('filterAll').textContent = dict.filterAll;
         document.getElementById('filterSecurity').textContent = dict.filterSecurity;
-        document.getElementById('filterUtility').textContent = dict.filterUtility;
+        document.getElementById('filterImage').textContent = dict.filterImage;
         document.getElementById('filterMetadata').textContent = dict.filterMetadata;
+        document.getElementById('filterQr').textContent = dict.filterQr;
 
         document.getElementById('footerCopy').textContent = dict.footerCopy;
         document.getElementById('footerRepoText').textContent = dict.footerRepo;
@@ -932,8 +981,9 @@
 
       function getBadgeClass(category) {
         if (category === 'security') return 'badge-security';
+        if (category === 'image') return 'badge-image';
         if (category === 'metadata') return 'badge-metadata';
-        return 'badge-utility';
+        return 'badge-qr';
       }
 
       function renderTools() {
