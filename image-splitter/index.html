@@ -1,0 +1,1683 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none';">
+  <title>Image Splitter - UtilitiBox</title>
+  <style>
+    :root {
+      --bg-page: #f4f6f9;
+      --bg-card: #ffffff;
+      --bg-subtle: #eef2f6;
+      --bg-hover: #e2e8f0;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --border-color: #cbd5e1;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --accent-soft: rgba(37, 99, 235, 0.12);
+      --success: #059669;
+      --success-hover: #047857;
+      --warning-bg: #fef3c7;
+      --warning-text: #92400e;
+      --danger-bg: #fee2e2;
+      --danger-text: #991b1b;
+      --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08);
+      --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+      --radius-md: 10px;
+      --radius-lg: 14px;
+    }
+
+    [data-theme="dark"] {
+      --bg-page: #0b1120;
+      --bg-card: #111827;
+      --bg-subtle: #1e293b;
+      --bg-hover: #334155;
+      --text-primary: #f8fafc;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --border-color: #334155;
+      --accent: #3b82f6;
+      --accent-hover: #60a5fa;
+      --accent-soft: rgba(59, 130, 246, 0.16);
+      --success: #10b981;
+      --success-hover: #34d399;
+      --warning-bg: rgba(245, 158, 11, 0.16);
+      --warning-text: #fcd34d;
+      --danger-bg: rgba(239, 68, 68, 0.16);
+      --danger-text: #fca5a5;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35);
+      --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background-color: var(--bg-page);
+      color: var(--text-primary);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    header {
+      background-color: var(--bg-card);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.85rem 1.25rem;
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header-inner {
+      max-width: 1320px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      text-decoration: none;
+      color: var(--text-secondary);
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      padding: 0.4rem 0.75rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: all 0.15s ease;
+    }
+
+    .back-link:hover {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+    }
+
+    .title-wrap h1 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .title-wrap p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .icon-btn {
+      background: var(--bg-subtle);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 0.42rem 0.75rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: background 0.15s ease;
+    }
+
+    .icon-btn:hover {
+      background: var(--bg-hover);
+    }
+
+    main {
+      max-width: 1320px;
+      width: 100%;
+      margin: 1.25rem auto;
+      padding: 0 1.25rem;
+      flex: 1;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: 370px 1fr;
+      gap: 1.25rem;
+      align-items: start;
+    }
+
+    @media (max-width: 960px) {
+      .workspace {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.15rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .section-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-secondary);
+      margin-bottom: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .dropzone {
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1.35rem 1rem;
+      text-align: center;
+      background: var(--bg-subtle);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      margin-bottom: 1rem;
+    }
+
+    .dropzone:hover,
+    .dropzone.dragover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .dropzone strong {
+      display: block;
+      font-size: 0.92rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .dropzone span {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: block;
+    }
+
+    .file-meta {
+      display: none;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 0.65rem 0.8rem;
+      margin-bottom: 1rem;
+      font-size: 0.82rem;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .file-meta.active {
+      display: flex;
+    }
+
+    .file-meta-info {
+      overflow: hidden;
+    }
+
+    .file-meta-name {
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .file-meta-dim {
+      color: var(--text-muted);
+      font-size: 0.76rem;
+    }
+
+    .mode-tabs {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.45rem;
+      margin-bottom: 1rem;
+    }
+
+    .mode-tab {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      padding: 0.55rem 0.6rem;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s ease;
+    }
+
+    .mode-tab.full-span {
+      grid-column: span 2;
+    }
+
+    .mode-tab:hover {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+    }
+
+    .mode-tab.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #ffffff;
+    }
+
+    .control-panel {
+      display: none;
+      flex-direction: column;
+      gap: 0.85rem;
+      padding: 0.85rem;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      margin-bottom: 1rem;
+    }
+
+    .control-panel.active {
+      display: flex;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.65rem;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    input[type="number"],
+    select {
+      width: 100%;
+      padding: 0.5rem 0.65rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-size: 0.88rem;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    input[type="color"] {
+      width: 100%;
+      height: 36px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: var(--bg-card);
+      padding: 2px;
+      cursor: pointer;
+    }
+
+    .preset-pills {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.45rem;
+    }
+
+    .preset-pill {
+      padding: 0.5rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .preset-pill.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #ffffff;
+    }
+
+    .helper-note {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .alert-box {
+      display: none;
+      padding: 0.65rem 0.8rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      margin-bottom: 0.85rem;
+      line-height: 1.4;
+    }
+
+    .alert-box.warning {
+      display: block;
+      background: var(--warning-bg);
+      color: var(--warning-text);
+    }
+
+    .alert-box.danger {
+      display: block;
+      background: var(--danger-bg);
+      color: var(--danger-text);
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--border-color);
+      margin: 0.95rem 0;
+    }
+
+    .action-stack {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+      margin-top: 0.9rem;
+    }
+
+    .btn {
+      padding: 0.68rem 0.9rem;
+      border-radius: 9px;
+      border: none;
+      font-size: 0.86rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      transition: all 0.15s ease;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #ffffff;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--accent-hover);
+    }
+
+    .btn-success {
+      background: var(--success);
+      color: #ffffff;
+    }
+
+    .btn-success:hover:not(:disabled) {
+      background: var(--success-hover);
+    }
+
+    .btn-secondary {
+      background: var(--bg-subtle);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background: var(--bg-hover);
+    }
+
+    .preview-stage {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .canvas-wrapper {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      min-height: 340px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .empty-state {
+      text-align: center;
+      color: var(--text-muted);
+      max-width: 340px;
+      padding: 2rem 1rem;
+    }
+
+    .empty-state h3 {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.35rem;
+    }
+
+    .empty-state p {
+      font-size: 0.84rem;
+    }
+
+    #previewCanvas {
+      max-width: 100%;
+      max-height: 520px;
+      border-radius: 6px;
+      box-shadow: var(--shadow-md);
+      display: none;
+    }
+
+    .stats-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      background: var(--bg-subtle);
+      padding: 0.6rem 0.85rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .tiles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+      gap: 0.85rem;
+    }
+
+    .tile-card {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 0.6rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    .tile-thumb-box {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      background-image: linear-gradient(45deg, #cbd5e1 25%, transparent 25%),
+                        linear-gradient(-45deg, #cbd5e1 25%, transparent 25%),
+                        linear-gradient(45deg, transparent 75%, #cbd5e1 75%),
+                        linear-gradient(-45deg, transparent 75%, #cbd5e1 75%);
+      background-size: 14px 14px;
+      background-position: 0 0, 0 7px, 7px -7px, -7px 0;
+      border-radius: 6px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border-color);
+    }
+
+    [data-theme="dark"] .tile-thumb-box {
+      background-image: linear-gradient(45deg, #334155 25%, transparent 25%),
+                        linear-gradient(-45deg, #334155 25%, transparent 25%),
+                        linear-gradient(45deg, transparent 75%, #334155 75%),
+                        linear-gradient(-45deg, transparent 75%, #334155 75%);
+    }
+
+    .tile-thumb-box img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .tile-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.76rem;
+    }
+
+    .tile-badge {
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .tile-dim {
+      color: var(--text-muted);
+    }
+
+    .tile-dl-btn {
+      width: 100%;
+      padding: 0.42rem;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .tile-dl-btn:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #ffffff;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1.1rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border-color);
+      background: var(--bg-card);
+      margin-top: 2rem;
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="brand-group">
+        <a href="https://utilitibox.github.io/" class="back-link" id="backLink">
+          <span aria-hidden="true">&larr;</span>
+          <span data-i18n="backHome">UtilitiBox</span>
+        </a>
+        <div class="title-wrap">
+          <h1>Image Splitter</h1>
+          <p data-i18n="subtitle">Potong gambar menjadi grid, potongan piksel, atau feed Instagram secara lokal di browser</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button type="button" class="icon-btn" id="langToggle" aria-label="Switch Language">ID / EN</button>
+        <button type="button" class="icon-btn" id="themeToggle" aria-label="Toggle Theme">Tema Gelap</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="workspace">
+      <aside class="card">
+        <div class="section-title">
+          <span data-i18n="stepUpload">1. Sumber Gambar</span>
+        </div>
+
+        <div class="dropzone" id="dropzone" tabindex="0" role="button">
+          <strong data-i18n="dropTitle">Klik, seret gambar ke sini, atau tempel (Ctrl+V)</strong>
+          <span data-i18n="dropHint">Mendukung PNG, JPG, WebP, GIF, BMP (100% diproses lokal)</span>
+          <input type="file" id="fileInput" accept="image/*" hidden>
+        </div>
+
+        <div class="file-meta" id="fileMeta">
+          <div class="file-meta-info">
+            <div class="file-meta-name" id="fileName">image.png</div>
+            <div class="file-meta-dim" id="fileDim">0 x 0 px</div>
+          </div>
+          <button type="button" class="icon-btn" id="changeFileBtn" data-i18n="changeBtn">Ganti</button>
+        </div>
+
+        <div class="section-title">
+          <span data-i18n="stepMode">2. Mode Pemotongan</span>
+        </div>
+
+        <div class="mode-tabs" role="tablist">
+          <button type="button" class="mode-tab active" data-mode="grid" data-i18n="modeGrid">Grid (Baris x Kolom)</button>
+          <button type="button" class="mode-tab" data-mode="instagram" data-i18n="modeIg">Instagram Grid</button>
+          <button type="button" class="mode-tab" data-mode="horizontal" data-i18n="modeHoriz">Horizontal Split</button>
+          <button type="button" class="mode-tab" data-mode="vertical" data-i18n="modeVert">Vertical Split</button>
+          <button type="button" class="mode-tab full-span" data-mode="custom" data-i18n="modeCustom">Custom Dimensions (Piksel)</button>
+        </div>
+
+        <div class="control-panel active" id="panel-grid">
+          <div class="field-row">
+            <div class="field">
+              <label for="gridRows" data-i18n="lblRows">Jumlah Baris (Rows)</label>
+              <input type="number" id="gridRows" min="1" max="50" value="3">
+            </div>
+            <div class="field">
+              <label for="gridCols" data-i18n="lblCols">Jumlah Kolom (Columns)</label>
+              <input type="number" id="gridCols" min="1" max="50" value="3">
+            </div>
+          </div>
+          <div class="field">
+            <label for="gridOrder" data-i18n="lblOrder">Urutan Penomoran</label>
+            <select id="gridOrder">
+              <option value="standard" data-i18n="optOrderStd">Standar (Kiri-Atas ke Kanan-Bawah)</option>
+              <option value="ig_reverse" data-i18n="optOrderRev">Terbalik (Kanan-Bawah ke Kiri-Atas)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="control-panel" id="panel-horizontal">
+          <div class="field">
+            <label for="horizParts" data-i18n="lblHorizParts">Jumlah Potongan Horizontal (Baris)</label>
+            <input type="number" id="horizParts" min="2" max="100" value="3">
+          </div>
+          <p class="helper-note" data-i18n="noteHoriz">Membagi tinggi gambar menjadi beberapa bagian mendatar sama besar.</p>
+        </div>
+
+        <div class="control-panel" id="panel-vertical">
+          <div class="field">
+            <label for="vertParts" data-i18n="lblVertParts">Jumlah Potongan Vertikal (Kolom)</label>
+            <input type="number" id="vertParts" min="2" max="100" value="3">
+          </div>
+          <p class="helper-note" data-i18n="noteVert">Membagi lebar gambar menjadi beberapa bagian tegak sama besar.</p>
+        </div>
+
+        <div class="control-panel" id="panel-custom">
+          <div class="field-row">
+            <div class="field">
+              <label for="customW" data-i18n="lblTileW">Lebar Potongan (px)</label>
+              <input type="number" id="customW" min="8" max="8000" value="300">
+            </div>
+            <div class="field">
+              <label for="customH" data-i18n="lblTileH">Tinggi Potongan (px)</label>
+              <input type="number" id="customH" min="8" max="8000" value="300">
+            </div>
+          </div>
+          <p class="helper-note" data-i18n="noteCustom">Sisa piksel di tepi kanan atau bawah akan tetap disimpan sesuai ukuran aslinya.</p>
+        </div>
+
+        <div class="control-panel" id="panel-instagram">
+          <div class="field">
+            <label data-i18n="lblIgPreset">Preset Grid Instagram</label>
+            <div class="preset-pills">
+              <button type="button" class="preset-pill active" data-ig="3x3">3 x 3</button>
+              <button type="button" class="preset-pill" data-ig="3x4">3 x 4</button>
+              <button type="button" class="preset-pill" data-ig="3x2">3 x 2</button>
+            </div>
+          </div>
+          <div class="field">
+            <label for="igCropMode" data-i18n="lblIgCrop">Penyesuaian Rasio Aspek</label>
+            <select id="igCropMode">
+              <option value="square" data-i18n="optIgSquare">Smart Crop 1:1 per Kotak (Persegi Klasik)</option>
+              <option value="portrait" data-i18n="optIgPortrait">Smart Crop 4:5 per Kotak (Feed Portrait IG)</option>
+              <option value="none" data-i18n="optIgNone">Tanpa Crop (Gunakan Rasio Asli Gambar)</option>
+            </select>
+          </div>
+          <div id="igOffsetGroup">
+            <div class="field-row">
+              <div class="field">
+                <label for="igOffsetX"><span data-i18n="lblFocusX">Geser Fokus X</span> (<span id="igOffsetXVal">0%</span>)</label>
+                <input type="range" id="igOffsetX" min="-100" max="100" value="0">
+              </div>
+              <div class="field">
+                <label for="igOffsetY"><span data-i18n="lblFocusY">Geser Fokus Y</span> (<span id="igOffsetYVal">0%</span>)</label>
+                <input type="range" id="igOffsetY" min="-100" max="100" value="0">
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label for="igOrder" data-i18n="lblIgOrder">Urutan Penomoran File</label>
+            <select id="igOrder">
+              <option value="ig_reverse" data-i18n="optIgRev">Urutan Posting IG (Kanan-Bawah ke Kiri-Atas)</option>
+              <option value="standard" data-i18n="optIgStd">Urutan Standar (Kiri-Atas ke Kanan-Bawah)</option>
+            </select>
+          </div>
+          <p class="helper-note" data-i18n="noteIg">Unggah file nomor 01 terlebih dahulu di Instagram, lalu lanjutkan berurutan agar susunan grid tampil utuh.</p>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section-title">
+          <span data-i18n="stepOutput">3. Format & Kualitas Output</span>
+        </div>
+
+        <div class="control-panel active" style="margin-bottom: 0;">
+          <div class="field-row">
+            <div class="field">
+              <label for="outputFormat" data-i18n="lblFormat">Format File</label>
+              <select id="outputFormat">
+                <option value="image/png">PNG (Lossless)</option>
+                <option value="image/jpeg">JPG</option>
+                <option value="image/webp">WebP</option>
+              </select>
+            </div>
+            <div class="field" id="qualityField" style="display: none;">
+              <label for="outputQuality"><span data-i18n="lblQuality">Kualitas</span> (<span id="qualityVal">92%</span>)</label>
+              <input type="range" id="outputQuality" min="10" max="100" value="92">
+            </div>
+            <div class="field" id="bgField" style="display: none;">
+              <label for="jpgBgColor" data-i18n="lblBgColor">Latar Transparansi JPG</label>
+              <input type="color" id="jpgBgColor" value="#ffffff">
+            </div>
+          </div>
+        </div>
+
+        <div class="alert-box" id="alertBox"></div>
+
+        <div class="action-stack">
+          <button type="button" class="btn btn-primary" id="zipBtn" disabled data-i18n="btnZip">ZIP Export</button>
+          <button type="button" class="btn btn-success" id="downloadAllBtn" disabled data-i18n="btnDownloadAll">Download All</button>
+        </div>
+      </aside>
+
+      <section class="preview-stage">
+        <div class="card">
+          <div class="section-title">
+            <span data-i18n="previewTitle">Pratinjau Garis Potong</span>
+            <span id="gridSummaryBadge" style="font-size: 0.8rem; color: var(--accent);"></span>
+          </div>
+
+          <div class="canvas-wrapper" id="canvasWrapper">
+            <div class="empty-state" id="emptyState">
+              <h3 data-i18n="emptyTitle">Belum Ada Gambar Dipilih</h3>
+              <p data-i18n="emptyDesc">Pilih atau seret gambar pada panel di samping untuk melihat pratinjau pembagian grid secara langsung.</p>
+            </div>
+            <canvas id="previewCanvas"></canvas>
+          </div>
+
+          <div class="stats-bar" id="statsBar" style="margin-top: 0.85rem; display: none;">
+            <span id="statPieces">Total: 0 potongan</span>
+            <span id="statCropInfo"></span>
+            <span id="statTotalSize">Estimasi ukuran: 0 KB</span>
+          </div>
+        </div>
+
+        <div class="card" id="resultsCard" style="display: none;">
+          <div class="section-title">
+            <span data-i18n="resultsTitle">Hasil Potongan (Preview & Unduh Satuan)</span>
+          </div>
+          <div class="tiles-grid" id="tilesGrid"></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <span data-i18n="footerText">Bagian dari ekosistem utilitas web client-side</span>
+    <a href="https://utilitibox.github.io/">UtilitiBox</a>
+  </footer>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const I18N = {
+        id: {
+          backHome: "UtilitiBox",
+          subtitle: "Potong gambar menjadi grid, potongan piksel, atau feed Instagram secara lokal di browser",
+          themeDark: "Tema Gelap",
+          themeLight: "Tema Terang",
+          stepUpload: "1. Sumber Gambar",
+          dropTitle: "Klik, seret gambar ke sini, atau tempel (Ctrl+V)",
+          dropHint: "Mendukung PNG, JPG, WebP, GIF, BMP (100% diproses lokal)",
+          changeBtn: "Ganti",
+          stepMode: "2. Mode Pemotongan",
+          modeGrid: "Grid (Baris x Kolom)",
+          modeIg: "Instagram Grid",
+          modeHoriz: "Horizontal Split",
+          modeVert: "Vertical Split",
+          modeCustom: "Custom Dimensions (Piksel)",
+          lblRows: "Jumlah Baris (Rows)",
+          lblCols: "Jumlah Kolom (Columns)",
+          lblOrder: "Urutan Penomoran",
+          optOrderStd: "Standar (Kiri-Atas ke Kanan-Bawah)",
+          optOrderRev: "Terbalik (Kanan-Bawah ke Kiri-Atas)",
+          lblHorizParts: "Jumlah Potongan Horizontal (Baris)",
+          noteHoriz: "Membagi tinggi gambar menjadi beberapa bagian mendatar sama besar.",
+          lblVertParts: "Jumlah Potongan Vertikal (Kolom)",
+          noteVert: "Membagi lebar gambar menjadi beberapa bagian tegak sama besar.",
+          lblTileW: "Lebar Potongan (px)",
+          lblTileH: "Tinggi Potongan (px)",
+          noteCustom: "Sisa piksel di tepi kanan atau bawah akan tetap disimpan sesuai ukuran aslinya.",
+          lblIgPreset: "Preset Grid Instagram",
+          lblIgCrop: "Penyesuaian Rasio Aspek",
+          optIgSquare: "Smart Crop 1:1 per Kotak (Persegi Klasik)",
+          optIgPortrait: "Smart Crop 4:5 per Kotak (Feed Portrait IG)",
+          optIgNone: "Tanpa Crop (Gunakan Rasio Asli Gambar)",
+          lblFocusX: "Geser Fokus X",
+          lblFocusY: "Geser Fokus Y",
+          lblIgOrder: "Urutan Penomoran File",
+          optIgRev: "Urutan Posting IG (Kanan-Bawah ke Kiri-Atas)",
+          optIgStd: "Urutan Standar (Kiri-Atas ke Kanan-Bawah)",
+          noteIg: "Unggah file nomor 01 terlebih dahulu di Instagram, lalu lanjutkan berurutan agar susunan grid tampil utuh.",
+          stepOutput: "3. Format & Kualitas Output",
+          lblFormat: "Format File",
+          lblQuality: "Kualitas",
+          lblBgColor: "Latar Transparansi JPG",
+          btnZip: "ZIP Export",
+          btnDownloadAll: "Download All",
+          previewTitle: "Pratinjau Garis Potong",
+          emptyTitle: "Belum Ada Gambar Dipilih",
+          emptyDesc: "Pilih atau seret gambar pada panel di samping untuk melihat pratinjau pembagian grid secara langsung.",
+          resultsTitle: "Hasil Potongan (Preview & Unduh Satuan)",
+          footerText: "Bagian dari ekosistem utilitas web client-side",
+          dlSingle: "Unduh",
+          totalPieces: "Total: {n} potongan",
+          estSize: "Total ukuran: {s}",
+          cropAreaInfo: "Area potong: {w} x {h} px",
+          remainderNote: "Terdapat potongan sisa tepi dengan ukuran asli.",
+          maxTileWarn: "Jumlah potongan dibatasi maksimal 400 bagian untuk menjaga stabilitas memori browser.",
+          invalidFileErr: "File yang dipilih bukan format gambar yang valid.",
+          downloadingProgress: "Mengunduh ({c}/{t})...",
+          zippingProgress: "Membuat ZIP..."
+        },
+        en: {
+          backHome: "UtilitiBox",
+          subtitle: "Split images into grids, custom pixel tiles, or Instagram layouts locally in your browser",
+          themeDark: "Dark Mode",
+          themeLight: "Light Mode",
+          stepUpload: "1. Image Source",
+          dropTitle: "Click, drag & drop an image here, or paste (Ctrl+V)",
+          dropHint: "Supports PNG, JPG, WebP, GIF, BMP (100% processed locally)",
+          changeBtn: "Change",
+          stepMode: "2. Split Mode",
+          modeGrid: "Grid (Rows x Cols)",
+          modeIg: "Instagram Grid",
+          modeHoriz: "Horizontal Split",
+          modeVert: "Vertical Split",
+          modeCustom: "Custom Dimensions (Pixels)",
+          lblRows: "Rows Count",
+          lblCols: "Columns Count",
+          lblOrder: "Numbering Order",
+          optOrderStd: "Standard (Top-Left to Bottom-Right)",
+          optOrderRev: "Reverse (Bottom-Right to Top-Left)",
+          lblHorizParts: "Horizontal Slices (Rows)",
+          noteHoriz: "Divides image height into equal horizontal strips.",
+          lblVertParts: "Vertical Slices (Columns)",
+          noteVert: "Divides image width into equal vertical columns.",
+          lblTileW: "Tile Width (px)",
+          lblTileH: "Tile Height (px)",
+          noteCustom: "Remaining edge pixels on the right or bottom are preserved at their exact remaining dimensions.",
+          lblIgPreset: "Instagram Grid Preset",
+          lblIgCrop: "Aspect Ratio Fitting",
+          optIgSquare: "Smart Crop 1:1 per Tile (Classic Square)",
+          optIgPortrait: "Smart Crop 4:5 per Tile (IG Portrait Feed)",
+          optIgNone: "No Crop (Keep Original Image Aspect Ratio)",
+          lblFocusX: "Focus Offset X",
+          lblFocusY: "Focus Offset Y",
+          lblIgOrder: "File Numbering Order",
+          optIgRev: "IG Posting Order (Bottom-Right to Top-Left)",
+          optIgStd: "Standard Order (Top-Left to Bottom-Right)",
+          noteIg: "Upload file 01 first on Instagram and continue sequentially so your profile grid aligns properly.",
+          stepOutput: "3. Output Format & Quality",
+          lblFormat: "File Format",
+          lblQuality: "Quality",
+          lblBgColor: "JPG Background Fill",
+          btnZip: "ZIP Export",
+          btnDownloadAll: "Download All",
+          previewTitle: "Cut Lines Preview",
+          emptyTitle: "No Image Selected",
+          emptyDesc: "Select or drop an image on the left panel to preview split lines in real time.",
+          resultsTitle: "Split Results (Preview & Individual Download)",
+          footerText: "Part of the client-side web utility ecosystem",
+          dlSingle: "Download",
+          totalPieces: "Total: {n} pieces",
+          estSize: "Total size: {s}",
+          cropAreaInfo: "Crop area: {w} x {h} px",
+          remainderNote: "Includes remainder edge tiles kept at original remaining size.",
+          maxTileWarn: "Maximum slice count is capped at 400 pieces to prevent browser memory exhaustion.",
+          invalidFileErr: "Selected file is not a valid image.",
+          downloadingProgress: "Downloading ({c}/{t})...",
+          zippingProgress: "Building ZIP..."
+        }
+      };
+
+      const state = {
+        lang: localStorage.getItem("utilitibox_lang") || "id",
+        theme: localStorage.getItem("utilitibox_theme") || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"),
+        mode: "grid",
+        igPreset: "3x3",
+        sourceImg: null,
+        sourceName: "image",
+        slices: [],
+        renderToken: 0
+      };
+
+      const MAX_TILES = 400;
+
+      const els = {
+        langToggle: document.getElementById("langToggle"),
+        themeToggle: document.getElementById("themeToggle"),
+        dropzone: document.getElementById("dropzone"),
+        fileInput: document.getElementById("fileInput"),
+        fileMeta: document.getElementById("fileMeta"),
+        fileName: document.getElementById("fileName"),
+        fileDim: document.getElementById("fileDim"),
+        changeFileBtn: document.getElementById("changeFileBtn"),
+        modeTabs: document.querySelectorAll(".mode-tab"),
+        panels: {
+          grid: document.getElementById("panel-grid"),
+          horizontal: document.getElementById("panel-horizontal"),
+          vertical: document.getElementById("panel-vertical"),
+          custom: document.getElementById("panel-custom"),
+          instagram: document.getElementById("panel-instagram")
+        },
+        gridRows: document.getElementById("gridRows"),
+        gridCols: document.getElementById("gridCols"),
+        gridOrder: document.getElementById("gridOrder"),
+        horizParts: document.getElementById("horizParts"),
+        vertParts: document.getElementById("vertParts"),
+        customW: document.getElementById("customW"),
+        customH: document.getElementById("customH"),
+        igPills: document.querySelectorAll(".preset-pill"),
+        igCropMode: document.getElementById("igCropMode"),
+        igOffsetGroup: document.getElementById("igOffsetGroup"),
+        igOffsetX: document.getElementById("igOffsetX"),
+        igOffsetY: document.getElementById("igOffsetY"),
+        igOffsetXVal: document.getElementById("igOffsetXVal"),
+        igOffsetYVal: document.getElementById("igOffsetYVal"),
+        igOrder: document.getElementById("igOrder"),
+        outputFormat: document.getElementById("outputFormat"),
+        qualityField: document.getElementById("qualityField"),
+        outputQuality: document.getElementById("outputQuality"),
+        qualityVal: document.getElementById("qualityVal"),
+        bgField: document.getElementById("bgField"),
+        jpgBgColor: document.getElementById("jpgBgColor"),
+        alertBox: document.getElementById("alertBox"),
+        zipBtn: document.getElementById("zipBtn"),
+        downloadAllBtn: document.getElementById("downloadAllBtn"),
+        emptyState: document.getElementById("emptyState"),
+        previewCanvas: document.getElementById("previewCanvas"),
+        gridSummaryBadge: document.getElementById("gridSummaryBadge"),
+        statsBar: document.getElementById("statsBar"),
+        statPieces: document.getElementById("statPieces"),
+        statCropInfo: document.getElementById("statCropInfo"),
+        statTotalSize: document.getElementById("statTotalSize"),
+        resultsCard: document.getElementById("resultsCard"),
+        tilesGrid: document.getElementById("tilesGrid")
+      };
+
+      function t(key) {
+        return (I18N[state.lang] && I18N[state.lang][key]) || I18N.id[key] || key;
+      }
+
+      function applyTheme() {
+        document.documentElement.setAttribute("data-theme", state.theme);
+        localStorage.setItem("utilitibox_theme", state.theme);
+        els.themeToggle.textContent = state.theme === "dark" ? t("themeLight") : t("themeDark");
+      }
+
+      function applyLanguage() {
+        document.documentElement.lang = state.lang;
+        localStorage.setItem("utilitibox_lang", state.lang);
+        document.querySelectorAll("[data-i18n]").forEach((node) => {
+          const key = node.getAttribute("data-i18n");
+          if (key) node.textContent = t(key);
+        });
+        els.themeToggle.textContent = state.theme === "dark" ? t("themeLight") : t("themeDark");
+        if (state.sourceImg) {
+          scheduleProcess();
+        }
+      }
+
+      function formatBytes(bytes) {
+        if (bytes < 1024) return bytes + " B";
+        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+        return (bytes / (1024 * 1024)).toFixed(2) + " MB";
+      }
+
+      function showAlert(msg, type) {
+        if (!msg) {
+          els.alertBox.className = "alert-box";
+          els.alertBox.textContent = "";
+          return;
+        }
+        els.alertBox.className = "alert-box " + type;
+        els.alertBox.textContent = msg;
+      }
+
+      function clearSlices() {
+        state.slices.forEach((s) => {
+          if (s.url) URL.revokeObjectURL(s.url);
+        });
+        state.slices = [];
+      }
+
+      function loadImageFile(file) {
+        if (!file || !file.type.startsWith("image/")) {
+          showAlert(t("invalidFileErr"), "danger");
+          return;
+        }
+        showAlert("", "");
+        const reader = new FileReader();
+        reader.onload = function (ev) {
+          const img = new Image();
+          img.onload = function () {
+            state.sourceImg = img;
+            const rawName = file.name ? file.name.replace(/\.[^/.]+$/, "") : "image";
+            state.sourceName = rawName.replace(/[^a-zA-Z0-9_-]/g, "_") || "image";
+            els.fileName.textContent = file.name || "pasted-image.png";
+            els.fileDim.textContent = img.naturalWidth + " x " + img.naturalHeight + " px";
+            els.fileMeta.classList.add("active");
+            els.emptyState.style.display = "none";
+            els.previewCanvas.style.display = "block";
+            scheduleProcess();
+          };
+          img.onerror = function () {
+            showAlert(t("invalidFileErr"), "danger");
+          };
+          img.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+
+      function clampInt(val, min, max, fallback) {
+        const parsed = parseInt(val, 10);
+        if (Number.isNaN(parsed)) return fallback;
+        return Math.min(max, Math.max(min, parsed));
+      }
+
+      function computePlan(imgW, imgH) {
+        let cropRect = { x: 0, y: 0, w: imgW, h: imgH };
+        let rects = [];
+        let orderMode = "standard";
+        let hasRemainder = false;
+        let capped = false;
+        let labelBadge = "";
+
+        if (state.mode === "grid") {
+          let rows = clampInt(els.gridRows.value, 1, 50, 3);
+          let cols = clampInt(els.gridCols.value, 1, 50, 3);
+          if (rows * cols > MAX_TILES) {
+            cols = Math.max(1, Math.floor(MAX_TILES / rows));
+            els.gridCols.value = cols;
+            capped = true;
+          }
+          orderMode = els.gridOrder.value;
+          labelBadge = rows + " x " + cols;
+          for (let r = 0; r < rows; r++) {
+            const y0 = Math.round((r * imgH) / rows);
+            const y1 = Math.round(((r + 1) * imgH) / rows);
+            for (let c = 0; c < cols; c++) {
+              const x0 = Math.round((c * imgW) / cols);
+              const x1 = Math.round(((c + 1) * imgW) / cols);
+              rects.push({ r, c, x: x0, y: y0, w: Math.max(1, x1 - x0), h: Math.max(1, y1 - y0) });
+            }
+          }
+        } else if (state.mode === "horizontal") {
+          const rows = clampInt(els.horizParts.value, 2, 100, 3);
+          labelBadge = rows + " x 1";
+          for (let r = 0; r < rows; r++) {
+            const y0 = Math.round((r * imgH) / rows);
+            const y1 = Math.round(((r + 1) * imgH) / rows);
+            rects.push({ r, c: 0, x: 0, y: y0, w: imgW, h: Math.max(1, y1 - y0) });
+          }
+        } else if (state.mode === "vertical") {
+          const cols = clampInt(els.vertParts.value, 2, 100, 3);
+          labelBadge = "1 x " + cols;
+          for (let c = 0; c < cols; c++) {
+            const x0 = Math.round((c * imgW) / cols);
+            const x1 = Math.round(((c + 1) * imgW) / cols);
+            rects.push({ r: 0, c, x: x0, y: 0, w: Math.max(1, x1 - x0), h: imgH });
+          }
+        } else if (state.mode === "custom") {
+          const tileW = clampInt(els.customW.value, 8, 8000, 300);
+          const tileH = clampInt(els.customH.value, 8, 8000, 300);
+          const cols = Math.ceil(imgW / tileW);
+          const rows = Math.ceil(imgH / tileH);
+          labelBadge = tileW + "x" + tileH + " px (" + rows + "x" + cols + ")";
+          let count = 0;
+          for (let r = 0; r < rows; r++) {
+            const y0 = r * tileH;
+            const h = Math.min(tileH, imgH - y0);
+            if (h < tileH) hasRemainder = true;
+            for (let c = 0; c < cols; c++) {
+              if (count >= MAX_TILES) {
+                capped = true;
+                break;
+              }
+              const x0 = c * tileW;
+              const w = Math.min(tileW, imgW - x0);
+              if (w < tileW) hasRemainder = true;
+              rects.push({ r, c, x: x0, y: y0, w, h });
+              count++;
+            }
+            if (capped) break;
+          }
+        } else if (state.mode === "instagram") {
+          const parts = state.igPreset.split("x");
+          const cols = parseInt(parts[0], 10);
+          const rows = parseInt(parts[1], 10);
+          const cropMode = els.igCropMode.value;
+          orderMode = els.igOrder.value;
+          labelBadge = "IG " + cols + "x" + rows;
+
+          if (cropMode === "square" || cropMode === "portrait") {
+            const tileRatio = cropMode === "square" ? 1 : 4 / 5;
+            const targetRatio = (cols * tileRatio) / rows;
+            let cw = imgW;
+            let ch = imgH;
+            if (imgW / imgH > targetRatio) {
+              ch = imgH;
+              cw = Math.max(1, Math.round(imgH * targetRatio));
+            } else {
+              cw = imgW;
+              ch = Math.max(1, Math.round(imgW / targetRatio));
+            }
+            const offX = parseInt(els.igOffsetX.value, 10) || 0;
+            const offY = parseInt(els.igOffsetY.value, 10) || 0;
+            const maxShiftX = imgW - cw;
+            const maxShiftY = imgH - ch;
+            const cx = Math.round((maxShiftX / 2) * (1 + offX / 100));
+            const cy = Math.round((maxShiftY / 2) * (1 + offY / 100));
+            cropRect = { x: cx, y: cy, w: cw, h: ch };
+          }
+
+          for (let r = 0; r < rows; r++) {
+            const y0 = cropRect.y + Math.round((r * cropRect.h) / rows);
+            const y1 = cropRect.y + Math.round(((r + 1) * cropRect.h) / rows);
+            for (let c = 0; c < cols; c++) {
+              const x0 = cropRect.x + Math.round((c * cropRect.w) / cols);
+              const x1 = cropRect.x + Math.round(((c + 1) * cropRect.w) / cols);
+              rects.push({ r, c, x: x0, y: y0, w: Math.max(1, x1 - x0), h: Math.max(1, y1 - y0) });
+            }
+          }
+        }
+
+        if (orderMode === "ig_reverse") {
+          rects.reverse();
+        }
+
+        const totalDigits = String(rects.length).length < 2 ? 2 : String(rects.length).length;
+        rects.forEach((item, idx) => {
+          item.order = idx + 1;
+          item.orderLabel = String(idx + 1).padStart(totalDigits, "0");
+        });
+
+        return { cropRect, rects, hasRemainder, capped, labelBadge };
+      }
+
+      function drawPreviewOverlay(img, plan) {
+        const canvas = els.previewCanvas;
+        const maxDisplay = 1000;
+        const scale = Math.min(1, maxDisplay / Math.max(img.naturalWidth, img.naturalHeight));
+        const dw = Math.max(1, Math.round(img.naturalWidth * scale));
+        const dh = Math.max(1, Math.round(img.naturalHeight * scale));
+        canvas.width = dw;
+        canvas.height = dh;
+
+        const ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, dw, dh);
+        ctx.drawImage(img, 0, 0, dw, dh);
+
+        const cr = plan.cropRect;
+        if (cr.w < img.naturalWidth || cr.h < img.naturalHeight) {
+          ctx.fillStyle = "rgba(15, 23, 42, 0.58)";
+          ctx.fillRect(0, 0, dw, cr.y * scale);
+          ctx.fillRect(0, (cr.y + cr.h) * scale, dw, dh - (cr.y + cr.h) * scale);
+          ctx.fillRect(0, cr.y * scale, cr.x * scale, cr.h * scale);
+          ctx.fillRect((cr.x + cr.w) * scale, cr.y * scale, dw - (cr.x + cr.w) * scale, cr.h * scale);
+        }
+
+        plan.rects.forEach((tile) => {
+          const tx = tile.x * scale;
+          const ty = tile.y * scale;
+          const tw = tile.w * scale;
+          const th = tile.h * scale;
+
+          ctx.strokeStyle = "#ffffff";
+          ctx.lineWidth = 2;
+          ctx.strokeRect(tx + 0.5, ty + 0.5, Math.max(1, tw - 1), Math.max(1, th - 1));
+
+          ctx.save();
+          ctx.setLineDash([5, 4]);
+          ctx.strokeStyle = "#2563eb";
+          ctx.lineWidth = 1.5;
+          ctx.strokeRect(tx + 0.5, ty + 0.5, Math.max(1, tw - 1), Math.max(1, th - 1));
+          ctx.restore();
+
+          if (tw >= 26 && th >= 22) {
+            const badgeText = "#" + tile.orderLabel;
+            ctx.font = "bold 12px sans-serif";
+            const textW = ctx.measureText(badgeText).width;
+            const boxW = textW + 10;
+            const boxH = 20;
+            ctx.fillStyle = "rgba(15, 23, 42, 0.78)";
+            ctx.fillRect(tx + 4, ty + 4, Math.min(boxW, tw - 4), Math.min(boxH, th - 4));
+            ctx.fillStyle = "#ffffff";
+            ctx.textBaseline = "middle";
+            ctx.fillText(badgeText, tx + 9, ty + 14);
+          }
+        });
+      }
+
+      function canvasToBlobAsync(canvas, mime, quality) {
+        return new Promise((resolve) => {
+          canvas.toBlob(
+            (blob) => {
+              resolve(blob);
+            },
+            mime,
+            quality
+          );
+        });
+      }
+
+      let debounceTimer = null;
+      function scheduleProcess() {
+        if (!state.sourceImg) return;
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+          processSlices();
+        }, 90);
+      }
+
+      async function processSlices() {
+        const img = state.sourceImg;
+        if (!img) return;
+
+        const currentToken = ++state.renderToken;
+        const plan = computePlan(img.naturalWidth, img.naturalHeight);
+
+        if (plan.capped) {
+          showAlert(t("maxTileWarn"), "warning");
+        } else if (plan.hasRemainder) {
+          showAlert(t("remainderNote"), "warning");
+        } else {
+          showAlert("", "");
+        }
+
+        els.gridSummaryBadge.textContent = plan.labelBadge;
+        drawPreviewOverlay(img, plan);
+
+        const mime = els.outputFormat.value;
+        const quality = (parseInt(els.outputQuality.value, 10) || 92) / 100;
+        const bgColor = els.jpgBgColor.value || "#ffffff";
+        const ext = mime === "image/png" ? "png" : mime === "image/jpeg" ? "jpg" : "webp";
+
+        const offCanvas = document.createElement("canvas");
+        const offCtx = offCanvas.getContext("2d");
+
+        const generated = [];
+        let totalBytes = 0;
+
+        for (let i = 0; i < plan.rects.length; i++) {
+          if (currentToken !== state.renderToken) return;
+          const tile = plan.rects[i];
+          offCanvas.width = tile.w;
+          offCanvas.height = tile.h;
+          offCtx.clearRect(0, 0, tile.w, tile.h);
+
+          if (mime === "image/jpeg") {
+            offCtx.fillStyle = bgColor;
+            offCtx.fillRect(0, 0, tile.w, tile.h);
+          }
+
+          offCtx.drawImage(img, tile.x, tile.y, tile.w, tile.h, 0, 0, tile.w, tile.h);
+          const blob = await canvasToBlobAsync(offCanvas, mime, quality);
+          if (currentToken !== state.renderToken) {
+            return;
+          }
+          const url = URL.createObjectURL(blob);
+          const filename = state.sourceName + "_" + tile.orderLabel + "_r" + (tile.r + 1) + "_c" + (tile.c + 1) + "." + ext;
+          totalBytes += blob.size;
+          generated.push({
+            orderLabel: tile.orderLabel,
+            w: tile.w,
+            h: tile.h,
+            size: blob.size,
+            blob,
+            url,
+            filename
+          });
+        }
+
+        clearSlices();
+        state.slices = generated;
+
+        els.statsBar.style.display = "flex";
+        els.statPieces.textContent = t("totalPieces").replace("{n}", generated.length);
+        els.statCropInfo.textContent = t("cropAreaInfo")
+          .replace("{w}", plan.cropRect.w)
+          .replace("{h}", plan.cropRect.h);
+        els.statTotalSize.textContent = t("estSize").replace("{s}", formatBytes(totalBytes));
+
+        renderTilesGallery(generated);
+        els.zipBtn.disabled = generated.length === 0;
+        els.downloadAllBtn.disabled = generated.length === 0;
+      }
+
+      function renderTilesGallery(slices) {
+        els.resultsCard.style.display = slices.length ? "block" : "none";
+        const frag = document.createDocumentFragment();
+        slices.forEach((slice) => {
+          const card = document.createElement("div");
+          card.className = "tile-card";
+
+          const thumbBox = document.createElement("div");
+          thumbBox.className = "tile-thumb-box";
+          const img = document.createElement("img");
+          img.src = slice.url;
+          img.alt = slice.filename;
+          img.loading = "lazy";
+          thumbBox.appendChild(img);
+
+          const info = document.createElement("div");
+          info.className = "tile-info";
+          const badge = document.createElement("span");
+          badge.className = "tile-badge";
+          badge.textContent = "#" + slice.orderLabel;
+          const dim = document.createElement("span");
+          dim.className = "tile-dim";
+          dim.textContent = slice.w + "x" + slice.h + " (" + formatBytes(slice.size) + ")";
+          info.appendChild(badge);
+          info.appendChild(dim);
+
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "tile-dl-btn";
+          btn.textContent = t("dlSingle");
+          btn.addEventListener("click", () => {
+            triggerDownload(slice.url, slice.filename);
+          });
+
+          card.appendChild(thumbBox);
+          card.appendChild(info);
+          card.appendChild(btn);
+          frag.appendChild(card);
+        });
+
+        els.tilesGrid.innerHTML = "";
+        els.tilesGrid.appendChild(frag);
+      }
+
+      function triggerDownload(url, filename) {
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+
+      const CRC_TABLE = (function () {
+        const table = new Uint32Array(256);
+        for (let n = 0; n < 256; n++) {
+          let c = n;
+          for (let k = 0; k < 8; k++) {
+            c = (c & 1) ? (0xedb88320 ^ (c >>> 1)) : (c >>> 1);
+          }
+          table[n] = c >>> 0;
+        }
+        return table;
+      })();
+
+      function computeCrc32(uint8Arr) {
+        let crc = 0xffffffff;
+        for (let i = 0; i < uint8Arr.length; i++) {
+          crc = CRC_TABLE[(crc ^ uint8Arr[i]) & 0xff] ^ (crc >>> 8);
+        }
+        return (crc ^ 0xffffffff) >>> 0;
+      }
+
+      async function buildZipBlob(slices) {
+        const encoder = new TextEncoder();
+        const now = new Date();
+        const dosTime = ((now.getHours() & 0x1f) << 11) | ((now.getMinutes() & 0x3f) << 5) | ((now.getSeconds() >> 1) & 0x1f);
+        const dosDate = (((Math.max(1980, now.getFullYear()) - 1980) & 0x7f) << 9) | (((now.getMonth() + 1) & 0x0f) << 5) | (now.getDate() & 0x1f);
+
+        const localChunks = [];
+        const centralChunks = [];
+        let offset = 0;
+
+        for (let i = 0; i < slices.length; i++) {
+          const item = slices[i];
+          const nameBytes = encoder.encode(item.filename);
+          const dataBuf = await item.blob.arrayBuffer();
+          const dataBytes = new Uint8Array(dataBuf);
+          const crc = computeCrc32(dataBytes);
+          const size = dataBytes.length;
+
+          const localHeader = new ArrayBuffer(30);
+          const lv = new DataView(localHeader);
+          lv.setUint32(0, 0x04034b50, true);
+          lv.setUint16(4, 20, true);
+          lv.setUint16(6, 0x0800, true);
+          lv.setUint16(8, 0, true);
+          lv.setUint16(10, dosTime, true);
+          lv.setUint16(12, dosDate, true);
+          lv.setUint32(14, crc, true);
+          lv.setUint32(18, size, true);
+          lv.setUint32(22, size, true);
+          lv.setUint16(26, nameBytes.length, true);
+          lv.setUint16(28, 0, true);
+
+          localChunks.push(new Uint8Array(localHeader), nameBytes, dataBytes);
+
+          const centralHeader = new ArrayBuffer(46);
+          const cv = new DataView(centralHeader);
+          cv.setUint32(0, 0x02014b50, true);
+          cv.setUint16(4, 20, true);
+          cv.setUint16(6, 20, true);
+          cv.setUint16(8, 0x0800, true);
+          cv.setUint16(10, 0, true);
+          cv.setUint16(12, dosTime, true);
+          cv.setUint16(14, dosDate, true);
+          cv.setUint32(16, crc, true);
+          cv.setUint32(20, size, true);
+          cv.setUint32(24, size, true);
+          cv.setUint16(28, nameBytes.length, true);
+          cv.setUint16(30, 0, true);
+          cv.setUint16(32, 0, true);
+          cv.setUint16(34, 0, true);
+          cv.setUint16(36, 0, true);
+          cv.setUint32(38, 0, true);
+          cv.setUint32(42, offset, true);
+
+          centralChunks.push(new Uint8Array(centralHeader), nameBytes);
+          offset += 30 + nameBytes.length + size;
+        }
+
+        let centralSize = 0;
+        centralChunks.forEach((c) => {
+          centralSize += c.length;
+        });
+
+        const eocd = new ArrayBuffer(22);
+        const ev = new DataView(eocd);
+        ev.setUint32(0, 0x06054b50, true);
+        ev.setUint16(4, 0, true);
+        ev.setUint16(6, 0, true);
+        ev.setUint16(8, slices.length, true);
+        ev.setUint16(10, slices.length, true);
+        ev.setUint32(12, centralSize, true);
+        ev.setUint32(16, offset, true);
+        ev.setUint16(20, 0, true);
+
+        return new Blob([...localChunks, ...centralChunks, new Uint8Array(eocd)], { type: "application/zip" });
+      }
+
+      els.langToggle.addEventListener("click", () => {
+        state.lang = state.lang === "id" ? "en" : "id";
+        applyLanguage();
+      });
+
+      els.themeToggle.addEventListener("click", () => {
+        state.theme = state.theme === "dark" ? "light" : "dark";
+        applyTheme();
+      });
+
+      els.dropzone.addEventListener("click", () => els.fileInput.click());
+      els.changeFileBtn.addEventListener("click", () => els.fileInput.click());
+      els.dropzone.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          els.fileInput.click();
+        }
+      });
+
+      els.fileInput.addEventListener("change", (e) => {
+        if (e.target.files && e.target.files[0]) {
+          loadImageFile(e.target.files[0]);
+        }
+      });
+
+      ["dragenter", "dragover"].forEach((evt) => {
+        els.dropzone.addEventListener(evt, (e) => {
+          e.preventDefault();
+          els.dropzone.classList.add("dragover");
+        });
+      });
+
+      ["dragleave", "drop"].forEach((evt) => {
+        els.dropzone.addEventListener(evt, (e) => {
+          e.preventDefault();
+          els.dropzone.classList.remove("dragover");
+        });
+      });
+
+      els.dropzone.addEventListener("drop", (e) => {
+        if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+          loadImageFile(e.dataTransfer.files[0]);
+        }
+      });
+
+      window.addEventListener("paste", (e) => {
+        if (!e.clipboardData || !e.clipboardData.items) return;
+        for (let i = 0; i < e.clipboardData.items.length; i++) {
+          const item = e.clipboardData.items[i];
+          if (item.type.startsWith("image/")) {
+            const file = item.getAsFile();
+            if (file) loadImageFile(file);
+            break;
+          }
+        }
+      });
+
+      els.modeTabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          els.modeTabs.forEach((tBtn) => tBtn.classList.remove("active"));
+          tab.classList.add("active");
+          state.mode = tab.getAttribute("data-mode");
+          Object.keys(els.panels).forEach((key) => {
+            els.panels[key].classList.toggle("active", key === state.mode);
+          });
+          scheduleProcess();
+        });
+      });
+
+      els.igPills.forEach((pill) => {
+        pill.addEventListener("click", () => {
+          els.igPills.forEach((p) => p.classList.remove("active"));
+          pill.classList.add("active");
+          state.igPreset = pill.getAttribute("data-ig");
+          scheduleProcess();
+        });
+      });
+
+      els.igCropMode.addEventListener("change", () => {
+        els.igOffsetGroup.style.display = els.igCropMode.value === "none" ? "none" : "block";
+        scheduleProcess();
+      });
+
+      els.igOffsetX.addEventListener("input", () => {
+        els.igOffsetXVal.textContent = els.igOffsetX.value + "%";
+        scheduleProcess();
+      });
+
+      els.igOffsetY.addEventListener("input", () => {
+        els.igOffsetYVal.textContent = els.igOffsetY.value + "%";
+        scheduleProcess();
+      });
+
+      els.outputFormat.addEventListener("change", () => {
+        const fmt = els.outputFormat.value;
+        els.qualityField.style.display = fmt === "image/png" ? "none" : "flex";
+        els.bgField.style.display = fmt === "image/jpeg" ? "flex" : "none";
+        scheduleProcess();
+      });
+
+      els.outputQuality.addEventListener("input", () => {
+        els.qualityVal.textContent = els.outputQuality.value + "%";
+        scheduleProcess();
+      });
+
+      [
+        els.gridRows,
+        els.gridCols,
+        els.gridOrder,
+        els.horizParts,
+        els.vertParts,
+        els.customW,
+        els.customH,
+        els.igOrder,
+        els.jpgBgColor
+      ].forEach((input) => {
+        input.addEventListener("input", scheduleProcess);
+        input.addEventListener("change", scheduleProcess);
+      });
+
+      els.zipBtn.addEventListener("click", async () => {
+        if (!state.slices.length) return;
+        const origLabel = els.zipBtn.textContent;
+        els.zipBtn.disabled = true;
+        els.zipBtn.textContent = t("zippingProgress");
+        try {
+          const zipBlob = await buildZipBlob(state.slices);
+          const zipUrl = URL.createObjectURL(zipBlob);
+          triggerDownload(zipUrl, state.sourceName + "_split.zip");
+          setTimeout(() => URL.revokeObjectURL(zipUrl), 10000);
+        } finally {
+          els.zipBtn.disabled = false;
+          els.zipBtn.textContent = origLabel;
+        }
+      });
+
+      els.downloadAllBtn.addEventListener("click", async () => {
+        if (!state.slices.length) return;
+        const origLabel = els.downloadAllBtn.textContent;
+        els.downloadAllBtn.disabled = true;
+        els.zipBtn.disabled = true;
+        const total = state.slices.length;
+        for (let i = 0; i < total; i++) {
+          els.downloadAllBtn.textContent = t("downloadingProgress")
+            .replace("{c}", i + 1)
+            .replace("{t}", total);
+          triggerDownload(state.slices[i].url, state.slices[i].filename);
+          await new Promise((r) => setTimeout(r, 250));
+        }
+        els.downloadAllBtn.textContent = origLabel;
+        els.downloadAllBtn.disabled = false;
+        els.zipBtn.disabled = false;
+      });
+
+      applyTheme();
+      applyLanguage();
+    })();
+  </script>
+</body>
+</html>
