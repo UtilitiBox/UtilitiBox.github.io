@@ -87,7 +87,6 @@
       text-decoration: underline;
     }
 
-    /* Header */
     .topbar {
       background-color: var(--bg-secondary);
       border-bottom: 1px solid var(--border-color);
@@ -186,7 +185,6 @@
       background: var(--bg-hover);
     }
 
-    /* Main Container */
     .container {
       width: 100%;
       max-width: 1160px;
@@ -196,7 +194,6 @@
       min-width: 0;
     }
 
-    /* Dropzone */
     .dropzone {
       background: var(--bg-secondary);
       border: 2px dashed var(--border-color);
@@ -296,7 +293,6 @@
       white-space: nowrap;
     }
 
-    /* Batch File Selector */
     .batch-bar {
       margin-top: 0.9rem;
       background: var(--bg-secondary);
@@ -346,7 +342,6 @@
       border-color: var(--accent);
     }
 
-    /* Action Bar */
     .action-bar {
       margin-top: 0.95rem;
       display: flex;
@@ -424,7 +419,6 @@
       }
     }
 
-    /* Privacy Alert Banner */
     .privacy-banner {
       margin-top: 0.95rem;
       padding: 0.85rem 1rem;
@@ -488,7 +482,6 @@
       color: var(--text-primary);
     }
 
-    /* Main Stack & Grid */
     .main-stack {
       margin-top: 1rem;
       display: flex;
@@ -544,7 +537,6 @@
       min-width: 0;
     }
 
-    /* Preview Box */
     .preview-box {
       background-color: var(--bg-tertiary);
       background-image: linear-gradient(45deg, rgba(148, 163, 184, 0.08) 25%, transparent 25%),
@@ -581,7 +573,6 @@
       padding: 0.45rem 0.65rem;
     }
 
-    /* Clean Key-Value Grid for File Info */
     .kv-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -621,7 +612,6 @@
       word-break: break-word;
     }
 
-    /* Specs Grid (Camera & GPS) */
     .specs-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -664,7 +654,6 @@
       overflow-wrap: anywhere;
     }
 
-    /* GPS Section */
     .gps-box {
       display: flex;
       flex-direction: column;
@@ -701,7 +690,15 @@
       border: 1px dashed var(--border-color);
     }
 
-    /* Raw Metadata Table (Responsive Card Rows on Mobile) */
+    .warning-state {
+      color: var(--text-primary);
+      font-size: 0.84rem;
+      padding: 0.8rem 0.9rem;
+      background: var(--warning-soft);
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(245, 158, 11, 0.45);
+    }
+
     .raw-controls {
       display: flex;
       align-items: center;
@@ -783,7 +780,6 @@
       background: var(--bg-hover);
     }
 
-    /* Mobile Stacked Layout for Raw Metadata Table */
     @media (max-width: 680px) {
       table,
       thead,
@@ -834,7 +830,6 @@
       font-size: 0.78rem;
     }
 
-    /* Toast */
     .toast {
       position: fixed;
       bottom: 1.25rem;
@@ -902,16 +897,16 @@
   </header>
 
   <main class="container">
-    <!-- Upload / Dropzone -->
+    <!-- Upload / Dropzone (No restrictive accept attribute so Android opens full File Manager) -->
     <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="Pilih atau jatuhkan gambar">
-      <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,image/*" multiple class="hidden">
+      <input type="file" id="fileInput" multiple class="hidden">
       <div class="dropzone-main">
         <div class="dropzone-icon">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
         </div>
         <div>
           <h2 data-i18n="dropTitle">Jatuhkan gambar di sini, tempel (Ctrl+V), atau klik untuk memilih</h2>
-          <p data-i18n="dropSubtitle">File dibaca langsung dari memori browser tanpa diunggah dan tanpa mengubah byte asli.</p>
+          <p data-i18n="dropSubtitle">Di ponsel Android, pilih menu File / Dokumen (bukan Galeri) agar koordinat GPS tidak disensor oleh sistem.</p>
         </div>
       </div>
       <div class="format-pills">
@@ -932,7 +927,6 @@
 
     <!-- Inspection View -->
     <section id="inspectorSection" class="hidden">
-      <!-- Action Bar -->
       <div class="action-bar">
         <div class="action-buttons">
           <button type="button" id="btnCopySummary" class="btn btn-primary">
@@ -970,7 +964,6 @@
         </a>
       </div>
 
-      <!-- Main Stacked Workspace -->
       <div class="main-stack">
         <!-- Top Overview: Preview + File & Resolution -->
         <div class="top-overview-grid">
@@ -1083,15 +1076,12 @@
     (function () {
       "use strict";
 
-      /* =====================================================================
-         1. I18N DICTIONARY (ID / EN)
-      ===================================================================== */
       const I18N = {
         id: {
           appTitle: "Image Metadata Viewer",
           localBadge: "100% Lokal & Read-Only",
           dropTitle: "Jatuhkan gambar di sini, tempel (Ctrl+V), atau klik untuk memilih",
-          dropSubtitle: "File dibaca langsung dari memori browser tanpa diunggah dan tanpa mengubah byte asli.",
+          dropSubtitle: "Di ponsel Android, pilih menu File / Dokumen (bukan Galeri) agar koordinat GPS tidak disensor oleh sistem.",
           exportBatchJson: "Unduh JSON Semua File",
           copySummary: "Salin Ringkasan Teks",
           copyJson: "Salin JSON",
@@ -1136,7 +1126,8 @@
           camSoftware: "Software / Firmware",
           cameraEmpty: "Tidak ada metadata kamera atau pengaturan eksposur yang ditemukan pada gambar ini.",
           notAvailable: "Tidak tersedia",
-          gpsEmpty: "Tidak ada koordinat GPS di dalam biner file ini. Jika Anda memilih foto dari galeri Android, pastikan memilih melalui pengelola file (Dokumen/File) agar sistem Android tidak menghapus data lokasi secara otomatis.",
+          gpsEmpty: "Tidak ada koordinat GPS di dalam biner file ini.",
+          gpsRedactedZero: "Tag struktur GPS ditemukan, tetapi nilainya dinolkan (0, 0) oleh pemilih galeri Android (Photo Picker). Klik kotak unggah di atas lalu pilih gambar melalui menu File / Dokumen (Pengelola File) untuk membaca koordinat aslinya.",
           gpsDecimal: "Koordinat Desimal (Lat, Lon)",
           gpsDms: "Koordinat DMS",
           gpsAltitude: "Ketinggian (Altitude)",
@@ -1162,7 +1153,7 @@
           appTitle: "Image Metadata Viewer",
           localBadge: "100% Local & Read-Only",
           dropTitle: "Drop images here, paste (Ctrl+V), or click to select",
-          dropSubtitle: "Files are read directly in browser memory without uploading or altering original bytes.",
+          dropSubtitle: "On Android, choose File / Documents (not Gallery) so the system does not redact GPS coordinates.",
           exportBatchJson: "Download All Files JSON",
           copySummary: "Copy Text Summary",
           copyJson: "Copy JSON",
@@ -1207,7 +1198,8 @@
           camSoftware: "Software / Firmware",
           cameraEmpty: "No camera or exposure settings metadata found in this image.",
           notAvailable: "Not available",
-          gpsEmpty: "No GPS coordinates found inside this file's binary data. If selecting from an Android gallery picker, choose via the system File Manager so Android does not strip location tags.",
+          gpsEmpty: "No GPS coordinates found inside this file's binary data.",
+          gpsRedactedZero: "GPS tag headers exist in this file, but the values were zeroed out (0, 0) by the Android Gallery Photo Picker. Tap the upload area above and pick the file via Files / Documents to read the unredacted coordinates.",
           gpsDecimal: "Decimal Coordinates (Lat, Lon)",
           gpsDms: "DMS Coordinates",
           gpsAltitude: "Altitude",
@@ -1231,9 +1223,6 @@
         }
       };
 
-      /* =====================================================================
-         2. EXIF TAG DICTIONARIES & LOOKUP TABLES
-      ===================================================================== */
       const TAG_NAMES = {
         IFD0: {
           0x0100: "ImageWidth",
@@ -1428,22 +1417,19 @@
       const COLOR_SPACE_MAP = { 1: "sRGB", 2: "Adobe RGB", 65535: "Uncalibrated" };
       const RESOLUTION_UNIT_MAP = { 1: "No absolute unit", 2: "inches (DPI)", 3: "centimeters (DPCM)" };
 
-      /* =====================================================================
-         3. PURE VANILLA JS BINARY METADATA PARSER (JPEG / PNG / WebP)
-      ===================================================================== */
       const TYPE_SIZES = {
-        1: 1,  // BYTE
-        2: 1,  // ASCII
-        3: 2,  // SHORT
-        4: 4,  // LONG
-        5: 8,  // RATIONAL
-        6: 1,  // SBYTE
-        7: 1,  // UNDEFINED
-        8: 2,  // SSHORT
-        9: 4,  // SLONG
-        10: 8, // SRATIONAL
-        11: 4, // FLOAT
-        12: 8  // DOUBLE
+        1: 1,
+        2: 1,
+        3: 2,
+        4: 4,
+        5: 8,
+        6: 1,
+        7: 1,
+        8: 2,
+        9: 4,
+        10: 8,
+        11: 4,
+        12: 8
       };
 
       function decodeAscii(view, offset, length) {
@@ -1840,15 +1826,12 @@
         parseTiffExif(new DataView(bytes.buffer), 0, result);
       }
 
-      /* Fallback binary signature scan if a third-party editor wrote irregular segment lengths */
       function scanJpegBinaryFallback(view, result, foundExif, foundXmp) {
         const maxScan = Math.min(view.byteLength - 16, 262144);
         for (let i = 2; i < maxScan; i++) {
-          // Stop at Start of Scan (FF DA)
           if (view.getUint8(i) === 0xFF && view.getUint8(i + 1) === 0xDA) {
             break;
           }
-          // Look for "Exif\0\0" (0x45786966 0x0000)
           if (!foundExif &&
               view.getUint32(i, false) === 0x45786966 &&
               view.getUint16(i + 4, false) === 0x0000) {
@@ -1856,7 +1839,6 @@
               foundExif = true;
             }
           }
-          // Look for "<x:xmpmeta" or "<rdf:RDF"
           if (!foundXmp && view.getUint8(i) === 0x3C) {
             const probe = decodeAscii(view, i, 12);
             if (probe.startsWith("<x:xmpmeta") || probe.startsWith("<rdf:RDF")) {
@@ -2108,7 +2090,6 @@
         return String(refVal || "").trim().toUpperCase();
       }
 
-      /* Universal GPS coordinate parser supporting EXIF arrays, rationals, signed floats, and XMP strings */
       function parseFlexibleCoord(rawVal, refStr, negHemisphere) {
         if (rawVal === undefined || rawVal === null || rawVal === "") return null;
         const ref = normalizeRef(refStr);
@@ -2134,7 +2115,6 @@
         const effectiveRef = embeddedDir || ref;
         const numPart = embeddedDir ? str.slice(0, -1).trim() : str;
 
-        // Handle "deg,min,sec" or "deg,min.dec"
         if (numPart.includes(",")) {
           const parts = numPart.split(",").map(function (p) {
             if (p.includes("/")) {
@@ -2149,7 +2129,6 @@
           return deg;
         }
 
-        // Handle DMS with symbols: 0° 56' 10.72"
         const dmsMatch = numPart.match(/^([+-]?\d+(?:\.\d+)?)\s*(?:deg|°)\s*(\d+(?:\.\d+)?)?\s*['′]?\s*(\d+(?:\.\d+)?)?\s*["″]?$/i);
         if (dmsMatch) {
           const d = Number(dmsMatch[1] || 0);
@@ -2206,11 +2185,20 @@
           return null;
         }
 
+        /* Detect Android Photo Picker / OS redaction where GPS tags are zeroed out (0, 0) */
+        if (lat === 0 && lon === 0) {
+          return {
+            isRedactedZero: true,
+            latitude: 0,
+            longitude: 0
+          };
+        }
+
         const dmsStr = decimalToDms(lat, "N", "S") + ", " + decimalToDms(lon, "E", "W");
 
         let altitude = null;
         const altSource = kv.GPSAltitude !== undefined ? kv.GPSAltitude : kv["exif:GPSAltitude"];
-        if (typeof altSource === "number") {
+        if (typeof altSource === "number" && altSource !== 0) {
           const belowSea = Number(kv.GPSAltitudeRef) === 1;
           const altVal = belowSea ? -Math.abs(altSource) : altSource;
           altitude = Number(altVal.toFixed(1)) + " m";
@@ -2219,7 +2207,7 @@
           const altNum = parts.length === 2 && Number(parts[1]) !== 0
             ? Number(parts[0]) / Number(parts[1])
             : Number(parts[0]);
-          if (Number.isFinite(altNum)) {
+          if (Number.isFinite(altNum) && altNum !== 0) {
             const belowSea = Number(kv.GPSAltitudeRef || kv["exif:GPSAltitudeRef"]) === 1;
             altitude = Number((belowSea ? -Math.abs(altNum) : altNum).toFixed(1)) + " m";
           }
@@ -2246,6 +2234,7 @@
         const lonFixed = Number(lon.toFixed(6));
 
         return {
+          isRedactedZero: false,
           latitude: latFixed,
           longitude: lonFixed,
           decimalStr: latFixed + ", " + lonFixed,
@@ -2263,7 +2252,9 @@
         const highItems = [];
         const medItems = [];
 
-        if (gpsInfo) highItems.push("GPS (" + gpsInfo.decimalStr + ")");
+        if (gpsInfo && !gpsInfo.isRedactedZero) {
+          highItems.push("GPS (" + gpsInfo.decimalStr + ")");
+        }
         if (kv.BodySerialNumber) highItems.push("BodySerialNumber");
         if (kv.CameraSerialNumber) highItems.push("CameraSerialNumber");
         if (kv.LensSerialNumber) highItems.push("LensSerialNumber");
@@ -2337,9 +2328,6 @@
         return result;
       }
 
-      /* =====================================================================
-         4. APPLICATION STATE & UI RENDERING
-      ===================================================================== */
       const state = {
         lang: localStorage.getItem("utilitibox_lang") || "id",
         theme: localStorage.getItem("utilitibox_theme") || "dark",
@@ -2602,6 +2590,14 @@
           return;
         }
 
+        if (rec.gps.isRedactedZero) {
+          const warn = document.createElement("div");
+          warn.className = "warning-state";
+          warn.textContent = t("gpsRedactedZero");
+          el.gpsContainer.appendChild(warn);
+          return;
+        }
+
         const g = rec.gps;
         const box = document.createElement("div");
         box.className = "gps-box";
@@ -2799,9 +2795,6 @@
         });
       }
 
-      /* =====================================================================
-         5. EXPORT & CLIPBOARD HELPERS
-      ===================================================================== */
       function buildExportObject(rec) {
         const w = rec.headerWidth || rec.naturalWidth || rec.kv.PixelXDimension || rec.kv.ImageWidth || null;
         const h = rec.headerHeight || rec.naturalHeight || rec.kv.PixelYDimension || rec.kv.ImageLength || null;
@@ -2837,7 +2830,7 @@
             whiteBalance: rec.kvFormatted.WhiteBalance || null,
             software: rec.kv.Software || rec.kv["xmp:CreatorTool"] || null
           },
-          gps: rec.gps,
+          gps: (rec.gps && !rec.gps.isRedactedZero) ? rec.gps : null,
           privacyAssessment: rec.privacy,
           rawTags: rec.tags
         };
@@ -2900,9 +2893,6 @@
         showToast(t("toastDownloadedJson"));
       }
 
-      /* =====================================================================
-         6. EVENT LISTENERS & SESSION LIFECYCLE
-      ===================================================================== */
       function clearSession() {
         state.records.forEach(function (rec) {
           if (rec.objectUrl) URL.revokeObjectURL(rec.objectUrl);
