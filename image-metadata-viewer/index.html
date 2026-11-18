@@ -295,12 +295,13 @@
 
     .android-tip {
       margin-top: 0.85rem;
-      padding: 0.75rem 0.95rem;
+      padding: 0.8rem 0.95rem;
       border-radius: var(--radius-md);
       background: var(--bg-secondary);
       border: 1px solid var(--border-color);
-      font-size: 0.8rem;
+      font-size: 0.82rem;
       color: var(--text-secondary);
+      line-height: 1.55;
     }
 
     .android-tip strong {
@@ -698,10 +699,11 @@
     .empty-state {
       color: var(--text-secondary);
       font-size: 0.84rem;
-      padding: 0.75rem 0.85rem;
+      padding: 0.8rem 0.9rem;
       background: var(--bg-tertiary);
       border-radius: var(--radius-sm);
       border: 1px dashed var(--border-color);
+      line-height: 1.55;
     }
 
     .warning-state {
@@ -920,19 +922,19 @@
         </div>
         <div>
           <h2 data-i18n="dropTitle">Jatuhkan gambar atau file .ZIP di sini, atau klik untuk memilih</h2>
-          <p data-i18n="dropSubtitle">Mendukung pembacaan langsung foto di dalam arsip .ZIP untuk menghindari sensor lokasi Android.</p>
+          <p data-i18n="dropSubtitle">Mendukung pembacaan langsung foto di dalam arsip .ZIP agar koordinat GPS tidak disensor sistem Android.</p>
         </div>
       </div>
       <div class="format-pills">
         <span class="pill">JPEG / JPG (EXIF, GPS, XMP)</span>
         <span class="pill">PNG (IHDR, eXIf, tEXt, iTXt)</span>
         <span class="pill">WebP (EXIF, XMP)</span>
-        <span class="pill">ZIP Archive (Android Bypass)</span>
+        <span class="pill">ZIP Archive (Solusi Android)</span>
       </div>
     </div>
 
     <div class="android-tip" data-i18n="androidTip">
-      <strong>Tips Pengguna Android:</strong> Sistem Android otomatis menyensor koordinat GPS saat foto dipilih lewat Galeri. Untuk membaca GPS asli di HP: (1) Pilih menu garis tiga di pemilih file lalu buka <strong>Penyimpanan Internal</strong> (bukan Gambar/Galeri), atau (2) <strong>Kompres foto ke .ZIP</strong> di File Manager lalu unggah file .ZIP tersebut ke sini.
+      <strong>Catatan Pengguna Android:</strong> Sistem Android otomatis menyensor koordinat GPS pada file gambar yang dibuka lewat browser HP. Solusinya, <strong>kompres foto menjadi file .ZIP</strong> lewat File Manager lalu unggah file .ZIP tersebut ke sini. Jika cara tersebut masih tidak bisa, mau tidak mau pemeriksaan koordinat GPS harus dilakukan menggunakan <strong>Laptop atau PC</strong>.
     </div>
 
     <!-- Batch File Switcher -->
@@ -1095,8 +1097,8 @@
           appTitle: "Image Metadata Viewer",
           localBadge: "100% Lokal & Read-Only",
           dropTitle: "Jatuhkan gambar atau file .ZIP di sini, atau klik untuk memilih",
-          dropSubtitle: "Mendukung pembacaan langsung foto di dalam arsip .ZIP untuk menghindari sensor lokasi Android.",
-          androidTipHtml: "<strong>Tips Pengguna Android:</strong> Sistem Android otomatis menyensor koordinat GPS saat foto dipilih lewat Galeri. Untuk membaca GPS asli di HP: (1) Pilih menu garis tiga di pemilih file lalu buka <strong>Penyimpanan Internal</strong> (bukan Gambar/Galeri), atau (2) <strong>Kompres foto ke .ZIP</strong> di File Manager lalu unggah file .ZIP tersebut ke sini.",
+          dropSubtitle: "Mendukung pembacaan langsung foto di dalam arsip .ZIP agar koordinat GPS tidak disensor sistem Android.",
+          androidTipHtml: "<strong>Catatan Pengguna Android:</strong> Sistem Android otomatis menyensor koordinat GPS pada file gambar yang dibuka lewat browser HP. Solusinya, <strong>kompres foto menjadi file .ZIP</strong> lewat File Manager lalu unggah file .ZIP tersebut ke sini. Jika cara tersebut masih tidak bisa, mau tidak mau pemeriksaan koordinat GPS harus dilakukan menggunakan <strong>Laptop atau PC</strong>.",
           exportBatchJson: "Unduh JSON Semua File",
           copySummary: "Salin Ringkasan Teks",
           copyJson: "Salin JSON",
@@ -1141,8 +1143,8 @@
           camSoftware: "Software / Firmware",
           cameraEmpty: "Tidak ada metadata kamera atau pengaturan eksposur yang ditemukan pada gambar ini.",
           notAvailable: "Tidak tersedia",
-          gpsEmpty: "Tidak ada data GPS di dalam file ini (kemungkinan besar telah disensor/dihapus oleh pemilih galeri Android). Gunakan cara Penyimpanan Internal atau unggah foto dalam bentuk file .ZIP.",
-          gpsRedactedZero: "Tag GPS ditemukan, tetapi nilainya dinolkan (0, 0) oleh sistem Android. Solusi: kompres foto menjadi file .ZIP lewat File Manager Android lalu unggah file .ZIP tersebut ke halaman ini.",
+          gpsEmpty: "Tidak ada data GPS di dalam file ini (atau telah disensor otomatis oleh sistem Android). Jika menggunakan HP Android, kompres foto menjadi file .ZIP lalu unggah ke sini. Jika tetap tidak muncul, mau tidak mau Anda harus membukanya menggunakan Laptop atau PC.",
+          gpsRedactedZero: "Tag GPS ditemukan, tetapi nilainya dinolkan (0, 0) oleh sistem Android. Kompres foto menjadi file .ZIP di File Manager lalu unggah file .ZIP tersebut ke sini. Jika tetap tidak bisa, mau tidak mau Anda harus menggunakan Laptop atau PC.",
           gpsDecimal: "Koordinat Desimal (Lat, Lon)",
           gpsDms: "Koordinat DMS",
           gpsAltitude: "Ketinggian (Altitude)",
@@ -1169,8 +1171,8 @@
           appTitle: "Image Metadata Viewer",
           localBadge: "100% Local & Read-Only",
           dropTitle: "Drop images or a .ZIP archive here, or click to select",
-          dropSubtitle: "Supports inspecting photos directly inside .ZIP files to bypass Android OS GPS redaction.",
-          androidTipHtml: "<strong>Android Tip:</strong> Android automatically strips or zeroes out GPS tags when picking images via Gallery. To read unredacted GPS on mobile: (1) Open the file picker drawer and browse <strong>Internal Storage</strong> directly (not Images/Gallery), or (2) <strong>Compress the photo into a .ZIP</strong> in your File Manager and upload that .ZIP here.",
+          dropSubtitle: "Supports inspecting photos directly inside .ZIP files to prevent Android OS GPS redaction.",
+          androidTipHtml: "<strong>Android Users Notice:</strong> Android OS automatically strips GPS coordinates from image files opened in a mobile browser. To bypass this, <strong>compress the photo into a .ZIP file</strong> using your File Manager and upload the .ZIP here. If that still does not work on your device, you will need to use a <strong>Laptop or PC</strong>.",
           exportBatchJson: "Download All Files JSON",
           copySummary: "Copy Text Summary",
           copyJson: "Copy JSON",
@@ -1215,8 +1217,8 @@
           camSoftware: "Software / Firmware",
           cameraEmpty: "No camera or exposure settings metadata found in this image.",
           notAvailable: "Not available",
-          gpsEmpty: "No GPS data found in this file (likely stripped by the Android gallery picker). Browse Internal Storage directly or upload the photo inside a .ZIP archive.",
-          gpsRedactedZero: "GPS tag headers exist, but values were zeroed out (0, 0) by Android OS. Solution: compress the photo into a .ZIP file in your Android File Manager and upload the .ZIP here.",
+          gpsEmpty: "No GPS data found in this file (or it was stripped by Android OS). On Android, compress the photo into a .ZIP file and upload it here. If it still does not appear, you will need to inspect the original file on a Laptop or PC.",
+          gpsRedactedZero: "GPS tags exist, but the coordinates were zeroed out (0, 0) by Android OS. Compress the photo into a .ZIP archive and upload it here. If that still fails, you will need to use a Laptop or PC.",
           gpsDecimal: "Decimal Coordinates (Lat, Lon)",
           gpsDms: "DMS Coordinates",
           gpsAltitude: "Altitude",
@@ -1242,7 +1244,7 @@
       };
 
       /* =====================================================================
-         ZERO-DEPENDENCY CLIENT-SIDE ZIP EXTRACTOR (BYPASSES ANDROID MEDIASTORE)
+         ZERO-DEPENDENCY CLIENT-SIDE ZIP EXTRACTOR (BYPASSES ANDROID FUSE)
       ===================================================================== */
       function guessImageMime(filename) {
         const lower = filename.toLowerCase();
@@ -1260,7 +1262,6 @@
         const view = new DataView(buffer);
         const extractedFiles = [];
 
-        // Locate End of Central Directory (0x06054b50)
         const minSearch = Math.max(0, buffer.byteLength - 65557);
         let eocdOffset = -1;
         for (let i = buffer.byteLength - 22; i >= minSearch; i--) {
@@ -1295,7 +1296,7 @@
 
           if (entryName.endsWith("/") || entryName.startsWith("__MACOSX/")) continue;
           if (!/\.(jpe?g|png|webp|tiff?|gif|bmp)$/i.test(entryName)) continue;
-          if (uncompressedSize > 80 * 1024 * 1024) continue; // Safety cap 80MB per entry
+          if (uncompressedSize > 80 * 1024 * 1024) continue;
 
           if (localHeaderOffset + 30 > buffer.byteLength) continue;
           if (view.getUint32(localHeaderOffset, true) !== 0x04034b50) continue;
@@ -1314,10 +1315,9 @@
             try {
               const ds = new DecompressionStream("deflate-raw");
               const writer = ds.writable.getWriter();
-              const readPromise = new Response(ds.readable).arrayBuffer();
-              writer.write(compressedSlice);
-              writer.close();
-              rawBytes = new Uint8Array(await readPromise);
+              writer.write(compressedSlice).catch(function () {});
+              writer.close().catch(function () {});
+              rawBytes = new Uint8Array(await new Response(ds.readable).arrayBuffer());
             } catch (e) {
               rawBytes = null;
             }
