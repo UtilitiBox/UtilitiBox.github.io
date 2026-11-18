@@ -98,21 +98,19 @@
     }
 
     .topbar-inner {
-      max-width: 1200px;
+      max-width: 1160px;
       margin: 0 auto;
-      padding: 0.8rem 1.25rem;
+      padding: 0.75rem 1rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 0.75rem;
-      flex-wrap: wrap;
+      gap: 0.65rem;
     }
 
     .brand-group {
       display: flex;
       align-items: center;
-      gap: 0.65rem;
-      flex-wrap: wrap;
+      gap: 0.6rem;
       min-width: 0;
     }
 
@@ -120,14 +118,14 @@
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
-      font-size: 0.84rem;
+      font-size: 0.82rem;
       font-weight: 600;
       color: var(--text-secondary);
-      padding: 0.38rem 0.68rem;
+      padding: 0.36rem 0.62rem;
       border-radius: var(--radius-sm);
       border: 1px solid var(--border-color);
       background: var(--bg-tertiary);
-      transition: all 0.15s ease;
+      flex-shrink: 0;
     }
 
     .back-link:hover {
@@ -137,15 +135,17 @@
     }
 
     .app-title {
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       font-weight: 700;
-      letter-spacing: -0.01em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .badge-local {
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       font-weight: 600;
-      padding: 0.18rem 0.55rem;
+      padding: 0.16rem 0.5rem;
       border-radius: 999px;
       background: var(--success-soft);
       color: var(--success);
@@ -153,26 +153,32 @@
       white-space: nowrap;
     }
 
+    @media (max-width: 600px) {
+      .badge-local {
+        display: none;
+      }
+    }
+
     .controls-group {
       display: flex;
       align-items: center;
-      gap: 0.45rem;
+      gap: 0.4rem;
+      flex-shrink: 0;
     }
 
     .btn-icon {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 0.38rem;
-      padding: 0.42rem 0.72rem;
-      font-size: 0.82rem;
+      gap: 0.35rem;
+      padding: 0.4rem 0.65rem;
+      font-size: 0.8rem;
       font-weight: 600;
       color: var(--text-primary);
       background: var(--bg-tertiary);
       border: 1px solid var(--border-color);
       border-radius: var(--radius-sm);
       cursor: pointer;
-      transition: all 0.15s ease;
     }
 
     .btn-icon:hover {
@@ -183,9 +189,9 @@
     /* Main Container */
     .container {
       width: 100%;
-      max-width: 1200px;
+      max-width: 1160px;
       margin: 0 auto;
-      padding: 1.25rem 1.25rem 2.75rem;
+      padding: 1.1rem 1rem 2.5rem;
       flex: 1;
       min-width: 0;
     }
@@ -195,7 +201,7 @@
       background: var(--bg-secondary);
       border: 2px dashed var(--border-color);
       border-radius: var(--radius-lg);
-      padding: 2.4rem 1.5rem;
+      padding: 2.2rem 1.25rem;
       text-align: center;
       cursor: pointer;
       transition: all 0.2s ease;
@@ -203,11 +209,11 @@
     }
 
     .dropzone.compact {
-      padding: 0.9rem 1.2rem;
+      padding: 0.8rem 1rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 1rem;
+      gap: 0.85rem;
       text-align: left;
     }
 
@@ -218,20 +224,20 @@
     }
 
     .dropzone-icon {
-      width: 46px;
-      height: 46px;
-      margin: 0 auto 0.85rem;
+      width: 44px;
+      height: 44px;
+      margin: 0 auto 0.8rem;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 12px;
+      border-radius: 11px;
       background: var(--accent-soft);
       color: var(--accent);
     }
 
     .dropzone.compact .dropzone-icon {
-      width: 36px;
-      height: 36px;
+      width: 34px;
+      height: 34px;
       margin: 0;
       flex-shrink: 0;
     }
@@ -239,7 +245,7 @@
     .dropzone-main {
       display: flex;
       align-items: center;
-      gap: 0.85rem;
+      gap: 0.8rem;
       min-width: 0;
     }
 
@@ -248,23 +254,23 @@
     }
 
     .dropzone h2 {
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       font-weight: 700;
       margin-bottom: 0.25rem;
     }
 
     .dropzone.compact h2 {
-      font-size: 0.94rem;
-      margin-bottom: 0.1rem;
+      font-size: 0.9rem;
+      margin-bottom: 0.05rem;
     }
 
     .dropzone p {
       color: var(--text-secondary);
-      font-size: 0.88rem;
+      font-size: 0.85rem;
     }
 
     .dropzone.compact p {
-      font-size: 0.8rem;
+      font-size: 0.78rem;
     }
 
     .format-pills {
@@ -272,7 +278,7 @@
       justify-content: center;
       flex-wrap: wrap;
       gap: 0.4rem;
-      margin-top: 0.95rem;
+      margin-top: 0.9rem;
     }
 
     .dropzone.compact .format-pills {
@@ -280,9 +286,9 @@
     }
 
     .pill {
-      font-size: 0.74rem;
+      font-size: 0.72rem;
       font-family: var(--font-mono);
-      padding: 0.18rem 0.52rem;
+      padding: 0.16rem 0.5rem;
       border-radius: var(--radius-sm);
       background: var(--bg-tertiary);
       border: 1px solid var(--border-color);
@@ -292,15 +298,15 @@
 
     /* Batch File Selector */
     .batch-bar {
-      margin-top: 0.95rem;
+      margin-top: 0.9rem;
       background: var(--bg-secondary);
       border: 1px solid var(--border-color);
       border-radius: var(--radius-md);
-      padding: 0.7rem 0.95rem;
+      padding: 0.65rem 0.9rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 0.75rem;
+      gap: 0.65rem;
       flex-wrap: wrap;
     }
 
@@ -317,15 +323,15 @@
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
-      padding: 0.36rem 0.68rem;
-      font-size: 0.8rem;
+      padding: 0.35rem 0.65rem;
+      font-size: 0.78rem;
       font-weight: 500;
       border-radius: var(--radius-sm);
       border: 1px solid var(--border-color);
       background: var(--bg-tertiary);
       color: var(--text-secondary);
       cursor: pointer;
-      max-width: 210px;
+      max-width: 200px;
     }
 
     .batch-tab span {
@@ -342,18 +348,18 @@
 
     /* Action Bar */
     .action-bar {
-      margin-top: 1rem;
+      margin-top: 0.95rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 0.65rem;
+      gap: 0.55rem;
       flex-wrap: wrap;
     }
 
     .action-buttons {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.45rem;
       flex-wrap: wrap;
     }
 
@@ -361,9 +367,9 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 0.42rem;
-      padding: 0.5rem 0.88rem;
-      font-size: 0.83rem;
+      gap: 0.4rem;
+      padding: 0.48rem 0.82rem;
+      font-size: 0.81rem;
       font-weight: 600;
       border-radius: var(--radius-sm);
       border: 1px solid var(--border-color);
@@ -404,16 +410,30 @@
       border-color: var(--danger);
     }
 
+    @media (max-width: 540px) {
+      .action-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .action-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+      .action-buttons .btn-primary {
+        grid-column: 1 / -1;
+      }
+    }
+
     /* Privacy Alert Banner */
     .privacy-banner {
-      margin-top: 1rem;
-      padding: 0.9rem 1.1rem;
+      margin-top: 0.95rem;
+      padding: 0.85rem 1rem;
       border-radius: var(--radius-md);
       border: 1px solid var(--border-color);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 0.9rem;
+      gap: 0.8rem;
       flex-wrap: wrap;
     }
 
@@ -435,19 +455,19 @@
     .privacy-info {
       display: flex;
       align-items: flex-start;
-      gap: 0.7rem;
+      gap: 0.65rem;
       flex: 1;
-      min-width: 240px;
+      min-width: 220px;
     }
 
     .privacy-title {
       font-weight: 700;
-      font-size: 0.92rem;
-      margin-bottom: 0.18rem;
+      font-size: 0.9rem;
+      margin-bottom: 0.15rem;
     }
 
     .privacy-desc {
-      font-size: 0.83rem;
+      font-size: 0.81rem;
       color: var(--text-secondary);
     }
 
@@ -459,31 +479,34 @@
     }
 
     .privacy-tag {
-      font-size: 0.73rem;
+      font-size: 0.71rem;
       font-weight: 600;
-      padding: 0.14rem 0.48rem;
+      padding: 0.14rem 0.45rem;
       border-radius: 4px;
       background: var(--bg-secondary);
       border: 1px solid var(--border-color);
       color: var(--text-primary);
     }
 
-    /* Workspace Grid - min-width: 0 prevents grid blowout */
-    .workspace-grid {
-      margin-top: 1.15rem;
-      display: grid;
-      grid-template-columns: 330px minmax(0, 1fr);
-      gap: 1.15rem;
-      align-items: start;
+    /* Main Stack & Grid */
+    .main-stack {
+      margin-top: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
       width: 100%;
-    }
-
-    .workspace-grid > * {
       min-width: 0;
     }
 
-    @media (max-width: 900px) {
-      .workspace-grid {
+    .top-overview-grid {
+      display: grid;
+      grid-template-columns: 320px minmax(0, 1fr);
+      gap: 1rem;
+      align-items: stretch;
+    }
+
+    @media (max-width: 860px) {
+      .top-overview-grid {
         grid-template-columns: minmax(0, 1fr);
       }
     }
@@ -499,29 +522,29 @@
     }
 
     .card-header {
-      padding: 0.85rem 1.1rem;
+      padding: 0.8rem 1rem;
       border-bottom: 1px solid var(--border-color);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 0.65rem;
+      gap: 0.5rem;
       flex-wrap: wrap;
     }
 
     .card-title {
-      font-size: 0.94rem;
+      font-size: 0.92rem;
       font-weight: 700;
       display: flex;
       align-items: center;
-      gap: 0.48rem;
+      gap: 0.45rem;
     }
 
     .card-body {
-      padding: 1.05rem 1.1rem;
+      padding: 0.95rem 1rem;
       min-width: 0;
     }
 
-    /* Preview Panel */
+    /* Preview Box */
     .preview-box {
       background-color: var(--bg-tertiary);
       background-image: linear-gradient(45deg, rgba(148, 163, 184, 0.08) 25%, transparent 25%),
@@ -532,115 +555,110 @@
       background-position: 0 0, 0 8px, 8px -8px, -8px 0;
       border: 1px solid var(--border-color);
       border-radius: var(--radius-md);
-      padding: 0.65rem;
+      padding: 0.6rem;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 190px;
-      max-height: 270px;
+      height: 220px;
       overflow: hidden;
-      margin-bottom: 0.85rem;
+      margin-bottom: 0.75rem;
     }
 
     .preview-box img {
       max-width: 100%;
-      max-height: 250px;
+      max-height: 204px;
       object-fit: contain;
       border-radius: 4px;
       display: block;
     }
 
     .readonly-note {
-      font-size: 0.77rem;
+      font-size: 0.75rem;
       color: var(--text-secondary);
       background: var(--bg-tertiary);
       border: 1px solid var(--border-color);
       border-radius: var(--radius-sm);
-      padding: 0.5rem 0.7rem;
-      margin-bottom: 0.9rem;
+      padding: 0.45rem 0.65rem;
     }
 
-    /* Key-Value List */
-    .kv-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.55rem;
+    /* Clean Key-Value Grid for File Info */
+    .kv-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.65rem;
     }
 
-    .kv-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 0.75rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 1px solid var(--border-color);
-      font-size: 0.83rem;
+    @media (max-width: 540px) {
+      .kv-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .kv-item {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 0.55rem 0.75rem;
       min-width: 0;
-    }
-
-    .kv-row:last-child {
-      border-bottom: none;
-      padding-bottom: 0;
     }
 
     .kv-label {
+      display: block;
+      font-size: 0.71rem;
       color: var(--text-secondary);
-      flex-shrink: 0;
-      max-width: 45%;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-bottom: 0.15rem;
     }
 
     .kv-value {
+      display: block;
       font-weight: 600;
-      text-align: right;
+      font-family: var(--font-mono);
+      font-size: 0.81rem;
+      color: var(--text-primary);
       overflow-wrap: anywhere;
       word-break: break-word;
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
-      min-width: 0;
-      flex: 1;
     }
 
-    /* Detail Panels Stack */
-    .detail-stack {
-      display: flex;
-      flex-direction: column;
-      gap: 1.15rem;
-      min-width: 0;
-      width: 100%;
-    }
-
-    /* Camera Grid */
+    /* Specs Grid (Camera & GPS) */
     .specs-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
-      gap: 0.7rem;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.65rem;
+    }
+
+    @media (max-width: 480px) {
+      .specs-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
     }
 
     .spec-tile {
       background: var(--bg-tertiary);
       border: 1px solid var(--border-color);
       border-radius: var(--radius-md);
-      padding: 0.7rem 0.85rem;
+      padding: 0.68rem 0.82rem;
       min-width: 0;
     }
 
     .spec-tile-label {
-      font-size: 0.72rem;
+      font-size: 0.71rem;
       color: var(--text-secondary);
       text-transform: uppercase;
       letter-spacing: 0.03em;
-      margin-bottom: 0.22rem;
+      margin-bottom: 0.2rem;
     }
 
     .spec-tile-value {
-      font-size: 0.92rem;
+      font-size: 0.9rem;
       font-weight: 700;
       overflow-wrap: anywhere;
       word-break: break-word;
     }
 
     .spec-tile-sub {
-      font-size: 0.74rem;
+      font-size: 0.73rem;
       color: var(--text-muted);
       margin-top: 0.15rem;
       overflow-wrap: anywhere;
@@ -650,43 +668,52 @@
     .gps-box {
       display: flex;
       flex-direction: column;
-      gap: 0.85rem;
+      gap: 0.8rem;
     }
 
     .gps-coords-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-      gap: 0.7rem;
+      gap: 0.65rem;
     }
 
     .gps-actions {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.55rem;
+      gap: 0.5rem;
+    }
+
+    @media (max-width: 520px) {
+      .gps-actions {
+        flex-direction: column;
+      }
+      .gps-actions .btn {
+        width: 100%;
+      }
     }
 
     .empty-state {
       color: var(--text-secondary);
-      font-size: 0.85rem;
-      padding: 0.75rem 0.9rem;
+      font-size: 0.84rem;
+      padding: 0.75rem 0.85rem;
       background: var(--bg-tertiary);
       border-radius: var(--radius-sm);
       border: 1px dashed var(--border-color);
     }
 
-    /* Raw Metadata Table */
+    /* Raw Metadata Table (Responsive Card Rows on Mobile) */
     .raw-controls {
       display: flex;
       align-items: center;
-      gap: 0.55rem;
+      gap: 0.5rem;
       flex-wrap: wrap;
-      margin-bottom: 0.85rem;
+      margin-bottom: 0.8rem;
     }
 
     .search-input,
     .filter-select {
-      padding: 0.48rem 0.72rem;
-      font-size: 0.84rem;
+      padding: 0.48rem 0.7rem;
+      font-size: 0.83rem;
       border-radius: var(--radius-sm);
       border: 1px solid var(--border-color);
       background: var(--bg-tertiary);
@@ -706,26 +733,25 @@
 
     .table-wrap {
       width: 100%;
-      overflow-x: auto;
-      max-height: 460px;
+      max-height: 500px;
+      overflow-y: auto;
       border: 1px solid var(--border-color);
       border-radius: var(--radius-md);
     }
 
     table {
       width: 100%;
-      min-width: 620px;
       table-layout: fixed;
       border-collapse: collapse;
-      font-size: 0.82rem;
+      font-size: 0.81rem;
       text-align: left;
     }
 
-    col.col-group { width: 14%; }
-    col.col-id { width: 11%; }
-    col.col-name { width: 23%; }
-    col.col-fmt { width: 28%; }
-    col.col-raw { width: 24%; }
+    col.col-group { width: 15%; }
+    col.col-id { width: 12%; }
+    col.col-name { width: 24%; }
+    col.col-fmt { width: 27%; }
+    col.col-raw { width: 22%; }
 
     thead {
       background: var(--bg-tertiary);
@@ -735,15 +761,14 @@
     }
 
     th {
-      padding: 0.6rem 0.75rem;
+      padding: 0.58rem 0.72rem;
       font-weight: 700;
       color: var(--text-secondary);
       border-bottom: 1px solid var(--border-color);
-      white-space: nowrap;
     }
 
     td {
-      padding: 0.55rem 0.75rem;
+      padding: 0.55rem 0.72rem;
       border-bottom: 1px solid var(--border-color);
       vertical-align: top;
       overflow-wrap: anywhere;
@@ -758,16 +783,50 @@
       background: var(--bg-hover);
     }
 
+    /* Mobile Stacked Layout for Raw Metadata Table */
+    @media (max-width: 680px) {
+      table,
+      thead,
+      tbody,
+      th,
+      td,
+      tr {
+        display: block;
+        width: 100%;
+      }
+      colgroup,
+      thead {
+        display: none;
+      }
+      tbody tr {
+        padding: 0.65rem 0.75rem;
+        border-bottom: 1px solid var(--border-color);
+      }
+      tbody tr:last-child {
+        border-bottom: none;
+      }
+      td {
+        padding: 0.18rem 0;
+        border-bottom: none;
+      }
+      td[data-label]::before {
+        content: attr(data-label) ": ";
+        font-weight: 600;
+        color: var(--text-secondary);
+        font-family: var(--font-sans);
+        font-size: 0.75rem;
+      }
+    }
+
     .tag-group-badge {
       display: inline-block;
-      font-size: 0.71rem;
+      font-size: 0.7rem;
       font-family: var(--font-mono);
       padding: 0.14rem 0.42rem;
       border-radius: 4px;
       background: var(--accent-soft);
       color: var(--accent);
       font-weight: 600;
-      max-width: 100%;
     }
 
     .mono-cell {
@@ -778,13 +837,16 @@
     /* Toast */
     .toast {
       position: fixed;
-      bottom: 1.5rem;
-      right: 1.5rem;
+      bottom: 1.25rem;
+      right: 1.25rem;
+      left: 1.25rem;
+      max-width: 380px;
+      margin-left: auto;
       background: var(--text-primary);
       color: var(--bg-primary);
-      padding: 0.68rem 1.05rem;
+      padding: 0.65rem 1rem;
       border-radius: var(--radius-md);
-      font-size: 0.85rem;
+      font-size: 0.84rem;
       font-weight: 600;
       box-shadow: var(--shadow);
       opacity: 0;
@@ -805,8 +867,8 @@
 
     footer {
       text-align: center;
-      padding: 1.1rem;
-      font-size: 0.8rem;
+      padding: 1rem;
+      font-size: 0.78rem;
       color: var(--text-muted);
       border-top: 1px solid var(--border-color);
       background: var(--bg-secondary);
@@ -819,7 +881,7 @@
     <div class="topbar-inner">
       <div class="brand-group">
         <a href="https://utilitibox.github.io/" class="back-link" title="UtilitiBox Home">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
           <span>UtilitiBox</span>
         </a>
         <h1 class="app-title" data-i18n="appTitle">Image Metadata Viewer</h1>
@@ -827,12 +889,12 @@
       </div>
       <div class="controls-group">
         <button type="button" id="langToggle" class="btn-icon" aria-label="Switch Language">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
           <span id="langLabel">ID</span>
         </button>
         <button type="button" id="themeToggle" class="btn-icon" aria-label="Toggle Theme">
-          <svg id="themeIconSun" class="hidden" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-          <svg id="themeIconMoon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg id="themeIconSun" class="hidden" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg id="themeIconMoon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
           <span id="themeLabel">Dark</span>
         </button>
       </div>
@@ -859,11 +921,11 @@
       </div>
     </div>
 
-    <!-- Batch File Switcher (visible when > 1 file loaded) -->
+    <!-- Batch File Switcher -->
     <div id="batchBar" class="batch-bar hidden">
       <div id="batchTabs" class="batch-tabs"></div>
       <button type="button" id="btnExportAllJson" class="btn">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         <span data-i18n="exportBatchJson">Unduh JSON Semua File</span>
       </button>
     </div>
@@ -874,20 +936,20 @@
       <div class="action-bar">
         <div class="action-buttons">
           <button type="button" id="btnCopySummary" class="btn btn-primary">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
             <span data-i18n="copySummary">Salin Ringkasan Teks</span>
           </button>
           <button type="button" id="btnCopyJson" class="btn">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
             <span data-i18n="copyJson">Salin JSON</span>
           </button>
           <button type="button" id="btnDownloadJson" class="btn">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             <span data-i18n="downloadJson">Unduh .JSON</span>
           </button>
         </div>
         <button type="button" id="btnClear" class="btn btn-danger-outline">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
           <span data-i18n="clearSession">Bersihkan Sesi</span>
         </button>
       </div>
@@ -903,97 +965,107 @@
           </div>
         </div>
         <a id="btnCleanMetadata" href="https://utilitibox.github.io/metadata-remover/" target="_blank" rel="noopener noreferrer" class="btn btn-primary hidden">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg>
           <span data-i18n="openRemover">Hapus Metadata di Metadata Remover</span>
         </a>
       </div>
 
-      <!-- Main Workspace -->
-      <div class="workspace-grid">
-        <!-- Left Column: Preview & File/Resolution -->
-        <aside class="card">
+      <!-- Main Stacked Workspace -->
+      <div class="main-stack">
+        <!-- Top Overview: Preview + File & Resolution -->
+        <div class="top-overview-grid">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                <span data-i18n="cardPreview">Pratinjau Gambar</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="preview-box">
+                <img id="imagePreview" alt="Preview gambar">
+              </div>
+              <div class="readonly-note" data-i18n="readonlyNote">
+                Mode Read-Only: file diproses via ArrayBuffer tanpa kompresi ulang atau perubahan byte asli.
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <span data-i18n="cardFile">Informasi File &amp; Resolusi</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <div id="fileKvGrid" class="kv-grid"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- GPS & Location Card -->
+        <div class="card">
           <div class="card-header">
             <div class="card-title">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-              <span data-i18n="cardFile">File &amp; Resolusi</span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span data-i18n="cardGps">Lokasi &amp; Koordinat GPS</span>
             </div>
           </div>
           <div class="card-body">
-            <div class="preview-box">
-              <img id="imagePreview" alt="Preview gambar">
-            </div>
-            <div class="readonly-note" data-i18n="readonlyNote">
-              Mode Read-Only aktif: file diproses via ArrayBuffer tanpa kompresi ulang atau perubahan byte.
-            </div>
-            <div id="fileKvList" class="kv-list"></div>
+            <div id="gpsContainer"></div>
           </div>
-        </aside>
+        </div>
 
-        <!-- Right Column: GPS, Camera, Raw Tags -->
-        <div class="detail-stack">
-          <!-- GPS & Location Card -->
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                <span data-i18n="cardGps">Lokasi &amp; Koordinat GPS</span>
-              </div>
-            </div>
-            <div class="card-body">
-              <div id="gpsContainer"></div>
+        <!-- Camera & Exposure Card -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              <span data-i18n="cardCamera">Kamera, Lensa &amp; Eksposur</span>
             </div>
           </div>
-
-          <!-- Camera & Exposure Card -->
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-                <span data-i18n="cardCamera">Kamera, Lensa &amp; Eksposur</span>
-              </div>
-            </div>
-            <div class="card-body">
-              <div id="cameraGrid" class="specs-grid"></div>
-            </div>
+          <div class="card-body">
+            <div id="cameraGrid" class="specs-grid"></div>
           </div>
+        </div>
 
-          <!-- Raw Tags Explorer Card -->
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-                <span data-i18n="cardRaw">Semua Tag Metadata (Raw Explorer)</span>
-              </div>
-              <span id="tagCountBadge" class="pill">0 tags</span>
+        <!-- Raw Tags Explorer Card -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+              <span data-i18n="cardRaw">Semua Tag Metadata (Raw Explorer)</span>
             </div>
-            <div class="card-body">
-              <div class="raw-controls">
-                <input type="search" id="tagSearchInput" class="search-input" placeholder="Cari nama tag, ID hex, atau nilai...">
-                <select id="tagGroupFilter" class="filter-select" aria-label="Filter Grup Metadata">
-                  <option value="ALL" data-i18n="filterAll">Semua Grup</option>
-                </select>
-              </div>
-              <div class="table-wrap">
-                <table>
-                  <colgroup>
-                    <col class="col-group">
-                    <col class="col-id">
-                    <col class="col-name">
-                    <col class="col-fmt">
-                    <col class="col-raw">
-                  </colgroup>
-                  <thead>
-                    <tr>
-                      <th data-i18n="colGroup">Grup</th>
-                      <th data-i18n="colTagId">Tag ID</th>
-                      <th data-i18n="colTagName">Nama Tag</th>
-                      <th data-i18n="colFormatted">Nilai Terformat</th>
-                      <th data-i18n="colRaw">Nilai Mentah</th>
-                    </tr>
-                  </thead>
-                  <tbody id="rawTagsBody"></tbody>
-                </table>
-              </div>
+            <span id="tagCountBadge" class="pill">0 tags</span>
+          </div>
+          <div class="card-body">
+            <div class="raw-controls">
+              <input type="search" id="tagSearchInput" class="search-input" placeholder="Cari nama tag, ID hex, atau nilai...">
+              <select id="tagGroupFilter" class="filter-select" aria-label="Filter Grup Metadata">
+                <option value="ALL" data-i18n="filterAll">Semua Grup</option>
+              </select>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <colgroup>
+                  <col class="col-group">
+                  <col class="col-id">
+                  <col class="col-name">
+                  <col class="col-fmt">
+                  <col class="col-raw">
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th data-i18n="colGroup">Grup</th>
+                    <th data-i18n="colTagId">Tag ID</th>
+                    <th data-i18n="colTagName">Nama Tag</th>
+                    <th data-i18n="colFormatted">Nilai Terformat</th>
+                    <th data-i18n="colRaw">Nilai Mentah</th>
+                  </tr>
+                </thead>
+                <tbody id="rawTagsBody"></tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -1026,8 +1098,9 @@
           downloadJson: "Unduh .JSON",
           clearSession: "Bersihkan Sesi",
           openRemover: "Hapus Metadata di Metadata Remover",
-          cardFile: "File & Resolusi",
-          readonlyNote: "Mode Read-Only aktif: file diproses via ArrayBuffer tanpa kompresi ulang atau perubahan byte.",
+          cardPreview: "Pratinjau Gambar",
+          cardFile: "Informasi File & Resolusi",
+          readonlyNote: "Mode Read-Only: file diproses via ArrayBuffer tanpa kompresi ulang atau perubahan byte asli.",
           cardCamera: "Kamera, Lensa & Eksposur",
           cardGps: "Lokasi & Koordinat GPS",
           cardRaw: "Semua Tag Metadata (Raw Explorer)",
@@ -1063,13 +1136,12 @@
           camSoftware: "Software / Firmware",
           cameraEmpty: "Tidak ada metadata kamera atau pengaturan eksposur yang ditemukan pada gambar ini.",
           notAvailable: "Tidak tersedia",
-          gpsEmpty: "Tidak ada koordinat GPS yang ditemukan dalam metadata gambar ini.",
+          gpsEmpty: "Tidak ada koordinat GPS di dalam biner file ini. Jika Anda memilih foto dari galeri Android, pastikan memilih melalui pengelola file (Dokumen/File) agar sistem Android tidak menghapus data lokasi secara otomatis.",
           gpsDecimal: "Koordinat Desimal (Lat, Lon)",
           gpsDms: "Koordinat DMS",
           gpsAltitude: "Ketinggian (Altitude)",
           gpsDirection: "Arah Kompas",
           gpsTimestamp: "Waktu Satelit (UTC)",
-          gpsSource: "Sumber Tag GPS",
           openGoogleMaps: "Buka di Google Maps",
           openOsm: "Buka di OpenStreetMap",
           copyCoords: "Salin Koordinat",
@@ -1097,8 +1169,9 @@
           downloadJson: "Download .JSON",
           clearSession: "Clear Session",
           openRemover: "Strip Metadata in Metadata Remover",
-          cardFile: "File & Resolution",
-          readonlyNote: "Read-Only mode active: file is inspected via ArrayBuffer with zero re-encoding or byte modification.",
+          cardPreview: "Image Preview",
+          cardFile: "File Info & Resolution",
+          readonlyNote: "Read-Only mode: file is inspected via ArrayBuffer with zero re-encoding or byte modification.",
           cardCamera: "Camera, Lens & Exposure",
           cardGps: "Location & GPS Coordinates",
           cardRaw: "All Metadata Tags (Raw Explorer)",
@@ -1134,13 +1207,12 @@
           camSoftware: "Software / Firmware",
           cameraEmpty: "No camera or exposure settings metadata found in this image.",
           notAvailable: "Not available",
-          gpsEmpty: "No GPS coordinates were found in this image's metadata.",
+          gpsEmpty: "No GPS coordinates found inside this file's binary data. If selecting from an Android gallery picker, choose via the system File Manager so Android does not strip location tags.",
           gpsDecimal: "Decimal Coordinates (Lat, Lon)",
           gpsDms: "DMS Coordinates",
           gpsAltitude: "Altitude",
           gpsDirection: "Compass Direction",
           gpsTimestamp: "Satellite Timestamp (UTC)",
-          gpsSource: "GPS Tag Source",
           openGoogleMaps: "Open in Google Maps",
           openOsm: "Open in OpenStreetMap",
           copyCoords: "Copy Coordinates",
@@ -1352,22 +1424,9 @@
         0x59: "Auto, Fired, Red-eye reduction"
       };
 
-      const WHITE_BALANCE_MAP = {
-        0: "Auto",
-        1: "Manual"
-      };
-
-      const COLOR_SPACE_MAP = {
-        1: "sRGB",
-        2: "Adobe RGB",
-        65535: "Uncalibrated"
-      };
-
-      const RESOLUTION_UNIT_MAP = {
-        1: "No absolute unit",
-        2: "inches (DPI)",
-        3: "centimeters (DPCM)"
-      };
+      const WHITE_BALANCE_MAP = { 0: "Auto", 1: "Manual" };
+      const COLOR_SPACE_MAP = { 1: "sRGB", 2: "Adobe RGB", 65535: "Uncalibrated" };
+      const RESOLUTION_UNIT_MAP = { 1: "No absolute unit", 2: "inches (DPI)", 3: "centimeters (DPCM)" };
 
       /* =====================================================================
          3. PURE VANILLA JS BINARY METADATA PARSER (JPEG / PNG / WebP)
@@ -1437,12 +1496,8 @@
 
         if (tagId === 0x9286 && sliceLen > 8) {
           const prefix = decodeAscii(view, offset, 8);
-          if (prefix.startsWith("ASCII")) {
-            return decodeAscii(view, offset + 8, sliceLen - 8);
-          }
-          if (prefix.startsWith("UNICODE")) {
-            return decodeUtf16Le(view, offset + 8, sliceLen - 8);
-          }
+          if (prefix.startsWith("ASCII")) return decodeAscii(view, offset + 8, sliceLen - 8);
+          if (prefix.startsWith("UNICODE")) return decodeUtf16Le(view, offset + 8, sliceLen - 8);
         }
 
         let printable = 0;
@@ -1544,9 +1599,7 @@
         if (tagId === 0x0128 && RESOLUTION_UNIT_MAP[rawVal]) return RESOLUTION_UNIT_MAP[rawVal];
 
         if (tagId === 0x829A && typeof rawVal === "number" && rawVal > 0) {
-          if (rawVal < 1) {
-            return "1/" + Math.round(1 / rawVal) + " s";
-          }
+          if (rawVal < 1) return "1/" + Math.round(1 / rawVal) + " s";
           return Number(rawVal.toFixed(2)) + " s";
         }
 
@@ -1597,24 +1650,19 @@
         return String(rawVal);
       }
 
-      /* Locate exact TIFF header signature (II*\0 or MM\0*) within EXIF payload */
       function findTiffStart(view, startOffset, maxScan) {
-        const limit = Math.min(view.byteLength - 8, startOffset + (maxScan || 24));
+        const limit = Math.min(view.byteLength - 8, startOffset + (maxScan || 32));
         for (let pos = startOffset; pos <= limit; pos++) {
           const byteOrder = view.getUint16(pos, false);
-          if (byteOrder === 0x4949 && view.getUint16(pos + 2, true) === 42) {
-            return pos;
-          }
-          if (byteOrder === 0x4D4D && view.getUint16(pos + 2, false) === 42) {
-            return pos;
-          }
+          if (byteOrder === 0x4949 && view.getUint16(pos + 2, true) === 42) return pos;
+          if (byteOrder === 0x4D4D && view.getUint16(pos + 2, false) === 42) return pos;
         }
         return -1;
       }
 
       function parseTiffExif(view, payloadStart, result) {
-        const tiffStart = findTiffStart(view, payloadStart, 24);
-        if (tiffStart < 0) return;
+        const tiffStart = findTiffStart(view, payloadStart, 32);
+        if (tiffStart < 0) return false;
 
         const endianTag = view.getUint16(tiffStart, false);
         const littleEndian = (endianTag === 0x4949);
@@ -1642,7 +1690,6 @@
             const type = view.getUint16(entryOffset + 2, littleEndian);
             const count = view.getUint32(entryOffset + 4, littleEndian);
 
-            /* Read pointer tags via readTagValue so SHORT (type 3) in Big-Endian works accurately */
             if (tagId === 0x8769) {
               const ptr = readTagValue(view, tiffStart, entryOffset, tagId, type, count, littleEndian);
               if (typeof ptr === "number") exifPointer = ptr;
@@ -1696,6 +1743,7 @@
         if (ifd1Offset) {
           parseIfd(ifd1Offset, "IFD1 (Thumbnail)");
         }
+        return true;
       }
 
       function parseXmpXml(xmlText, result) {
@@ -1705,18 +1753,30 @@
           const doc = new DOMParser().parseFromString(cleanXml, "text/xml");
           if (doc.querySelector("parsererror")) return;
 
-          const interestedPrefixes = ["xmp:", "dc:", "photoshop:", "tiff:", "exif:", "aux:", "crs:"];
+          const interestedPrefixes = ["xmp:", "dc:", "photoshop:", "tiff:", "exif:", "exifex:", "aux:", "crs:", "iptccore:"];
+          const unprefixedGpsOrMeta = new Set([
+            "GPSLatitude", "GPSLongitude", "GPSLatitudeRef", "GPSLongitudeRef",
+            "GPSAltitude", "GPSAltitudeRef", "DateTimeOriginal", "CreateDate",
+            "Make", "Model", "LensModel", "Software", "CreatorTool"
+          ]);
+
+          function isRelevantName(rawName) {
+            const lower = rawName.toLowerCase();
+            if (interestedPrefixes.some(function (p) { return lower.startsWith(p); })) return true;
+            const local = rawName.includes(":") ? rawName.split(":")[1] : rawName;
+            return unprefixedGpsOrMeta.has(local);
+          }
+
           const allNodes = doc.getElementsByTagName("*");
           for (let i = 0; i < allNodes.length; i++) {
             const node = allNodes[i];
             const name = node.nodeName || "";
 
-            /* Also check attributes on rdf:Description (many editors write exif:GPSLatitude as XML attribute) */
             if (node.attributes) {
               for (let a = 0; a < node.attributes.length; a++) {
                 const attr = node.attributes[a];
                 const attrName = attr.name || "";
-                if (interestedPrefixes.some(function (p) { return attrName.startsWith(p); })) {
+                if (isRelevantName(attrName)) {
                   const attrVal = (attr.value || "").trim();
                   if (attrVal && !result.kv[attrName]) {
                     result.tags.push({
@@ -1733,8 +1793,7 @@
               }
             }
 
-            const isTarget = interestedPrefixes.some(function (p) { return name.startsWith(p); });
-            if (!isTarget) continue;
+            if (!isRelevantName(name)) continue;
 
             let textVal = "";
             if (node.children.length === 0) {
@@ -1770,7 +1829,6 @@
         }
       }
 
-      /* Parse ImageMagick / GIMP hex-encoded EXIF text profile inside PNG */
       function parsePngRawExifProfile(hexText, result) {
         const cleaned = hexText.replace(/^\s*exif\s*\d+\s*/i, "").replace(/[^0-9a-fA-F]/g, "");
         if (cleaned.length < 16) return;
@@ -1782,9 +1840,46 @@
         parseTiffExif(new DataView(bytes.buffer), 0, result);
       }
 
+      /* Fallback binary signature scan if a third-party editor wrote irregular segment lengths */
+      function scanJpegBinaryFallback(view, result, foundExif, foundXmp) {
+        const maxScan = Math.min(view.byteLength - 16, 262144);
+        for (let i = 2; i < maxScan; i++) {
+          // Stop at Start of Scan (FF DA)
+          if (view.getUint8(i) === 0xFF && view.getUint8(i + 1) === 0xDA) {
+            break;
+          }
+          // Look for "Exif\0\0" (0x45786966 0x0000)
+          if (!foundExif &&
+              view.getUint32(i, false) === 0x45786966 &&
+              view.getUint16(i + 4, false) === 0x0000) {
+            if (parseTiffExif(view, i + 6, result)) {
+              foundExif = true;
+            }
+          }
+          // Look for "<x:xmpmeta" or "<rdf:RDF"
+          if (!foundXmp && view.getUint8(i) === 0x3C) {
+            const probe = decodeAscii(view, i, 12);
+            if (probe.startsWith("<x:xmpmeta") || probe.startsWith("<rdf:RDF")) {
+              const xmpChunk = decodeAscii(view, i, Math.min(65535, view.byteLength - i));
+              const endIdx = xmpChunk.indexOf("</x:xmpmeta>");
+              const rdfEndIdx = xmpChunk.indexOf("</rdf:RDF>");
+              const xmlSlice = endIdx > 0
+                ? xmpChunk.slice(0, endIdx + 12)
+                : rdfEndIdx > 0
+                  ? xmpChunk.slice(0, rdfEndIdx + 10)
+                  : xmpChunk;
+              parseXmpXml(xmlSlice, result);
+              foundXmp = true;
+            }
+          }
+        }
+      }
+
       function parseJpeg(view, result) {
         result.container = "JPEG (JFIF / EXIF)";
         let offset = 2;
+        let foundExif = false;
+        let foundXmp = false;
 
         while (offset + 1 < view.byteLength) {
           if (view.getUint8(offset) !== 0xFF) {
@@ -1810,12 +1905,15 @@
           if (marker === 0xE1 && dataLen > 6) {
             const header6 = decodeAscii(view, dataStart, 6);
             if (header6 === "Exif") {
-              parseTiffExif(view, dataStart + 6, result);
+              if (parseTiffExif(view, dataStart + 6, result)) {
+                foundExif = true;
+              }
             } else if (dataLen > 29) {
               const xmpHeader = decodeAscii(view, dataStart, 29);
               if (xmpHeader === "http://ns.adobe.com/xap/1.0/") {
                 const xmlStr = decodeAscii(view, dataStart + 29, dataLen - 29);
                 parseXmpXml(xmlStr, result);
+                foundXmp = true;
               }
             }
           }
@@ -1845,6 +1943,10 @@
           }
 
           offset += segLen;
+        }
+
+        if (!foundExif || !foundXmp) {
+          scanJpegBinaryFallback(view, result, foundExif, foundXmp);
         }
       }
 
@@ -1999,7 +2101,6 @@
         }
       }
 
-      /* Normalize Ref value whether string ("S") or ASCII byte code (83) */
       function normalizeRef(refVal) {
         if (typeof refVal === "number") {
           return String.fromCharCode(refVal).toUpperCase();
@@ -2007,26 +2108,62 @@
         return String(refVal || "").trim().toUpperCase();
       }
 
-      /* Parse XMP GPS string formats like "1,8.4521N", "1,8,27.12N", or "-6.2088" */
-      function parseXmpGpsCoord(str) {
-        if (!str) return null;
-        const s = String(str).trim();
-        const dirMatch = s.match(/([NSEW])$/i);
-        const dir = dirMatch ? dirMatch[1].toUpperCase() : "";
-        const numPart = dir ? s.slice(0, -1).trim() : s;
+      /* Universal GPS coordinate parser supporting EXIF arrays, rationals, signed floats, and XMP strings */
+      function parseFlexibleCoord(rawVal, refStr, negHemisphere) {
+        if (rawVal === undefined || rawVal === null || rawVal === "") return null;
+        const ref = normalizeRef(refStr);
 
-        if (numPart.includes(",")) {
-          const parts = numPart.split(",").map(Number);
-          if (parts.some(function (n) { return !Number.isFinite(n); })) return null;
-          let deg = Math.abs(parts[0] || 0) + (parts[1] || 0) / 60 + (parts[2] || 0) / 3600;
-          if (parts[0] < 0 || dir === "S" || dir === "W") deg = -Math.abs(deg);
+        if (Array.isArray(rawVal)) {
+          const d = Number(rawVal[0] || 0);
+          const m = Number(rawVal[1] || 0);
+          const s = Number(rawVal[2] || 0);
+          if (!Number.isFinite(d)) return null;
+          let deg = Math.abs(d) + Math.abs(m) / 60 + Math.abs(s) / 3600;
+          if (d < 0 || ref.startsWith(negHemisphere)) deg = -Math.abs(deg);
           return deg;
         }
 
-        const val = Number(numPart);
-        if (!Number.isFinite(val)) return null;
-        if (dir === "S" || dir === "W") return -Math.abs(val);
-        return val;
+        if (typeof rawVal === "number") {
+          if (!Number.isFinite(rawVal)) return null;
+          return ref.startsWith(negHemisphere) ? -Math.abs(rawVal) : rawVal;
+        }
+
+        const str = String(rawVal).trim();
+        const dirMatch = str.match(/([NSEW])$/i);
+        const embeddedDir = dirMatch ? dirMatch[1].toUpperCase() : "";
+        const effectiveRef = embeddedDir || ref;
+        const numPart = embeddedDir ? str.slice(0, -1).trim() : str;
+
+        // Handle "deg,min,sec" or "deg,min.dec"
+        if (numPart.includes(",")) {
+          const parts = numPart.split(",").map(function (p) {
+            if (p.includes("/")) {
+              const frac = p.split("/");
+              return Number(frac[1]) ? Number(frac[0]) / Number(frac[1]) : NaN;
+            }
+            return Number(p.trim());
+          });
+          if (parts.some(function (n) { return !Number.isFinite(n); })) return null;
+          let deg = Math.abs(parts[0] || 0) + Math.abs(parts[1] || 0) / 60 + Math.abs(parts[2] || 0) / 3600;
+          if (parts[0] < 0 || effectiveRef.startsWith(negHemisphere)) deg = -Math.abs(deg);
+          return deg;
+        }
+
+        // Handle DMS with symbols: 0° 56' 10.72"
+        const dmsMatch = numPart.match(/^([+-]?\d+(?:\.\d+)?)\s*(?:deg|°)\s*(\d+(?:\.\d+)?)?\s*['′]?\s*(\d+(?:\.\d+)?)?\s*["″]?$/i);
+        if (dmsMatch) {
+          const d = Number(dmsMatch[1] || 0);
+          const m = Number(dmsMatch[2] || 0);
+          const s = Number(dmsMatch[3] || 0);
+          let deg = Math.abs(d) + m / 60 + s / 3600;
+          if (d < 0 || effectiveRef.startsWith(negHemisphere)) deg = -Math.abs(deg);
+          return deg;
+        }
+
+        const plain = Number(numPart);
+        if (!Number.isFinite(plain)) return null;
+        if (effectiveRef.startsWith(negHemisphere)) return -Math.abs(plain);
+        return plain;
       }
 
       function decimalToDms(val, posChar, negChar) {
@@ -2040,40 +2177,26 @@
       }
 
       function computeGpsInfo(kv) {
-        let lat = null;
-        let lon = null;
+        let latRaw = kv.GPSLatitude;
+        let lonRaw = kv.GPSLongitude;
+        let latRef = kv.GPSLatitudeRef;
+        let lonRef = kv.GPSLongitudeRef;
         let sourceLabel = "EXIF GPSIFD";
 
-        const latRaw = kv.GPSLatitude;
-        const lonRaw = kv.GPSLongitude;
-        const latRef = normalizeRef(kv.GPSLatitudeRef);
-        const lonRef = normalizeRef(kv.GPSLongitudeRef);
-
-        if (latRaw !== undefined && lonRaw !== undefined) {
-          if (Array.isArray(latRaw)) {
-            const d = Number(latRaw[0] || 0);
-            const m = Number(latRaw[1] || 0);
-            const s = Number(latRaw[2] || 0);
-            lat = Math.abs(d) + m / 60 + s / 3600;
-            if (d < 0 || latRef.startsWith("S")) lat = -Math.abs(lat);
-          } else if (typeof latRaw === "number") {
-            lat = latRef.startsWith("S") ? -Math.abs(latRaw) : latRaw;
+        if (latRaw === undefined || lonRaw === undefined) {
+          if (kv["exif:GPSLatitude"] !== undefined && kv["exif:GPSLongitude"] !== undefined) {
+            latRaw = kv["exif:GPSLatitude"];
+            lonRaw = kv["exif:GPSLongitude"];
+            latRef = kv["exif:GPSLatitudeRef"];
+            lonRef = kv["exif:GPSLongitudeRef"];
+            sourceLabel = "XMP Metadata";
           }
-
-          if (Array.isArray(lonRaw)) {
-            const d = Number(lonRaw[0] || 0);
-            const m = Number(lonRaw[1] || 0);
-            const s = Number(lonRaw[2] || 0);
-            lon = Math.abs(d) + m / 60 + s / 3600;
-            if (d < 0 || lonRef.startsWith("W")) lon = -Math.abs(lon);
-          } else if (typeof lonRaw === "number") {
-            lon = lonRef.startsWith("W") ? -Math.abs(lonRaw) : lonRaw;
-          }
-        } else if (kv["exif:GPSLatitude"] && kv["exif:GPSLongitude"]) {
-          lat = parseXmpGpsCoord(kv["exif:GPSLatitude"]);
-          lon = parseXmpGpsCoord(kv["exif:GPSLongitude"]);
-          sourceLabel = "XMP Metadata";
+        } else if (typeof latRaw === "string" && !kv.GPSVersionID && !kv.GPSLatitudeRef) {
+          sourceLabel = "XMP / Text Metadata";
         }
+
+        const lat = parseFlexibleCoord(latRaw, latRef, "S");
+        const lon = parseFlexibleCoord(lonRaw, lonRef, "W");
 
         if (lat === null || lon === null || !Number.isFinite(lat) || !Number.isFinite(lon)) {
           return null;
@@ -2086,17 +2209,18 @@
         const dmsStr = decimalToDms(lat, "N", "S") + ", " + decimalToDms(lon, "E", "W");
 
         let altitude = null;
-        if (typeof kv.GPSAltitude === "number") {
+        const altSource = kv.GPSAltitude !== undefined ? kv.GPSAltitude : kv["exif:GPSAltitude"];
+        if (typeof altSource === "number") {
           const belowSea = Number(kv.GPSAltitudeRef) === 1;
-          const altVal = belowSea ? -Math.abs(kv.GPSAltitude) : kv.GPSAltitude;
+          const altVal = belowSea ? -Math.abs(altSource) : altSource;
           altitude = Number(altVal.toFixed(1)) + " m";
-        } else if (kv["exif:GPSAltitude"]) {
-          const parts = String(kv["exif:GPSAltitude"]).split("/");
+        } else if (typeof altSource === "string" && altSource.trim() !== "") {
+          const parts = altSource.split("/");
           const altNum = parts.length === 2 && Number(parts[1]) !== 0
             ? Number(parts[0]) / Number(parts[1])
             : Number(parts[0]);
           if (Number.isFinite(altNum)) {
-            const belowSea = Number(kv["exif:GPSAltitudeRef"]) === 1;
+            const belowSea = Number(kv.GPSAltitudeRef || kv["exif:GPSAltitudeRef"]) === 1;
             altitude = Number((belowSea ? -Math.abs(altNum) : altNum).toFixed(1)) + " m";
           }
         }
@@ -2152,21 +2276,12 @@
         if (kv.DateTimeOriginal || kv.DateTime) medItems.push("Capture Timestamp");
 
         if (highItems.length > 0) {
-          return {
-            level: "high",
-            detectedTags: highItems.concat(medItems)
-          };
+          return { level: "high", detectedTags: highItems.concat(medItems) };
         }
         if (medItems.length > 0) {
-          return {
-            level: "medium",
-            detectedTags: medItems
-          };
+          return { level: "medium", detectedTags: medItems };
         }
-        return {
-          level: "low",
-          detectedTags: []
-        };
+        return { level: "low", detectedTags: [] };
       }
 
       async function analyzeImageFile(file) {
@@ -2249,7 +2364,7 @@
         privacyTags: document.getElementById("privacyTags"),
         btnCleanMetadata: document.getElementById("btnCleanMetadata"),
         imagePreview: document.getElementById("imagePreview"),
-        fileKvList: document.getElementById("fileKvList"),
+        fileKvGrid: document.getElementById("fileKvGrid"),
         cameraGrid: document.getElementById("cameraGrid"),
         gpsContainer: document.getElementById("gpsContainer"),
         tagCountBadge: document.getElementById("tagCountBadge"),
@@ -2284,7 +2399,7 @@
         const units = ["B", "KB", "MB", "GB"];
         const idx = Math.floor(Math.log(bytes) / Math.log(1024));
         const val = bytes / Math.pow(1024, idx);
-        return (idx === 0 ? bytes : val.toFixed(2)) + " " + units[idx] + " (" + bytes.toLocaleString() + " bytes)";
+        return (idx === 0 ? bytes : val.toFixed(2)) + " " + units[idx] + " (" + bytes.toLocaleString() + " B)";
       }
 
       function computeAspectRatio(w, h) {
@@ -2336,9 +2451,9 @@
         }
       }
 
-      function createKvRow(label, value) {
-        const row = document.createElement("div");
-        row.className = "kv-row";
+      function createKvItem(label, value) {
+        const box = document.createElement("div");
+        box.className = "kv-item";
 
         const lbl = document.createElement("span");
         lbl.className = "kv-label";
@@ -2348,9 +2463,9 @@
         val.className = "kv-value";
         val.textContent = value;
 
-        row.appendChild(lbl);
-        row.appendChild(val);
-        return row;
+        box.appendChild(lbl);
+        box.appendChild(val);
+        return box;
       }
 
       function createSpecTile(label, value, sub) {
@@ -2416,10 +2531,10 @@
         el.imagePreview.onload = function () {
           rec.naturalWidth = el.imagePreview.naturalWidth;
           rec.naturalHeight = el.imagePreview.naturalHeight;
-          renderFileMetadataList(rec);
+          renderFileMetadataGrid(rec);
         };
         el.imagePreview.src = rec.objectUrl;
-        renderFileMetadataList(rec);
+        renderFileMetadataGrid(rec);
 
         renderPrivacyBanner(rec);
         renderGpsSection(rec);
@@ -2428,8 +2543,8 @@
         renderRawTable(rec);
       }
 
-      function renderFileMetadataList(rec) {
-        clearChildren(el.fileKvList);
+      function renderFileMetadataGrid(rec) {
+        clearChildren(el.fileKvGrid);
         const w = rec.headerWidth || rec.naturalWidth || rec.kv.PixelXDimension || rec.kv.ImageWidth;
         const h = rec.headerHeight || rec.naturalHeight || rec.kv.PixelYDimension || rec.kv.ImageLength;
 
@@ -2438,16 +2553,16 @@
         const ratioText = computeAspectRatio(w, h);
         const modDate = rec.lastModified ? new Date(rec.lastModified).toLocaleString() : t("notAvailable");
 
-        el.fileKvList.appendChild(createKvRow(t("fileName"), rec.fileName));
-        el.fileKvList.appendChild(createKvRow(t("fileFormat"), rec.container));
-        el.fileKvList.appendChild(createKvRow(t("fileSize"), formatBytes(rec.fileSize)));
-        el.fileKvList.appendChild(createKvRow(t("resolution"), dimText));
-        el.fileKvList.appendChild(createKvRow(t("megapixels"), mpText));
-        el.fileKvList.appendChild(createKvRow(t("aspectRatio"), ratioText));
-        el.fileKvList.appendChild(createKvRow(t("colorInfo"), rec.colorSummary || rec.kvFormatted.ColorSpace || t("notAvailable")));
-        el.fileKvList.appendChild(createKvRow(t("dpiInfo"), rec.dpiSummary || t("notAvailable")));
-        el.fileKvList.appendChild(createKvRow(t("orientation"), rec.kvFormatted.Orientation || t("notAvailable")));
-        el.fileKvList.appendChild(createKvRow(t("fileModified"), modDate));
+        el.fileKvGrid.appendChild(createKvItem(t("fileName"), rec.fileName));
+        el.fileKvGrid.appendChild(createKvItem(t("fileFormat"), rec.container));
+        el.fileKvGrid.appendChild(createKvItem(t("fileSize"), formatBytes(rec.fileSize)));
+        el.fileKvGrid.appendChild(createKvItem(t("resolution"), dimText));
+        el.fileKvGrid.appendChild(createKvItem(t("megapixels"), mpText));
+        el.fileKvGrid.appendChild(createKvItem(t("aspectRatio"), ratioText));
+        el.fileKvGrid.appendChild(createKvItem(t("colorInfo"), rec.colorSummary || rec.kvFormatted.ColorSpace || t("notAvailable")));
+        el.fileKvGrid.appendChild(createKvItem(t("dpiInfo"), rec.dpiSummary || t("notAvailable")));
+        el.fileKvGrid.appendChild(createKvItem(t("orientation"), rec.kvFormatted.Orientation || t("notAvailable")));
+        el.fileKvGrid.appendChild(createKvItem(t("fileModified"), modDate));
       }
 
       function renderPrivacyBanner(rec) {
@@ -2558,7 +2673,7 @@
         if (deviceName) tiles.push(createSpecTile(t("camDevice"), deviceName, kv.BodySerialNumber ? "S/N: " + kv.BodySerialNumber : ""));
         const lens = kv.LensModel || kv["aux:Lens"] || "";
         if (lens) tiles.push(createSpecTile(t("camLens"), lens, kv.LensMake || ""));
-        const captureDate = kv.DateTimeOriginal || kv.DateTime || kv["xmp:CreateDate"] || "";
+        const captureDate = kv.DateTimeOriginal || kv.DateTime || kv["xmp:CreateDate"] || kv.CreateDate || "";
         if (captureDate) tiles.push(createSpecTile(t("camCaptureDate"), captureDate, kv.OffsetTimeOriginal || kv.OffsetTime || ""));
         if (kvf.ExposureTime) tiles.push(createSpecTile(t("camExposure"), kvf.ExposureTime, kvf.ExposureBiasValue || ""));
         if (kvf.FNumber) tiles.push(createSpecTile(t("camAperture"), kvf.FNumber, ""));
@@ -2568,7 +2683,7 @@
         if (kvf.MeteringMode) tiles.push(createSpecTile(t("camMetering"), kvf.MeteringMode, ""));
         if (kvf.ExposureProgram) tiles.push(createSpecTile(t("camProgram"), kvf.ExposureProgram, ""));
         if (kvf.WhiteBalance) tiles.push(createSpecTile(t("camWhiteBalance"), kvf.WhiteBalance, ""));
-        const software = kv.Software || kv["xmp:CreatorTool"] || "";
+        const software = kv.Software || kv["xmp:CreatorTool"] || kv.CreatorTool || "";
         if (software) tiles.push(createSpecTile(t("camSoftware"), software, ""));
 
         if (tiles.length === 0) {
@@ -2656,19 +2771,23 @@
 
           const tdId = document.createElement("td");
           tdId.className = "mono-cell";
+          tdId.setAttribute("data-label", t("colTagId"));
           tdId.textContent = tag.tagIdHex;
 
           const tdName = document.createElement("td");
           tdName.style.fontWeight = "600";
+          tdName.setAttribute("data-label", t("colTagName"));
           tdName.textContent = tag.name;
 
           const tdFmt = document.createElement("td");
           tdFmt.className = "mono-cell";
+          tdFmt.setAttribute("data-label", t("colFormatted"));
           tdFmt.textContent = truncateCellText(tag.formatted, 220);
 
           const tdRaw = document.createElement("td");
           tdRaw.className = "mono-cell";
           tdRaw.style.color = "var(--text-secondary)";
+          tdRaw.setAttribute("data-label", t("colRaw"));
           tdRaw.textContent = truncateCellText(tag.raw, 180);
 
           tr.appendChild(tdGroup);
