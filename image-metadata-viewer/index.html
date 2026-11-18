@@ -1,0 +1,2730 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Metadata Viewer - UtilitiBox</title>
+  <meta name="description" content="Lihat metadata EXIF, koordinat GPS, kamera, tanggal pengambilan, resolusi, dan tag mentah gambar (JPEG, PNG, WebP) secara lokal tanpa mengubah file asli.">
+  <link rel="canonical" href="https://utilitibox.github.io/image-metadata-viewer/">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; connect-src 'none'; frame-src 'none';">
+  <style>
+    :root {
+      --bg-primary: #0f172a;
+      --bg-secondary: #1e293b;
+      --bg-tertiary: #0b1120;
+      --bg-hover: #273549;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --border-color: #334155;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --accent-soft: rgba(59, 130, 246, 0.14);
+      --success: #10b981;
+      --success-soft: rgba(16, 185, 129, 0.14);
+      --warning: #f59e0b;
+      --warning-soft: rgba(245, 158, 11, 0.14);
+      --danger: #ef4444;
+      --danger-soft: rgba(239, 68, 68, 0.14);
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.35);
+      --radius-lg: 14px;
+      --radius-md: 10px;
+      --radius-sm: 6px;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    [data-theme="light"] {
+      --bg-primary: #f1f5f9;
+      --bg-secondary: #ffffff;
+      --bg-tertiary: #f8fafc;
+      --bg-hover: #e2e8f0;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --border-color: #cbd5e1;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --accent-soft: rgba(37, 99, 235, 0.1);
+      --success: #059669;
+      --success-soft: rgba(5, 150, 105, 0.12);
+      --warning: #d97706;
+      --warning-soft: rgba(217, 119, 6, 0.12);
+      --danger: #dc2626;
+      --danger-soft: rgba(220, 38, 38, 0.12);
+      --shadow: 0 8px 20px -4px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.55;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* Header */
+    .topbar {
+      background-color: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+
+    .topbar-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0.85rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      padding: 0.4rem 0.7rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background: var(--bg-tertiary);
+      transition: all 0.15s ease;
+    }
+
+    .back-link:hover {
+      color: var(--text-primary);
+      border-color: var(--accent);
+      text-decoration: none;
+    }
+
+    .app-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .badge-local {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      background: var(--success-soft);
+      color: var(--success);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .controls-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 0.45rem 0.75rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-icon:hover {
+      border-color: var(--accent);
+      background: var(--bg-hover);
+    }
+
+    /* Main Container */
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.5rem 1.25rem 3rem;
+      flex: 1;
+    }
+
+    /* Dropzone */
+    .dropzone {
+      background: var(--bg-secondary);
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow);
+    }
+
+    .dropzone.compact {
+      padding: 1.1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      text-align: left;
+      flex-wrap: wrap;
+    }
+
+    .dropzone:hover,
+    .dropzone.dragover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .dropzone-icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .dropzone.compact .dropzone-icon {
+      width: 38px;
+      height: 38px;
+      margin: 0;
+      flex-shrink: 0;
+    }
+
+    .dropzone-main {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+    }
+
+    .dropzone.compact .dropzone-main {
+      flex: 1;
+    }
+
+    .dropzone:not(.compact) .dropzone-main {
+      flex-direction: column;
+    }
+
+    .dropzone h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+    }
+
+    .dropzone.compact h2 {
+      font-size: 0.98rem;
+      margin-bottom: 0.1rem;
+    }
+
+    .dropzone p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .dropzone.compact p {
+      font-size: 0.82rem;
+    }
+
+    .format-pills {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 1rem;
+    }
+
+    .dropzone.compact .format-pills {
+      margin-top: 0;
+    }
+
+    .pill {
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      padding: 0.2rem 0.55rem;
+      border-radius: var(--radius-sm);
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+    }
+
+    /* Batch File Selector */
+    .batch-bar {
+      margin-top: 1rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 0.75rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .batch-tabs {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      flex-wrap: wrap;
+      flex: 1;
+    }
+
+    .batch-tab {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.38rem 0.7rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background: var(--bg-tertiary);
+      color: var(--text-secondary);
+      cursor: pointer;
+      max-width: 220px;
+    }
+
+    .batch-tab span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .batch-tab.active {
+      background: var(--accent);
+      color: #ffffff;
+      border-color: var(--accent);
+    }
+
+    /* Action Bar */
+    .action-bar {
+      margin-top: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .action-buttons {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.55rem 0.95rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn:hover {
+      border-color: var(--accent);
+      background: var(--bg-hover);
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #ffffff;
+      border-color: var(--accent);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+      color: #ffffff;
+    }
+
+    .btn-danger-outline {
+      border-color: rgba(239, 68, 68, 0.45);
+      color: var(--danger);
+      background: var(--danger-soft);
+    }
+
+    .btn-danger-outline:hover {
+      background: var(--danger);
+      color: #ffffff;
+      border-color: var(--danger);
+    }
+
+    /* Privacy Alert Banner */
+    .privacy-banner {
+      margin-top: 1.25rem;
+      padding: 1rem 1.2rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .privacy-banner.risk-high {
+      background: var(--danger-soft);
+      border-color: rgba(239, 68, 68, 0.4);
+    }
+
+    .privacy-banner.risk-medium {
+      background: var(--warning-soft);
+      border-color: rgba(245, 158, 11, 0.4);
+    }
+
+    .privacy-banner.risk-low {
+      background: var(--success-soft);
+      border-color: rgba(16, 185, 129, 0.4);
+    }
+
+    .privacy-info {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      flex: 1;
+      min-width: 260px;
+    }
+
+    .privacy-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .privacy-desc {
+      font-size: 0.84rem;
+      color: var(--text-secondary);
+    }
+
+    .privacy-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-top: 0.45rem;
+    }
+
+    .privacy-tag {
+      font-size: 0.74rem;
+      font-weight: 600;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+    }
+
+    /* Workspace Grid */
+    .workspace-grid {
+      margin-top: 1.25rem;
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 1.25rem;
+      align-items: start;
+    }
+
+    @media (max-width: 920px) {
+      .workspace-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 0.9rem 1.15rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    .card-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card-body {
+      padding: 1.15rem;
+    }
+
+    /* Preview Panel */
+    .preview-box {
+      background-color: var(--bg-tertiary);
+      background-image: linear-gradient(45deg, rgba(148, 163, 184, 0.08) 25%, transparent 25%),
+        linear-gradient(-45deg, rgba(148, 163, 184, 0.08) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, rgba(148, 163, 184, 0.08) 75%),
+        linear-gradient(-45deg, transparent 75%, rgba(148, 163, 184, 0.08) 75%);
+      background-size: 16px 16px;
+      background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 210px;
+      max-height: 310px;
+      overflow: hidden;
+      margin-bottom: 1rem;
+    }
+
+    .preview-box img {
+      max-width: 100%;
+      max-height: 280px;
+      object-fit: contain;
+      border-radius: 4px;
+    }
+
+    .readonly-note {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 0.55rem 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Key-Value List */
+    .kv-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .kv-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding-bottom: 0.55rem;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 0.85rem;
+    }
+
+    .kv-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .kv-label {
+      color: var(--text-secondary);
+      flex-shrink: 0;
+    }
+
+    .kv-value {
+      font-weight: 600;
+      text-align: right;
+      word-break: break-word;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+    }
+
+    /* Detail Panels Stack */
+    .detail-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    /* Camera Grid */
+    .specs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .spec-tile {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 0.75rem 0.9rem;
+    }
+
+    .spec-tile-label {
+      font-size: 0.74rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-bottom: 0.25rem;
+    }
+
+    .spec-tile-value {
+      font-size: 0.95rem;
+      font-weight: 700;
+      word-break: break-word;
+    }
+
+    .spec-tile-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.15rem;
+    }
+
+    /* GPS Section */
+    .gps-box {
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+
+    .gps-coords-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .gps-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+
+    .empty-state {
+      color: var(--text-secondary);
+      font-size: 0.88rem;
+      padding: 0.75rem;
+      background: var(--bg-tertiary);
+      border-radius: var(--radius-sm);
+      border: 1px dashed var(--border-color);
+    }
+
+    /* Raw Metadata Table */
+    .raw-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.9rem;
+    }
+
+    .search-input,
+    .filter-select {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.85rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .search-input {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .search-input:focus,
+    .filter-select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      max-height: 480px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.83rem;
+      text-align: left;
+    }
+
+    thead {
+      background: var(--bg-tertiary);
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+
+    th {
+      padding: 0.65rem 0.85rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border-color);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 0.6rem 0.85rem;
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: top;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr:hover {
+      background: var(--bg-hover);
+    }
+
+    .tag-group-badge {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .mono-cell {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      word-break: break-word;
+      max-width: 380px;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: var(--text-primary);
+      color: var(--bg-primary);
+      padding: 0.7rem 1.1rem;
+      border-radius: var(--radius-md);
+      font-size: 0.86rem;
+      font-weight: 600;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(10px);
+      transition: all 0.2s ease;
+      z-index: 100;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1.25rem;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border-color);
+      background: var(--bg-secondary);
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand-group">
+        <a href="https://utilitibox.github.io/" class="back-link" title="UtilitiBox Home">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+          <span>UtilitiBox</span>
+        </a>
+        <h1 class="app-title" data-i18n="appTitle">Image Metadata Viewer</h1>
+        <span class="badge-local" data-i18n="localBadge">100% Lokal &amp; Read-Only</span>
+      </div>
+      <div class="controls-group">
+        <button type="button" id="langToggle" class="btn-icon" aria-label="Switch Language">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          <span id="langLabel">ID</span>
+        </button>
+        <button type="button" id="themeToggle" class="btn-icon" aria-label="Toggle Theme">
+          <svg id="themeIconSun" class="hidden" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg id="themeIconMoon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <span id="themeLabel">Dark</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Upload / Dropzone -->
+    <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="Pilih atau jatuhkan gambar">
+      <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,image/*" multiple class="hidden">
+      <div class="dropzone-main">
+        <div class="dropzone-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        </div>
+        <div>
+          <h2 data-i18n="dropTitle">Jatuhkan gambar di sini, tempel (Ctrl+V), atau klik untuk memilih</h2>
+          <p data-i18n="dropSubtitle">File dibaca langsung dari memori browser tanpa diunggah dan tanpa mengubah byte asli.</p>
+        </div>
+      </div>
+      <div class="format-pills">
+        <span class="pill">JPEG / JPG (EXIF, XMP, JFIF)</span>
+        <span class="pill">PNG (IHDR, eXIf, tEXt, iTXt, pHYs)</span>
+        <span class="pill">WebP (VP8/VP8L/VP8X, EXIF, XMP)</span>
+      </div>
+    </div>
+
+    <!-- Batch File Switcher (visible when > 1 file loaded) -->
+    <div id="batchBar" class="batch-bar hidden">
+      <div id="batchTabs" class="batch-tabs"></div>
+      <button type="button" id="btnExportAllJson" class="btn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span data-i18n="exportBatchJson">Unduh JSON Semua File</span>
+      </button>
+    </div>
+
+    <!-- Inspection View -->
+    <section id="inspectorSection" class="hidden">
+      <!-- Action Bar -->
+      <div class="action-bar">
+        <div class="action-buttons">
+          <button type="button" id="btnCopySummary" class="btn btn-primary">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            <span data-i18n="copySummary">Salin Ringkasan Teks</span>
+          </button>
+          <button type="button" id="btnCopyJson" class="btn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            <span data-i18n="copyJson">Salin JSON</span>
+          </button>
+          <button type="button" id="btnDownloadJson" class="btn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span data-i18n="downloadJson">Unduh .JSON</span>
+          </button>
+        </div>
+        <button type="button" id="btnClear" class="btn btn-danger-outline">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+          <span data-i18n="clearSession">Bersihkan Sesi</span>
+        </button>
+      </div>
+
+      <!-- Privacy & Cross-Tool Integration Banner -->
+      <div id="privacyBanner" class="privacy-banner risk-low">
+        <div class="privacy-info">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:2px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <div>
+            <div id="privacyTitle" class="privacy-title"></div>
+            <div id="privacyDesc" class="privacy-desc"></div>
+            <div id="privacyTags" class="privacy-tags"></div>
+          </div>
+        </div>
+        <a id="btnCleanMetadata" href="https://utilitibox.github.io/metadata-remover/" target="_blank" rel="noopener noreferrer" class="btn btn-primary hidden">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg>
+          <span data-i18n="openRemover">Hapus Metadata di Metadata Remover</span>
+        </a>
+      </div>
+
+      <!-- Main Workspace -->
+      <div class="workspace-grid">
+        <!-- Left Column: Preview & File/Resolution -->
+        <aside class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <span data-i18n="cardFile">File &amp; Resolusi</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="preview-box">
+              <img id="imagePreview" alt="Preview gambar">
+            </div>
+            <div class="readonly-note" data-i18n="readonlyNote">
+              Mode Read-Only aktif: file diproses via ArrayBuffer tanpa kompresi ulang atau perubahan byte.
+            </div>
+            <div id="fileKvList" class="kv-list"></div>
+          </div>
+        </aside>
+
+        <!-- Right Column: Camera, GPS, Raw Tags -->
+        <div class="detail-stack">
+          <!-- Camera & Exposure Card -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                <span data-i18n="cardCamera">Kamera, Lensa &amp; Eksposur</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <div id="cameraGrid" class="specs-grid"></div>
+            </div>
+          </div>
+
+          <!-- GPS & Location Card -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <span data-i18n="cardGps">Lokasi &amp; Koordinat GPS</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <div id="gpsContainer"></div>
+            </div>
+          </div>
+
+          <!-- Raw Tags Explorer Card -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                <span data-i18n="cardRaw">Semua Tag Metadata (Raw Explorer)</span>
+              </div>
+              <span id="tagCountBadge" class="pill">0 tags</span>
+            </div>
+            <div class="card-body">
+              <div class="raw-controls">
+                <input type="search" id="tagSearchInput" class="search-input" placeholder="Cari nama tag, ID hex, atau nilai...">
+                <select id="tagGroupFilter" class="filter-select" aria-label="Filter Grup Metadata">
+                  <option value="ALL" data-i18n="filterAll">Semua Grup</option>
+                </select>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th data-i18n="colGroup">Grup</th>
+                      <th data-i18n="colTagId">Tag ID</th>
+                      <th data-i18n="colTagName">Nama Tag</th>
+                      <th data-i18n="colFormatted">Nilai Terformat</th>
+                      <th data-i18n="colRaw">Nilai Mentah</th>
+                    </tr>
+                  </thead>
+                  <tbody id="rawTagsBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span data-i18n="footerText">UtilitiBox Image Metadata Viewer - Pemrosesan biner 100% sisi klien tanpa pengiriman data ke server.</span>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      /* =====================================================================
+         1. I18N DICTIONARY (ID / EN)
+      ===================================================================== */
+      const I18N = {
+        id: {
+          appTitle: "Image Metadata Viewer",
+          localBadge: "100% Lokal & Read-Only",
+          dropTitle: "Jatuhkan gambar di sini, tempel (Ctrl+V), atau klik untuk memilih",
+          dropSubtitle: "File dibaca langsung dari memori browser tanpa diunggah dan tanpa mengubah byte asli.",
+          exportBatchJson: "Unduh JSON Semua File",
+          copySummary: "Salin Ringkasan Teks",
+          copyJson: "Salin JSON",
+          downloadJson: "Unduh .JSON",
+          clearSession: "Bersihkan Sesi",
+          openRemover: "Hapus Metadata di Metadata Remover",
+          cardFile: "File & Resolusi",
+          readonlyNote: "Mode Read-Only aktif: file diproses via ArrayBuffer tanpa kompresi ulang atau perubahan byte.",
+          cardCamera: "Kamera, Lensa & Eksposur",
+          cardGps: "Lokasi & Koordinat GPS",
+          cardRaw: "Semua Tag Metadata (Raw Explorer)",
+          filterAll: "Semua Grup",
+          colGroup: "Grup",
+          colTagId: "Tag ID",
+          colTagName: "Nama Tag",
+          colFormatted: "Nilai Terformat",
+          colRaw: "Nilai Mentah",
+          searchPlaceholder: "Cari nama tag, ID hex, atau nilai...",
+          footerText: "UtilitiBox Image Metadata Viewer - Pemrosesan biner 100% sisi klien tanpa pengiriman data ke server.",
+          fileName: "Nama File",
+          fileFormat: "Format / Kontainer",
+          fileSize: "Ukuran File",
+          resolution: "Resolusi Piksel",
+          megapixels: "Megapiksel",
+          aspectRatio: "Rasio Aspek",
+          colorInfo: "Profil Warna / Bit",
+          dpiInfo: "Kepadatan (DPI)",
+          orientation: "Orientasi EXIF",
+          fileModified: "Modifikasi Terakhir",
+          camDevice: "Perangkat / Kamera",
+          camLens: "Lensa",
+          camCaptureDate: "Tanggal Pengambilan",
+          camExposure: "Shutter Speed",
+          camAperture: "Aperture (Bukaan)",
+          camIso: "ISO",
+          camFocal: "Focal Length",
+          camFlash: "Flash",
+          camMetering: "Metering Mode",
+          camProgram: "Program Eksposur",
+          camWhiteBalance: "White Balance",
+          camSoftware: "Software / Firmware",
+          notAvailable: "Tidak tersedia",
+          gpsEmpty: "Tidak ada koordinat GPS yang ditemukan dalam metadata gambar ini.",
+          gpsDecimal: "Koordinat Desimal (Lat, Lon)",
+          gpsDms: "Koordinat DMS",
+          gpsAltitude: "Ketinggian (Altitude)",
+          gpsDirection: "Arah Kompas",
+          gpsTimestamp: "Waktu Satelit (UTC)",
+          openGoogleMaps: "Buka di Google Maps",
+          openOsm: "Buka di OpenStreetMap",
+          privacyHighTitle: "Data Sensitif Terdeteksi (Lokasi GPS / Nomor Seri Perangkat)",
+          privacyHighDesc: "Gambar ini menyimpan koordinat lokasi atau nomor seri perangkat yang dapat melacak tempat dan identitas perangkat Anda.",
+          privacyMedTitle: "Metadata Identitas & Perangkat Terdeteksi",
+          privacyMedDesc: "Gambar ini mengandung informasi model perangkat, software, waktu pengambilan, atau nama pembuat.",
+          privacyLowTitle: "Aman: Tidak Ditemukan Metadata Sensitif",
+          privacyLowDesc: "Tidak ada koordinat GPS, nomor seri kamera, atau informasi pemilik yang terdeteksi dalam file ini.",
+          toastCopiedSummary: "Ringkasan metadata disalin ke clipboard.",
+          toastCopiedJson: "JSON metadata disalin ke clipboard.",
+          toastDownloadedJson: "File JSON metadata berhasil diunduh.",
+          toastCleared: "Sesi dibersihkan.",
+          noRawTags: "Tidak ada tag metadata biner yang cocok dengan filter."
+        },
+        en: {
+          appTitle: "Image Metadata Viewer",
+          localBadge: "100% Local & Read-Only",
+          dropTitle: "Drop images here, paste (Ctrl+V), or click to select",
+          dropSubtitle: "Files are read directly in browser memory without uploading or altering original bytes.",
+          exportBatchJson: "Download All Files JSON",
+          copySummary: "Copy Text Summary",
+          copyJson: "Copy JSON",
+          downloadJson: "Download .JSON",
+          clearSession: "Clear Session",
+          openRemover: "Strip Metadata in Metadata Remover",
+          cardFile: "File & Resolution",
+          readonlyNote: "Read-Only mode active: file is inspected via ArrayBuffer with zero re-encoding or byte modification.",
+          cardCamera: "Camera, Lens & Exposure",
+          cardGps: "Location & GPS Coordinates",
+          cardRaw: "All Metadata Tags (Raw Explorer)",
+          filterAll: "All Groups",
+          colGroup: "Group",
+          colTagId: "Tag ID",
+          colTagName: "Tag Name",
+          colFormatted: "Formatted Value",
+          colRaw: "Raw Value",
+          searchPlaceholder: "Search tag name, hex ID, or value...",
+          footerText: "UtilitiBox Image Metadata Viewer - 100% client-side binary parsing with zero server uploads.",
+          fileName: "File Name",
+          fileFormat: "Format / Container",
+          fileSize: "File Size",
+          resolution: "Pixel Dimensions",
+          megapixels: "Megapixels",
+          aspectRatio: "Aspect Ratio",
+          colorInfo: "Color / Bit Depth",
+          dpiInfo: "Resolution (DPI)",
+          orientation: "EXIF Orientation",
+          fileModified: "Last Modified",
+          camDevice: "Camera / Device",
+          camLens: "Lens",
+          camCaptureDate: "Date Taken",
+          camExposure: "Shutter Speed",
+          camAperture: "Aperture",
+          camIso: "ISO",
+          camFocal: "Focal Length",
+          camFlash: "Flash",
+          camMetering: "Metering Mode",
+          camProgram: "Exposure Program",
+          camWhiteBalance: "White Balance",
+          camSoftware: "Software / Firmware",
+          notAvailable: "Not available",
+          gpsEmpty: "No GPS coordinates were found in this image's metadata.",
+          gpsDecimal: "Decimal Coordinates (Lat, Lon)",
+          gpsDms: "DMS Coordinates",
+          gpsAltitude: "Altitude",
+          gpsDirection: "Compass Direction",
+          gpsTimestamp: "Satellite Timestamp (UTC)",
+          openGoogleMaps: "Open in Google Maps",
+          openOsm: "Open in OpenStreetMap",
+          privacyHighTitle: "Sensitive Data Detected (GPS Location / Device Serial Number)",
+          privacyHighDesc: "This image contains location coordinates or hardware serial numbers that can identify where and with what device it was captured.",
+          privacyMedTitle: "Device & Timestamp Metadata Detected",
+          privacyMedDesc: "This image contains camera model, software, capture timestamp, or creator metadata.",
+          privacyLowTitle: "Clean: No Sensitive Metadata Detected",
+          privacyLowDesc: "No GPS coordinates, serial numbers, or personal author metadata were found in this file.",
+          toastCopiedSummary: "Metadata summary copied to clipboard.",
+          toastCopiedJson: "Metadata JSON copied to clipboard.",
+          toastDownloadedJson: "Metadata JSON downloaded.",
+          toastCleared: "Session cleared.",
+          noRawTags: "No metadata tags match the current filter."
+        }
+      };
+
+      /* =====================================================================
+         2. EXIF TAG DICTIONARIES & LOOKUP TABLES
+      ===================================================================== */
+      const TAG_NAMES = {
+        IFD0: {
+          0x0100: "ImageWidth",
+          0x0101: "ImageLength",
+          0x0102: "BitsPerSample",
+          0x0103: "Compression",
+          0x0106: "PhotometricInterpretation",
+          0x010E: "ImageDescription",
+          0x010F: "Make",
+          0x0110: "Model",
+          0x0112: "Orientation",
+          0x0115: "SamplesPerPixel",
+          0x011A: "XResolution",
+          0x011B: "YResolution",
+          0x0128: "ResolutionUnit",
+          0x0131: "Software",
+          0x0132: "DateTime",
+          0x013B: "Artist",
+          0x013E: "WhitePoint",
+          0x013F: "PrimaryChromaticities",
+          0x0211: "YCbCrCoefficients",
+          0x0213: "YCbCrPositioning",
+          0x8298: "Copyright",
+          0x8769: "ExifIFDPointer",
+          0x8825: "GPSInfoIFDPointer",
+          0x9C9B: "XPTitle",
+          0x9C9C: "XPComment",
+          0x9C9D: "XPAuthor",
+          0x9C9E: "XPKeywords",
+          0x9C9F: "XPSubject",
+          0xC614: "UniqueCameraModel",
+          0xC62F: "CameraSerialNumber"
+        },
+        ExifIFD: {
+          0x829A: "ExposureTime",
+          0x829D: "FNumber",
+          0x8822: "ExposureProgram",
+          0x8824: "SpectralSensitivity",
+          0x8827: "ISOSpeedRatings",
+          0x8830: "SensitivityType",
+          0x8832: "RecommendedExposureIndex",
+          0x9000: "ExifVersion",
+          0x9003: "DateTimeOriginal",
+          0x9004: "DateTimeDigitized",
+          0x9010: "OffsetTime",
+          0x9011: "OffsetTimeOriginal",
+          0x9012: "OffsetTimeDigitized",
+          0x9101: "ComponentsConfiguration",
+          0x9102: "CompressedBitsPerPixel",
+          0x9201: "ShutterSpeedValue",
+          0x9202: "ApertureValue",
+          0x9203: "BrightnessValue",
+          0x9204: "ExposureBiasValue",
+          0x9205: "MaxApertureValue",
+          0x9206: "SubjectDistance",
+          0x9207: "MeteringMode",
+          0x9208: "LightSource",
+          0x9209: "Flash",
+          0x920A: "FocalLength",
+          0x9214: "SubjectArea",
+          0x927C: "MakerNote",
+          0x9286: "UserComment",
+          0x9290: "SubSecTime",
+          0x9291: "SubSecTimeOriginal",
+          0x9292: "SubSecTimeDigitized",
+          0xA000: "FlashpixVersion",
+          0xA001: "ColorSpace",
+          0xA002: "PixelXDimension",
+          0xA003: "PixelYDimension",
+          0xA005: "InteroperabilityIFDPointer",
+          0xA20E: "FocalPlaneXResolution",
+          0xA20F: "FocalPlaneYResolution",
+          0xA210: "FocalPlaneResolutionUnit",
+          0xA215: "ExposureIndex",
+          0xA217: "SensingMethod",
+          0xA300: "FileSource",
+          0xA301: "SceneType",
+          0xA401: "CustomRendered",
+          0xA402: "ExposureMode",
+          0xA403: "WhiteBalance",
+          0xA404: "DigitalZoomRatio",
+          0xA405: "FocalLengthIn35mmFilm",
+          0xA406: "SceneCaptureType",
+          0xA407: "GainControl",
+          0xA408: "Contrast",
+          0xA409: "Saturation",
+          0xA40A: "Sharpness",
+          0xA40C: "SubjectDistanceRange",
+          0xA420: "ImageUniqueID",
+          0xA430: "CameraOwnerName",
+          0xA431: "BodySerialNumber",
+          0xA432: "LensSpecification",
+          0xA433: "LensMake",
+          0xA434: "LensModel",
+          0xA435: "LensSerialNumber",
+          0xA460: "CompositeImage"
+        },
+        GPSIFD: {
+          0x0000: "GPSVersionID",
+          0x0001: "GPSLatitudeRef",
+          0x0002: "GPSLatitude",
+          0x0003: "GPSLongitudeRef",
+          0x0004: "GPSLongitude",
+          0x0005: "GPSAltitudeRef",
+          0x0006: "GPSAltitude",
+          0x0007: "GPSTimeStamp",
+          0x0008: "GPSSatellites",
+          0x0009: "GPSStatus",
+          0x000A: "GPSMeasureMode",
+          0x000B: "GPSDOP",
+          0x000C: "GPSSpeedRef",
+          0x000D: "GPSSpeed",
+          0x000E: "GPSTrackRef",
+          0x000F: "GPSTrack",
+          0x0010: "GPSImgDirectionRef",
+          0x0011: "GPSImgDirection",
+          0x0012: "GPSMapDatum",
+          0x0013: "GPSDestLatitudeRef",
+          0x0014: "GPSDestLatitude",
+          0x0015: "GPSDestLongitudeRef",
+          0x0016: "GPSDestLongitude",
+          0x001B: "GPSProcessingMethod",
+          0x001C: "GPSAreaInformation",
+          0x001D: "GPSDateStamp",
+          0x001E: "GPSDifferential",
+          0x001F: "GPSHPositioningError"
+        },
+        InteropIFD: {
+          0x0001: "InteroperabilityIndex",
+          0x0002: "InteroperabilityVersion"
+        }
+      };
+
+      const ORIENTATION_MAP = {
+        1: "1 (Normal)",
+        2: "2 (Mirror Horizontal)",
+        3: "3 (Rotate 180)",
+        4: "4 (Mirror Vertical)",
+        5: "5 (Mirror Horizontal & Rotate 270 CW)",
+        6: "6 (Rotate 90 CW)",
+        7: "7 (Mirror Horizontal & Rotate 90 CW)",
+        8: "8 (Rotate 270 CW)"
+      };
+
+      const EXPOSURE_PROGRAM_MAP = {
+        0: "Not Defined",
+        1: "Manual",
+        2: "Program AE",
+        3: "Aperture-priority AE",
+        4: "Shutter speed priority AE",
+        5: "Creative (Slow speed)",
+        6: "Action (High speed)",
+        7: "Portrait",
+        8: "Landscape"
+      };
+
+      const METERING_MODE_MAP = {
+        0: "Unknown",
+        1: "Average",
+        2: "Center-weighted average",
+        3: "Spot",
+        4: "Multi-spot",
+        5: "Multi-segment / Pattern",
+        6: "Partial",
+        255: "Other"
+      };
+
+      const FLASH_MAP = {
+        0x00: "No Flash",
+        0x01: "Fired",
+        0x05: "Fired, Return not detected",
+        0x07: "Fired, Return detected",
+        0x08: "On, Did not fire",
+        0x09: "On, Fired",
+        0x0D: "On, Return not detected",
+        0x0F: "On, Return detected",
+        0x10: "Off, Did not fire",
+        0x14: "Off, Did not fire, Return not detected",
+        0x18: "Auto, Did not fire",
+        0x19: "Auto, Fired",
+        0x1D: "Auto, Fired, Return not detected",
+        0x1F: "Auto, Fired, Return detected",
+        0x20: "No flash function",
+        0x41: "Fired, Red-eye reduction",
+        0x45: "Fired, Red-eye reduction, Return not detected",
+        0x47: "Fired, Red-eye reduction, Return detected",
+        0x49: "On, Fired, Red-eye reduction",
+        0x59: "Auto, Fired, Red-eye reduction"
+      };
+
+      const WHITE_BALANCE_MAP = {
+        0: "Auto",
+        1: "Manual"
+      };
+
+      const COLOR_SPACE_MAP = {
+        1: "sRGB",
+        2: "Adobe RGB",
+        65535: "Uncalibrated"
+      };
+
+      const RESOLUTION_UNIT_MAP = {
+        1: "No absolute unit",
+        2: "inches (DPI)",
+        3: "centimeters (DPCM)"
+      };
+
+      /* =====================================================================
+         3. PURE VANILLA JS BINARY METADATA PARSER (JPEG / PNG / WebP)
+      ===================================================================== */
+      const TYPE_SIZES = {
+        1: 1,  // BYTE
+        2: 1,  // ASCII
+        3: 2,  // SHORT
+        4: 4,  // LONG
+        5: 8,  // RATIONAL
+        6: 1,  // SBYTE
+        7: 1,  // UNDEFINED
+        8: 2,  // SSHORT
+        9: 4,  // SLONG
+        10: 8, // SRATIONAL
+        11: 4, // FLOAT
+        12: 8  // DOUBLE
+      };
+
+      function decodeAscii(view, offset, length) {
+        const end = Math.min(view.byteLength, offset + length);
+        const bytes = [];
+        for (let i = offset; i < end; i++) {
+          const b = view.getUint8(i);
+          if (b === 0) break;
+          bytes.push(b);
+        }
+        try {
+          return new TextDecoder("utf-8", { fatal: false }).decode(new Uint8Array(bytes)).trim();
+        } catch (e) {
+          return String.fromCharCode.apply(null, bytes).trim();
+        }
+      }
+
+      function decodeUtf16Le(view, offset, length) {
+        const end = Math.min(view.byteLength, offset + length);
+        const chars = [];
+        for (let i = offset; i + 1 < end; i += 2) {
+          const code = view.getUint16(i, true);
+          if (code === 0) break;
+          chars.push(String.fromCharCode(code));
+        }
+        return chars.join("").trim();
+      }
+
+      function decodeUndefined(tagId, view, offset, length) {
+        const end = Math.min(view.byteLength, offset + length);
+        const sliceLen = end - offset;
+        if (sliceLen <= 0) return "";
+
+        // ExifVersion (0x9000), FlashpixVersion (0xA000), InteropVersion (0x0002)
+        if (tagId === 0x9000 || tagId === 0xA000 || tagId === 0x0002) {
+          const raw = decodeAscii(view, offset, sliceLen);
+          if (/^\d{4}$/.test(raw)) {
+            return (parseInt(raw.slice(0, 2), 10) + "." + raw.slice(2)).replace(/^0+/, "");
+          }
+          return raw;
+        }
+
+        // ComponentsConfiguration (0x9101)
+        if (tagId === 0x9101 && sliceLen >= 4) {
+          const map = { 0: "-", 1: "Y", 2: "Cb", 3: "Cr", 4: "R", 5: "G", 6: "B" };
+          const parts = [];
+          for (let i = 0; i < 4; i++) {
+            parts.push(map[view.getUint8(offset + i)] || String(view.getUint8(offset + i)));
+          }
+          return parts.join(" ");
+        }
+
+        // UserComment (0x9286)
+        if (tagId === 0x9286 && sliceLen > 8) {
+          const prefix = decodeAscii(view, offset, 8);
+          if (prefix.startsWith("ASCII")) {
+            return decodeAscii(view, offset + 8, sliceLen - 8);
+          }
+          if (prefix.startsWith("UNICODE")) {
+            return decodeUtf16Le(view, offset + 8, sliceLen - 8);
+          }
+        }
+
+        // Printable text check
+        let printable = 0;
+        const inspectLen = Math.min(sliceLen, 128);
+        for (let i = 0; i < inspectLen; i++) {
+          const c = view.getUint8(offset + i);
+          if ((c >= 32 && c <= 126) || c === 9 || c === 10 || c === 13) printable++;
+        }
+        if (inspectLen > 0 && printable / inspectLen > 0.85) {
+          return decodeAscii(view, offset, Math.min(sliceLen, 512));
+        }
+
+        return "[Binary data: " + sliceLen + " bytes]";
+      }
+
+      function readTagValue(view, tiffStart, entryOffset, tagId, type, count, littleEndian) {
+        const unitSize = TYPE_SIZES[type];
+        if (!unitSize || count <= 0) return null;
+
+        const totalBytes = unitSize * count;
+        let valueOffset = entryOffset + 8;
+
+        if (totalBytes > 4) {
+          const relOffset = view.getUint32(entryOffset + 8, littleEndian);
+          valueOffset = tiffStart + relOffset;
+        }
+
+        if (valueOffset < 0 || valueOffset + totalBytes > view.byteLength) {
+          return null;
+        }
+
+        // Windows XP UTF-16LE tags
+        if ((tagId >= 0x9C9B && tagId <= 0x9C9F) && type === 1) {
+          return decodeUtf16Le(view, valueOffset, totalBytes);
+        }
+
+        if (type === 2) {
+          return decodeAscii(view, valueOffset, totalBytes);
+        }
+
+        if (type === 7) {
+          return decodeUndefined(tagId, view, valueOffset, totalBytes);
+        }
+
+        const values = [];
+        for (let i = 0; i < count; i++) {
+          const pos = valueOffset + i * unitSize;
+          switch (type) {
+            case 1:
+              values.push(view.getUint8(pos));
+              break;
+            case 3:
+              values.push(view.getUint16(pos, littleEndian));
+              break;
+            case 4:
+              values.push(view.getUint32(pos, littleEndian));
+              break;
+            case 5: {
+              const num = view.getUint32(pos, littleEndian);
+              const den = view.getUint32(pos + 4, littleEndian);
+              values.push(den === 0 ? 0 : num / den);
+              break;
+            }
+            case 6:
+              values.push(view.getInt8(pos));
+              break;
+            case 8:
+              values.push(view.getInt16(pos, littleEndian));
+              break;
+            case 9:
+              values.push(view.getInt32(pos, littleEndian));
+              break;
+            case 10: {
+              const num = view.getInt32(pos, littleEndian);
+              const den = view.getInt32(pos + 4, littleEndian);
+              values.push(den === 0 ? 0 : num / den);
+              break;
+            }
+            case 11:
+              values.push(view.getFloat32(pos, littleEndian));
+              break;
+            case 12:
+              values.push(view.getFloat64(pos, littleEndian));
+              break;
+          }
+        }
+
+        return count === 1 ? values[0] : values;
+      }
+
+      function formatTagHuman(group, tagId, tagName, rawVal) {
+        if (rawVal === null || rawVal === undefined) return "";
+
+        if (tagId === 0x0112 && ORIENTATION_MAP[rawVal]) return ORIENTATION_MAP[rawVal];
+        if (tagId === 0x8822 && EXPOSURE_PROGRAM_MAP[rawVal]) return EXPOSURE_PROGRAM_MAP[rawVal];
+        if (tagId === 0x9207 && METERING_MODE_MAP[rawVal]) return METERING_MODE_MAP[rawVal];
+        if (tagId === 0x9209 && FLASH_MAP[rawVal] !== undefined) return FLASH_MAP[rawVal];
+        if (tagId === 0xA403 && WHITE_BALANCE_MAP[rawVal] !== undefined) return WHITE_BALANCE_MAP[rawVal];
+        if (tagId === 0xA001 && COLOR_SPACE_MAP[rawVal]) return COLOR_SPACE_MAP[rawVal];
+        if (tagId === 0x0128 && RESOLUTION_UNIT_MAP[rawVal]) return RESOLUTION_UNIT_MAP[rawVal];
+
+        if (tagId === 0x829A && typeof rawVal === "number" && rawVal > 0) {
+          if (rawVal < 1) {
+            return "1/" + Math.round(1 / rawVal) + " s";
+          }
+          return Number(rawVal.toFixed(2)) + " s";
+        }
+
+        if (tagId === 0x829D && typeof rawVal === "number" && rawVal > 0) {
+          return "f/" + Number(rawVal.toFixed(1));
+        }
+
+        if (tagId === 0x920A && typeof rawVal === "number" && rawVal > 0) {
+          return Number(rawVal.toFixed(1)) + " mm";
+        }
+
+        if (tagId === 0xA405 && typeof rawVal === "number" && rawVal > 0) {
+          return rawVal + " mm (35mm eq)";
+        }
+
+        if (tagId === 0x9204 && typeof rawVal === "number") {
+          return (rawVal >= 0 ? "+" : "") + Number(rawVal.toFixed(2)) + " EV";
+        }
+
+        if (group === "GPSIFD" && (tagId === 0x0002 || tagId === 0x0004) && Array.isArray(rawVal) && rawVal.length >= 3) {
+          return rawVal[0] + " deg " + rawVal[1] + "' " + Number(rawVal[2]).toFixed(2) + '"';
+        }
+
+        if (group === "GPSIFD" && tagId === 0x0006 && typeof rawVal === "number") {
+          return Number(rawVal.toFixed(1)) + " m";
+        }
+
+        if (group === "GPSIFD" && tagId === 0x0007 && Array.isArray(rawVal) && rawVal.length >= 3) {
+          const pad = function (n) { return String(Math.floor(n)).padStart(2, "0"); };
+          return pad(rawVal[0]) + ":" + pad(rawVal[1]) + ":" + pad(rawVal[2]) + " UTC";
+        }
+
+        if (Array.isArray(rawVal)) {
+          return rawVal.map(function (v) {
+            return typeof v === "number" && !Number.isInteger(v) ? Number(v.toFixed(4)) : v;
+          }).join(", ");
+        }
+
+        if (typeof rawVal === "number" && !Number.isInteger(rawVal)) {
+          return String(Number(rawVal.toFixed(4)));
+        }
+
+        return String(rawVal);
+      }
+
+      function parseTiffExif(view, tiffStart, result) {
+        if (tiffStart + 8 > view.byteLength) return;
+
+        const endianTag = view.getUint16(tiffStart, false);
+        let littleEndian;
+        if (endianTag === 0x4949) {
+          littleEndian = true;
+        } else if (endianTag === 0x4D4D) {
+          littleEndian = false;
+        } else {
+          return;
+        }
+
+        const magic = view.getUint16(tiffStart + 2, littleEndian);
+        if (magic !== 42) return;
+
+        const firstIfdOffset = view.getUint32(tiffStart + 4, littleEndian);
+        const visited = new Set();
+
+        function parseIfd(relOffset, groupName) {
+          if (!relOffset || relOffset <= 0) return 0;
+          const absOffset = tiffStart + relOffset;
+          if (visited.has(absOffset)) return 0;
+          if (absOffset + 2 > view.byteLength) return 0;
+          visited.add(absOffset);
+
+          const entryCount = view.getUint16(absOffset, littleEndian);
+          let exifPointer = 0;
+          let gpsPointer = 0;
+          let interopPointer = 0;
+
+          for (let i = 0; i < entryCount; i++) {
+            const entryOffset = absOffset + 2 + i * 12;
+            if (entryOffset + 12 > view.byteLength) break;
+
+            const tagId = view.getUint16(entryOffset, littleEndian);
+            const type = view.getUint16(entryOffset + 2, littleEndian);
+            const count = view.getUint32(entryOffset + 4, littleEndian);
+
+            if (tagId === 0x8769) {
+              exifPointer = view.getUint32(entryOffset + 8, littleEndian);
+              continue;
+            }
+            if (tagId === 0x8825) {
+              gpsPointer = view.getUint32(entryOffset + 8, littleEndian);
+              continue;
+            }
+            if (tagId === 0xA005) {
+              interopPointer = view.getUint32(entryOffset + 8, littleEndian);
+              continue;
+            }
+
+            const rawVal = readTagValue(view, tiffStart, entryOffset, tagId, type, count, littleEndian);
+            if (rawVal === null || rawVal === "") continue;
+
+            const dictGroup = groupName === "IFD1 (Thumbnail)" ? "IFD0" : groupName;
+            const tagName = (TAG_NAMES[dictGroup] && TAG_NAMES[dictGroup][tagId]) ||
+              ("Tag_0x" + tagId.toString(16).toUpperCase().padStart(4, "0"));
+            const formatted = formatTagHuman(dictGroup, tagId, tagName, rawVal);
+
+            result.tags.push({
+              group: groupName,
+              tagIdHex: "0x" + tagId.toString(16).toUpperCase().padStart(4, "0"),
+              name: tagName,
+              formatted: formatted,
+              raw: rawVal
+            });
+
+            if (groupName !== "IFD1 (Thumbnail)") {
+              result.kv[tagName] = rawVal;
+              result.kvFormatted[tagName] = formatted;
+            }
+          }
+
+          if (exifPointer) parseIfd(exifPointer, "ExifIFD");
+          if (gpsPointer) parseIfd(gpsPointer, "GPSIFD");
+          if (interopPointer) parseIfd(interopPointer, "InteropIFD");
+
+          const nextOffsetPos = absOffset + 2 + entryCount * 12;
+          if (nextOffsetPos + 4 <= view.byteLength) {
+            return view.getUint32(nextOffsetPos, littleEndian);
+          }
+          return 0;
+        }
+
+        const ifd1Offset = parseIfd(firstIfdOffset, "IFD0");
+        if (ifd1Offset) {
+          parseIfd(ifd1Offset, "IFD1 (Thumbnail)");
+        }
+      }
+
+      function parseXmpXml(xmlText, result) {
+        if (!xmlText || typeof DOMParser === "undefined") return;
+        try {
+          const cleanXml = xmlText.replace(/^[\s\S]*?(<\?xpacket|<x:xmpmeta|<rdf:RDF)/, "$1");
+          const doc = new DOMParser().parseFromString(cleanXml, "text/xml");
+          if (doc.querySelector("parsererror")) return;
+
+          const interestedPrefixes = ["xmp:", "dc:", "photoshop:", "tiff:", "exif:", "aux:", "crs:"];
+          const allNodes = doc.getElementsByTagName("*");
+          for (let i = 0; i < allNodes.length; i++) {
+            const node = allNodes[i];
+            const name = node.nodeName || "";
+            const isTarget = interestedPrefixes.some(function (p) { return name.startsWith(p); });
+            if (!isTarget) continue;
+
+            // Collect leaf text or rdf:li items
+            let textVal = "";
+            if (node.children.length === 0) {
+              textVal = (node.textContent || "").trim();
+            } else {
+              const liNodes = node.getElementsByTagName("rdf:li");
+              if (liNodes.length > 0) {
+                const items = [];
+                for (let j = 0; j < liNodes.length; j++) {
+                  const t = (liNodes[j].textContent || "").trim();
+                  if (t) items.push(t);
+                }
+                textVal = items.join(", ");
+              }
+            }
+
+            if (textVal) {
+              result.tags.push({
+                group: "XMP",
+                tagIdHex: "-",
+                name: name,
+                formatted: textVal,
+                raw: textVal
+              });
+              if (!result.kv[name]) {
+                result.kv[name] = textVal;
+                result.kvFormatted[name] = textVal;
+              }
+            }
+          }
+        } catch (e) {
+          // Ignore malformed XMP safely
+        }
+      }
+
+      function parseJpeg(view, result) {
+        result.container = "JPEG (JFIF / EXIF)";
+        let offset = 2;
+
+        while (offset + 1 < view.byteLength) {
+          if (view.getUint8(offset) !== 0xFF) {
+            offset++;
+            continue;
+          }
+          while (offset < view.byteLength && view.getUint8(offset) === 0xFF) {
+            offset++;
+          }
+          if (offset >= view.byteLength) break;
+
+          const marker = view.getUint8(offset++);
+          if (marker === 0xD9 || marker === 0xDA) break; // EOI or SOS
+          if (marker === 0x01 || (marker >= 0xD0 && marker <= 0xD7)) continue;
+
+          if (offset + 2 > view.byteLength) break;
+          const segLen = view.getUint16(offset, false);
+          if (segLen < 2 || offset + segLen > view.byteLength) break;
+
+          const dataStart = offset + 2;
+          const dataLen = segLen - 2;
+
+          // APP1 (EXIF or XMP)
+          if (marker === 0xE1 && dataLen > 6) {
+            const header6 = decodeAscii(view, dataStart, 6);
+            if (header6 === "Exif") {
+              parseTiffExif(view, dataStart + 6, result);
+            } else if (dataLen > 29) {
+              const xmpHeader = decodeAscii(view, dataStart, 29);
+              if (xmpHeader === "http://ns.adobe.com/xap/1.0/") {
+                const xmlStr = decodeAscii(view, dataStart + 29, dataLen - 29);
+                parseXmpXml(xmlStr, result);
+              }
+            }
+          }
+
+          // SOF0, SOF1, SOF2 (Frame Header for exact pixel dimensions & bit depth)
+          if ((marker === 0xC0 || marker === 0xC1 || marker === 0xC2) && dataLen >= 6) {
+            const bitDepth = view.getUint8(dataStart);
+            const height = view.getUint16(dataStart + 1, false);
+            const width = view.getUint16(dataStart + 3, false);
+            const components = view.getUint8(dataStart + 5);
+            result.headerWidth = width;
+            result.headerHeight = height;
+            const compName = components === 1 ? "Grayscale" : components === 3 ? "YCbCr (3 ch)" : components === 4 ? "CMYK (4 ch)" : components + " ch";
+            result.colorSummary = bitDepth + "-bit " + compName;
+          }
+
+          // COM (JPEG Comment)
+          if (marker === 0xFE && dataLen > 0) {
+            const comment = decodeAscii(view, dataStart, dataLen);
+            if (comment) {
+              result.tags.push({
+                group: "JPEG",
+                tagIdHex: "0xFFFE",
+                name: "Comment",
+                formatted: comment,
+                raw: comment
+              });
+            }
+          }
+
+          offset += segLen;
+        }
+      }
+
+      function parsePng(view, result) {
+        result.container = "PNG (Portable Network Graphics)";
+        let offset = 8;
+
+        const colorTypeMap = {
+          0: "Grayscale",
+          2: "RGB",
+          3: "Indexed Palette",
+          4: "Grayscale + Alpha",
+          6: "RGBA"
+        };
+
+        while (offset + 8 <= view.byteLength) {
+          const chunkLen = view.getUint32(offset, false);
+          const chunkType = decodeAscii(view, offset + 4, 4);
+          const dataStart = offset + 8;
+
+          if (dataStart + chunkLen > view.byteLength) break;
+
+          if (chunkType === "IHDR" && chunkLen >= 13) {
+            const width = view.getUint32(dataStart, false);
+            const height = view.getUint32(dataStart + 4, false);
+            const bitDepth = view.getUint8(dataStart + 8);
+            const colorType = view.getUint8(dataStart + 9);
+            result.headerWidth = width;
+            result.headerHeight = height;
+            result.colorSummary = bitDepth + "-bit " + (colorTypeMap[colorType] || "Type " + colorType);
+
+            result.tags.push(
+              { group: "PNG", tagIdHex: "IHDR", name: "Width", formatted: width + " px", raw: width },
+              { group: "PNG", tagIdHex: "IHDR", name: "Height", formatted: height + " px", raw: height },
+              { group: "PNG", tagIdHex: "IHDR", name: "BitDepth", formatted: String(bitDepth), raw: bitDepth },
+              { group: "PNG", tagIdHex: "IHDR", name: "ColorType", formatted: colorTypeMap[colorType] || String(colorType), raw: colorType }
+            );
+          } else if (chunkType === "eXIf" && chunkLen >= 8) {
+            parseTiffExif(view, dataStart, result);
+          } else if (chunkType === "pHYs" && chunkLen >= 9) {
+            const ppuX = view.getUint32(dataStart, false);
+            const ppuY = view.getUint32(dataStart + 4, false);
+            const unit = view.getUint8(dataStart + 8);
+            if (unit === 1 && ppuX > 0) {
+              const dpiX = Math.round(ppuX / 39.3701);
+              const dpiY = Math.round(ppuY / 39.3701);
+              result.dpiSummary = dpiX + " x " + dpiY + " DPI";
+              result.tags.push({
+                group: "PNG",
+                tagIdHex: "pHYs",
+                name: "PhysicalPixelDimensions",
+                formatted: dpiX + " x " + dpiY + " DPI",
+                raw: [ppuX, ppuY, unit]
+              });
+            }
+          } else if (chunkType === "tEXt" && chunkLen > 0) {
+            let nullPos = -1;
+            for (let i = 0; i < chunkLen; i++) {
+              if (view.getUint8(dataStart + i) === 0) {
+                nullPos = i;
+                break;
+              }
+            }
+            if (nullPos > 0) {
+              const key = decodeAscii(view, dataStart, nullPos);
+              const val = decodeAscii(view, dataStart + nullPos + 1, chunkLen - nullPos - 1);
+              if (key === "XML:com.adobe.xmp") {
+                parseXmpXml(val, result);
+              } else if (val) {
+                result.tags.push({ group: "PNG-Text", tagIdHex: "tEXt", name: key, formatted: val, raw: val });
+                result.kv[key] = val;
+                result.kvFormatted[key] = val;
+              }
+            }
+          } else if (chunkType === "iTXt" && chunkLen > 5) {
+            let cursor = dataStart;
+            const end = dataStart + chunkLen;
+            let keyEnd = cursor;
+            while (keyEnd < end && view.getUint8(keyEnd) !== 0) keyEnd++;
+            const key = decodeAscii(view, cursor, keyEnd - cursor);
+            cursor = keyEnd + 1;
+
+            if (cursor + 2 <= end) {
+              const compFlag = view.getUint8(cursor);
+              cursor += 2; // skip compFlag + compMethod
+              while (cursor < end && view.getUint8(cursor) !== 0) cursor++; // langTag
+              cursor++;
+              while (cursor < end && view.getUint8(cursor) !== 0) cursor++; // translatedKey
+              cursor++;
+
+              if (compFlag === 0 && cursor < end) {
+                const textVal = decodeAscii(view, cursor, end - cursor);
+                if (key === "XML:com.adobe.xmp") {
+                  parseXmpXml(textVal, result);
+                } else if (textVal) {
+                  result.tags.push({ group: "PNG-Text", tagIdHex: "iTXt", name: key, formatted: textVal, raw: textVal });
+                  result.kv[key] = textVal;
+                  result.kvFormatted[key] = textVal;
+                }
+              }
+            }
+          } else if (chunkType === "IEND") {
+            break;
+          }
+
+          offset += 12 + chunkLen;
+        }
+      }
+
+      function parseWebp(view, result) {
+        result.container = "WebP (RIFF Container)";
+        let offset = 12;
+
+        while (offset + 8 <= view.byteLength) {
+          const fourCC = decodeAscii(view, offset, 4);
+          const chunkSize = view.getUint32(offset + 4, true);
+          const dataStart = offset + 8;
+
+          if (dataStart + chunkSize > view.byteLength) break;
+
+          if (fourCC === "VP8X" && chunkSize >= 10) {
+            const flags = view.getUint8(dataStart);
+            const hasAlpha = Boolean(flags & 0x10);
+            const width = 1 + (view.getUint8(dataStart + 4) | (view.getUint8(dataStart + 5) << 8) | (view.getUint8(dataStart + 6) << 16));
+            const height = 1 + (view.getUint8(dataStart + 7) | (view.getUint8(dataStart + 8) << 8) | (view.getUint8(dataStart + 9) << 16));
+            result.headerWidth = width;
+            result.headerHeight = height;
+            result.colorSummary = hasAlpha ? "8-bit RGBA (Extended)" : "8-bit RGB (Extended)";
+          } else if (fourCC === "VP8 " && chunkSize >= 10 && !result.headerWidth) {
+            if (view.getUint8(dataStart + 3) === 0x9D && view.getUint8(dataStart + 4) === 0x01 && view.getUint8(dataStart + 5) === 0x2A) {
+              result.headerWidth = view.getUint16(dataStart + 6, true) & 0x3FFF;
+              result.headerHeight = view.getUint16(dataStart + 8, true) & 0x3FFF;
+              result.colorSummary = "8-bit YUV 4:2:0 (Lossy)";
+            }
+          } else if (fourCC === "VP8L" && chunkSize >= 5 && !result.headerWidth) {
+            if (view.getUint8(dataStart) === 0x2F) {
+              const bits = view.getUint32(dataStart + 1, true);
+              result.headerWidth = (bits & 0x3FFF) + 1;
+              result.headerHeight = ((bits >> 14) & 0x3FFF) + 1;
+              result.colorSummary = "8-bit RGBA (Lossless)";
+            }
+          } else if (fourCC === "EXIF" && chunkSize >= 8) {
+            const maybeHeader = decodeAscii(view, dataStart, 6);
+            if (maybeHeader === "Exif") {
+              parseTiffExif(view, dataStart + 6, result);
+            } else {
+              parseTiffExif(view, dataStart, result);
+            }
+          } else if (fourCC === "XMP " && chunkSize > 0) {
+            const xmpStr = decodeAscii(view, dataStart, chunkSize);
+            parseXmpXml(xmpStr, result);
+          }
+
+          offset += 8 + chunkSize + (chunkSize % 2);
+        }
+      }
+
+      function computeGpsInfo(kv) {
+        const latArr = kv.GPSLatitude;
+        const latRef = kv.GPSLatitudeRef;
+        const lonArr = kv.GPSLongitude;
+        const lonRef = kv.GPSLongitudeRef;
+
+        if (!Array.isArray(latArr) || latArr.length < 3 || !Array.isArray(lonArr) || lonArr.length < 3) {
+          return null;
+        }
+
+        let lat = Number(latArr[0]) + Number(latArr[1]) / 60 + Number(latArr[2]) / 3600;
+        let lon = Number(lonArr[0]) + Number(lonArr[1]) / 60 + Number(lonArr[2]) / 3600;
+
+        if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
+
+        if (String(latRef).toUpperCase().startsWith("S")) lat = -Math.abs(lat);
+        if (String(lonRef).toUpperCase().startsWith("W")) lon = -Math.abs(lon);
+
+        const latDir = lat < 0 ? "S" : "N";
+        const lonDir = lon < 0 ? "W" : "E";
+
+        const dmsStr =
+          Math.abs(latArr[0]) + "° " + Math.abs(latArr[1]) + "' " + Number(Math.abs(latArr[2])).toFixed(2) + '" ' + latDir + ", " +
+          Math.abs(lonArr[0]) + "° " + Math.abs(lonArr[1]) + "' " + Number(Math.abs(lonArr[2])).toFixed(2) + '" ' + lonDir;
+
+        let altitude = null;
+        if (typeof kv.GPSAltitude === "number") {
+          const belowSea = kv.GPSAltitudeRef === 1;
+          const altVal = belowSea ? -Math.abs(kv.GPSAltitude) : kv.GPSAltitude;
+          altitude = Number(altVal.toFixed(1)) + " m";
+        }
+
+        let direction = null;
+        if (typeof kv.GPSImgDirection === "number") {
+          const dirRef = kv.GPSImgDirectionRef === "M" ? "Magnetic" : "True North";
+          direction = Number(kv.GPSImgDirection.toFixed(1)) + "° (" + dirRef + ")";
+        }
+
+        let timestamp = null;
+        if (kv.GPSDateStamp || kv.GPSTimeStamp) {
+          const d = kv.GPSDateStamp ? String(kv.GPSDateStamp).replace(/:/g, "-") : "";
+          let t = "";
+          if (Array.isArray(kv.GPSTimeStamp) && kv.GPSTimeStamp.length >= 3) {
+            const pad = function (n) { return String(Math.floor(n)).padStart(2, "0"); };
+            t = pad(kv.GPSTimeStamp[0]) + ":" + pad(kv.GPSTimeStamp[1]) + ":" + pad(kv.GPSTimeStamp[2]) + " UTC";
+          }
+          timestamp = (d + " " + t).trim();
+        }
+
+        const latFixed = Number(lat.toFixed(6));
+        const lonFixed = Number(lon.toFixed(6));
+
+        return {
+          latitude: latFixed,
+          longitude: lonFixed,
+          decimalStr: latFixed + ", " + lonFixed,
+          dmsStr: dmsStr,
+          altitude: altitude,
+          direction: direction,
+          timestamp: timestamp,
+          googleMapsUrl: "https://www.google.com/maps?q=" + latFixed + "," + lonFixed,
+          osmUrl: "https://www.openstreetmap.org/?mlat=" + latFixed + "&mlon=" + lonFixed + "#map=17/" + latFixed + "/" + lonFixed
+        };
+      }
+
+      function assessPrivacyRisk(kv, gpsInfo) {
+        const highItems = [];
+        const medItems = [];
+
+        if (gpsInfo) highItems.push("GPS Coordinates (" + gpsInfo.decimalStr + ")");
+        if (kv.BodySerialNumber) highItems.push("BodySerialNumber");
+        if (kv.CameraSerialNumber) highItems.push("CameraSerialNumber");
+        if (kv.LensSerialNumber) highItems.push("LensSerialNumber");
+
+        if (kv.Artist || kv["dc:creator"]) medItems.push("Artist / Creator");
+        if (kv.Copyright || kv["dc:rights"]) medItems.push("Copyright");
+        if (kv.CameraOwnerName) medItems.push("CameraOwnerName");
+        if (kv.Make || kv.Model) medItems.push("Camera Make/Model");
+        if (kv.Software || kv["xmp:CreatorTool"]) medItems.push("Software");
+        if (kv.DateTimeOriginal || kv.DateTime) medItems.push("Capture Timestamp");
+
+        if (highItems.length > 0) {
+          return {
+            level: "high",
+            detectedTags: highItems.concat(medItems)
+          };
+        }
+        if (medItems.length > 0) {
+          return {
+            level: "medium",
+            detectedTags: medItems
+          };
+        }
+        return {
+          level: "low",
+          detectedTags: []
+        };
+      }
+
+      async function analyzeImageFile(file) {
+        const buffer = await file.arrayBuffer();
+        const view = new DataView(buffer);
+
+        const result = {
+          fileName: file.name,
+          mimeType: file.type || "unknown",
+          fileSize: file.size,
+          lastModified: file.lastModified ? new Date(file.lastModified).toISOString() : null,
+          container: "Unknown Image",
+          headerWidth: null,
+          headerHeight: null,
+          naturalWidth: null,
+          naturalHeight: null,
+          colorSummary: null,
+          dpiSummary: null,
+          tags: [],
+          kv: {},
+          kvFormatted: {},
+          gps: null,
+          privacy: null,
+          objectUrl: URL.createObjectURL(file)
+        };
+
+        // Magic byte detection
+        if (view.byteLength >= 2 && view.getUint16(0, false) === 0xFFD8) {
+          parseJpeg(view, result);
+        } else if (
+          view.byteLength >= 8 &&
+          view.getUint32(0, false) === 0x89504E47 &&
+          view.getUint32(4, false) === 0x0D0A1A0A
+        ) {
+          parsePng(view, result);
+        } else if (
+          view.byteLength >= 12 &&
+          decodeAscii(view, 0, 4) === "RIFF" &&
+          decodeAscii(view, 8, 4) === "WEBP"
+        ) {
+          parseWebp(view, result);
+        } else {
+          result.container = file.type || "Generic Image";
+        }
+
+        // Compute DPI from EXIF if not already set from PNG pHYs
+        if (!result.dpiSummary && result.kv.XResolution && result.kv.YResolution) {
+          const unit = result.kv.ResolutionUnit === 3 ? "DPCM" : "DPI";
+          result.dpiSummary = Math.round(result.kv.XResolution) + " x " + Math.round(result.kv.YResolution) + " " + unit;
+        }
+
+        result.gps = computeGpsInfo(result.kv);
+        result.privacy = assessPrivacyRisk(result.kv, result.gps);
+
+        return result;
+      }
+
+      /* =====================================================================
+         4. APPLICATION STATE & UI RENDERING
+      ===================================================================== */
+      const state = {
+        lang: localStorage.getItem("utilitibox_lang") || "id",
+        theme: localStorage.getItem("utilitibox_theme") || "dark",
+        records: [],
+        activeIndex: 0
+      };
+
+      const el = {
+        dropzone: document.getElementById("dropzone"),
+        fileInput: document.getElementById("fileInput"),
+        batchBar: document.getElementById("batchBar"),
+        batchTabs: document.getElementById("batchTabs"),
+        btnExportAllJson: document.getElementById("btnExportAllJson"),
+        inspectorSection: document.getElementById("inspectorSection"),
+        btnCopySummary: document.getElementById("btnCopySummary"),
+        btnCopyJson: document.getElementById("btnCopyJson"),
+        btnDownloadJson: document.getElementById("btnDownloadJson"),
+        btnClear: document.getElementById("btnClear"),
+        privacyBanner: document.getElementById("privacyBanner"),
+        privacyTitle: document.getElementById("privacyTitle"),
+        privacyDesc: document.getElementById("privacyDesc"),
+        privacyTags: document.getElementById("privacyTags"),
+        btnCleanMetadata: document.getElementById("btnCleanMetadata"),
+        imagePreview: document.getElementById("imagePreview"),
+        fileKvList: document.getElementById("fileKvList"),
+        cameraGrid: document.getElementById("cameraGrid"),
+        gpsContainer: document.getElementById("gpsContainer"),
+        tagCountBadge: document.getElementById("tagCountBadge"),
+        tagSearchInput: document.getElementById("tagSearchInput"),
+        tagGroupFilter: document.getElementById("tagGroupFilter"),
+        rawTagsBody: document.getElementById("rawTagsBody"),
+        toast: document.getElementById("toast"),
+        langToggle: document.getElementById("langToggle"),
+        langLabel: document.getElementById("langLabel"),
+        themeToggle: document.getElementById("themeToggle"),
+        themeLabel: document.getElementById("themeLabel"),
+        themeIconSun: document.getElementById("themeIconSun"),
+        themeIconMoon: document.getElementById("themeIconMoon")
+      };
+
+      function t(key) {
+        return (I18N[state.lang] && I18N[state.lang][key]) || I18N.id[key] || key;
+      }
+
+      let toastTimer = null;
+      function showToast(msg) {
+        el.toast.textContent = msg;
+        el.toast.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function () {
+          el.toast.classList.remove("show");
+        }, 2500);
+      }
+
+      function formatBytes(bytes) {
+        if (bytes === 0) return "0 B";
+        const units = ["B", "KB", "MB", "GB"];
+        const idx = Math.floor(Math.log(bytes) / Math.log(1024));
+        const val = bytes / Math.pow(1024, idx);
+        return (idx === 0 ? bytes : val.toFixed(2)) + " " + units[idx] + " (" + bytes.toLocaleString() + " bytes)";
+      }
+
+      function computeAspectRatio(w, h) {
+        if (!w || !h) return "-";
+        function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
+        const d = gcd(w, h);
+        const rw = w / d;
+        const rh = h / d;
+        if (rw > 32 || rh > 32) {
+          return (w / h).toFixed(2) + ":1";
+        }
+        return rw + ":" + rh;
+      }
+
+      function applyTheme() {
+        document.documentElement.setAttribute("data-theme", state.theme);
+        localStorage.setItem("utilitibox_theme", state.theme);
+        if (state.theme === "dark") {
+          el.themeLabel.textContent = "Dark";
+          el.themeIconMoon.classList.remove("hidden");
+          el.themeIconSun.classList.add("hidden");
+        } else {
+          el.themeLabel.textContent = "Light";
+          el.themeIconSun.classList.remove("hidden");
+          el.themeIconMoon.classList.add("hidden");
+        }
+      }
+
+      function applyLanguage() {
+        document.documentElement.setAttribute("lang", state.lang);
+        localStorage.setItem("utilitibox_lang", state.lang);
+        el.langLabel.textContent = state.lang.toUpperCase();
+
+        const nodes = document.querySelectorAll("[data-i18n]");
+        for (let i = 0; i < nodes.length; i++) {
+          const key = nodes[i].getAttribute("data-i18n");
+          nodes[i].textContent = t(key);
+        }
+        el.tagSearchInput.placeholder = t("searchPlaceholder");
+
+        if (state.records.length > 0) {
+          renderActiveRecord();
+        }
+      }
+
+      function clearChildren(node) {
+        while (node.firstChild) {
+          node.removeChild(node.firstChild);
+        }
+      }
+
+      function createKvRow(label, value) {
+        const row = document.createElement("div");
+        row.className = "kv-row";
+
+        const lbl = document.createElement("span");
+        lbl.className = "kv-label";
+        lbl.textContent = label;
+
+        const val = document.createElement("span");
+        val.className = "kv-value";
+        val.textContent = value;
+
+        row.appendChild(lbl);
+        row.appendChild(val);
+        return row;
+      }
+
+      function createSpecTile(label, value, sub) {
+        const tile = document.createElement("div");
+        tile.className = "spec-tile";
+
+        const lbl = document.createElement("div");
+        lbl.className = "spec-tile-label";
+        lbl.textContent = label;
+
+        const val = document.createElement("div");
+        val.className = "spec-tile-value";
+        val.textContent = value || t("notAvailable");
+
+        tile.appendChild(lbl);
+        tile.appendChild(val);
+
+        if (sub) {
+          const subEl = document.createElement("div");
+          subEl.className = "spec-tile-sub";
+          subEl.textContent = sub;
+          tile.appendChild(subEl);
+        }
+
+        return tile;
+      }
+
+      function renderBatchTabs() {
+        if (state.records.length <= 1) {
+          el.batchBar.classList.add("hidden");
+          return;
+        }
+        el.batchBar.classList.remove("hidden");
+        clearChildren(el.batchTabs);
+
+        state.records.forEach(function (rec, idx) {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "batch-tab" + (idx === state.activeIndex ? " active" : "");
+          btn.title = rec.fileName;
+
+          const span = document.createElement("span");
+          span.textContent = (idx + 1) + ". " + rec.fileName;
+          btn.appendChild(span);
+
+          btn.addEventListener("click", function () {
+            state.activeIndex = idx;
+            renderBatchTabs();
+            renderActiveRecord();
+          });
+
+          el.batchTabs.appendChild(btn);
+        });
+      }
+
+      function renderActiveRecord() {
+        const rec = state.records[state.activeIndex];
+        if (!rec) return;
+
+        el.dropzone.classList.add("compact");
+        el.inspectorSection.classList.remove("hidden");
+
+        // 1. Preview & File Info
+        el.imagePreview.onload = function () {
+          rec.naturalWidth = el.imagePreview.naturalWidth;
+          rec.naturalHeight = el.imagePreview.naturalHeight;
+          renderFileMetadataList(rec);
+        };
+        el.imagePreview.src = rec.objectUrl;
+        renderFileMetadataList(rec);
+
+        // 2. Privacy Banner
+        renderPrivacyBanner(rec);
+
+        // 3. Camera & Exposure
+        renderCameraGrid(rec);
+
+        // 4. GPS Section
+        renderGpsSection(rec);
+
+        // 5. Raw Tags Explorer
+        populateGroupFilter(rec);
+        renderRawTable(rec);
+      }
+
+      function renderFileMetadataList(rec) {
+        clearChildren(el.fileKvList);
+        const w = rec.headerWidth || rec.naturalWidth || rec.kv.PixelXDimension || rec.kv.ImageWidth;
+        const h = rec.headerHeight || rec.naturalHeight || rec.kv.PixelYDimension || rec.kv.ImageLength;
+
+        const dimText = (w && h) ? (w + " x " + h + " px") : t("notAvailable");
+        const mpText = (w && h) ? (((w * h) / 1000000).toFixed(2) + " MP") : t("notAvailable");
+        const ratioText = computeAspectRatio(w, h);
+        const modDate = rec.lastModified ? new Date(rec.lastModified).toLocaleString() : t("notAvailable");
+
+        el.fileKvList.appendChild(createKvRow(t("fileName"), rec.fileName));
+        el.fileKvList.appendChild(createKvRow(t("fileFormat"), rec.container));
+        el.fileKvList.appendChild(createKvRow(t("fileSize"), formatBytes(rec.fileSize)));
+        el.fileKvList.appendChild(createKvRow(t("resolution"), dimText));
+        el.fileKvList.appendChild(createKvRow(t("megapixels"), mpText));
+        el.fileKvList.appendChild(createKvRow(t("aspectRatio"), ratioText));
+        el.fileKvList.appendChild(createKvRow(t("colorInfo"), rec.colorSummary || rec.kvFormatted.ColorSpace || t("notAvailable")));
+        el.fileKvList.appendChild(createKvRow(t("dpiInfo"), rec.dpiSummary || t("notAvailable")));
+        el.fileKvList.appendChild(createKvRow(t("orientation"), rec.kvFormatted.Orientation || t("notAvailable")));
+        el.fileKvList.appendChild(createKvRow(t("fileModified"), modDate));
+      }
+
+      function renderPrivacyBanner(rec) {
+        const p = rec.privacy;
+        el.privacyBanner.className = "privacy-banner risk-" + p.level;
+        clearChildren(el.privacyTags);
+
+        if (p.level === "high") {
+          el.privacyTitle.textContent = t("privacyHighTitle");
+          el.privacyDesc.textContent = t("privacyHighDesc");
+          el.btnCleanMetadata.classList.remove("hidden");
+        } else if (p.level === "medium") {
+          el.privacyTitle.textContent = t("privacyMedTitle");
+          el.privacyDesc.textContent = t("privacyMedDesc");
+          el.btnCleanMetadata.classList.remove("hidden");
+        } else {
+          el.privacyTitle.textContent = t("privacyLowTitle");
+          el.privacyDesc.textContent = t("privacyLowDesc");
+          el.btnCleanMetadata.classList.add("hidden");
+        }
+
+        p.detectedTags.forEach(function (tagLabel) {
+          const span = document.createElement("span");
+          span.className = "privacy-tag";
+          span.textContent = tagLabel;
+          el.privacyTags.appendChild(span);
+        });
+      }
+
+      function renderCameraGrid(rec) {
+        clearChildren(el.cameraGrid);
+        const kv = rec.kv;
+        const kvf = rec.kvFormatted;
+
+        const make = kv.Make ? String(kv.Make).trim() : "";
+        const model = kv.Model ? String(kv.Model).trim() : "";
+        let deviceName = "";
+        if (make && model) {
+          deviceName = model.toLowerCase().startsWith(make.toLowerCase()) ? model : (make + " " + model);
+        } else {
+          deviceName = model || make || t("notAvailable");
+        }
+
+        const lens = kv.LensModel || kv["aux:Lens"] || t("notAvailable");
+        const lensSub = kv.LensMake || "";
+
+        const captureDate = kv.DateTimeOriginal || kv.DateTime || kv["xmp:CreateDate"] || t("notAvailable");
+        const offsetSub = kv.OffsetTimeOriginal || kv.OffsetTime || "";
+
+        const focal = kvf.FocalLength || t("notAvailable");
+        const focal35 = kvf.FocalLengthIn35mmFilm || "";
+
+        const iso = kv.ISOSpeedRatings ? ("ISO " + kv.ISOSpeedRatings) : t("notAvailable");
+        const software = kv.Software || kv["xmp:CreatorTool"] || t("notAvailable");
+
+        el.cameraGrid.appendChild(createSpecTile(t("camDevice"), deviceName, kv.BodySerialNumber ? "S/N: " + kv.BodySerialNumber : ""));
+        el.cameraGrid.appendChild(createSpecTile(t("camLens"), lens, lensSub));
+        el.cameraGrid.appendChild(createSpecTile(t("camCaptureDate"), captureDate, offsetSub));
+        el.cameraGrid.appendChild(createSpecTile(t("camExposure"), kvf.ExposureTime || t("notAvailable"), kvf.ExposureBiasValue || ""));
+        el.cameraGrid.appendChild(createSpecTile(t("camAperture"), kvf.FNumber || t("notAvailable"), ""));
+        el.cameraGrid.appendChild(createSpecTile(t("camIso"), iso, ""));
+        el.cameraGrid.appendChild(createSpecTile(t("camFocal"), focal, focal35));
+        el.cameraGrid.appendChild(createSpecTile(t("camFlash"), kvf.Flash || t("notAvailable"), ""));
+        el.cameraGrid.appendChild(createSpecTile(t("camMetering"), kvf.MeteringMode || t("notAvailable"), ""));
+        el.cameraGrid.appendChild(createSpecTile(t("camProgram"), kvf.ExposureProgram || t("notAvailable"), ""));
+        el.cameraGrid.appendChild(createSpecTile(t("camWhiteBalance"), kvf.WhiteBalance || t("notAvailable"), ""));
+        el.cameraGrid.appendChild(createSpecTile(t("camSoftware"), software, ""));
+      }
+
+      function renderGpsSection(rec) {
+        clearChildren(el.gpsContainer);
+        if (!rec.gps) {
+          const empty = document.createElement("div");
+          empty.className = "empty-state";
+          empty.textContent = t("gpsEmpty");
+          el.gpsContainer.appendChild(empty);
+          return;
+        }
+
+        const g = rec.gps;
+        const box = document.createElement("div");
+        box.className = "gps-box";
+
+        const grid = document.createElement("div");
+        grid.className = "gps-coords-grid";
+        grid.appendChild(createSpecTile(t("gpsDecimal"), g.decimalStr, ""));
+        grid.appendChild(createSpecTile(t("gpsDms"), g.dmsStr, ""));
+        grid.appendChild(createSpecTile(t("gpsAltitude"), g.altitude || t("notAvailable"), ""));
+        grid.appendChild(createSpecTile(t("gpsDirection"), g.direction || t("notAvailable"), g.timestamp || ""));
+
+        const actions = document.createElement("div");
+        actions.className = "gps-actions";
+
+        const gmapLink = document.createElement("a");
+        gmapLink.href = g.googleMapsUrl;
+        gmapLink.target = "_blank";
+        gmapLink.rel = "noopener noreferrer";
+        gmapLink.className = "btn btn-primary";
+        gmapLink.textContent = t("openGoogleMaps");
+
+        const osmLink = document.createElement("a");
+        osmLink.href = g.osmUrl;
+        osmLink.target = "_blank";
+        osmLink.rel = "noopener noreferrer";
+        osmLink.className = "btn";
+        osmLink.textContent = t("openOsm");
+
+        actions.appendChild(gmapLink);
+        actions.appendChild(osmLink);
+
+        box.appendChild(grid);
+        box.appendChild(actions);
+        el.gpsContainer.appendChild(box);
+      }
+
+      function populateGroupFilter(rec) {
+        const currentVal = el.tagGroupFilter.value;
+        clearChildren(el.tagGroupFilter);
+
+        const optAll = document.createElement("option");
+        optAll.value = "ALL";
+        optAll.textContent = t("filterAll");
+        el.tagGroupFilter.appendChild(optAll);
+
+        const groups = Array.from(new Set(rec.tags.map(function (item) { return item.group; })));
+        groups.forEach(function (grp) {
+          const opt = document.createElement("option");
+          opt.value = grp;
+          opt.textContent = grp;
+          el.tagGroupFilter.appendChild(opt);
+        });
+
+        if (groups.includes(currentVal)) {
+          el.tagGroupFilter.value = currentVal;
+        }
+      }
+
+      function renderRawTable(rec) {
+        clearChildren(el.rawTagsBody);
+        const query = el.tagSearchInput.value.trim().toLowerCase();
+        const groupFilter = el.tagGroupFilter.value;
+
+        const filtered = rec.tags.filter(function (tag) {
+          if (groupFilter !== "ALL" && tag.group !== groupFilter) return false;
+          if (!query) return true;
+          return (
+            tag.name.toLowerCase().includes(query) ||
+            tag.tagIdHex.toLowerCase().includes(query) ||
+            tag.group.toLowerCase().includes(query) ||
+            String(tag.formatted).toLowerCase().includes(query)
+          );
+        });
+
+        el.tagCountBadge.textContent = filtered.length + " / " + rec.tags.length + " tags";
+
+        if (filtered.length === 0) {
+          const tr = document.createElement("tr");
+          const td = document.createElement("td");
+          td.colSpan = 5;
+          td.style.textAlign = "center";
+          td.style.color = "var(--text-secondary)";
+          td.style.padding = "1.25rem";
+          td.textContent = t("noRawTags");
+          tr.appendChild(td);
+          el.rawTagsBody.appendChild(tr);
+          return;
+        }
+
+        filtered.forEach(function (tag) {
+          const tr = document.createElement("tr");
+
+          const tdGroup = document.createElement("td");
+          const badge = document.createElement("span");
+          badge.className = "tag-group-badge";
+          badge.textContent = tag.group;
+          tdGroup.appendChild(badge);
+
+          const tdId = document.createElement("td");
+          tdId.className = "mono-cell";
+          tdId.textContent = tag.tagIdHex;
+
+          const tdName = document.createElement("td");
+          tdName.style.fontWeight = "600";
+          tdName.textContent = tag.name;
+
+          const tdFmt = document.createElement("td");
+          tdFmt.className = "mono-cell";
+          tdFmt.textContent = tag.formatted;
+
+          const tdRaw = document.createElement("td");
+          tdRaw.className = "mono-cell";
+          tdRaw.style.color = "var(--text-secondary)";
+          tdRaw.textContent = Array.isArray(tag.raw) ? JSON.stringify(tag.raw) : String(tag.raw);
+
+          tr.appendChild(tdGroup);
+          tr.appendChild(tdId);
+          tr.appendChild(tdName);
+          tr.appendChild(tdFmt);
+          tr.appendChild(tdRaw);
+          el.rawTagsBody.appendChild(tr);
+        });
+      }
+
+      /* =====================================================================
+         5. EXPORT & CLIPBOARD HELPERS
+      ===================================================================== */
+      function buildExportObject(rec) {
+        const w = rec.headerWidth || rec.naturalWidth || rec.kv.PixelXDimension || rec.kv.ImageWidth || null;
+        const h = rec.headerHeight || rec.naturalHeight || rec.kv.PixelYDimension || rec.kv.ImageLength || null;
+
+        return {
+          tool: "UtilitiBox Image Metadata Viewer",
+          url: "https://utilitibox.github.io/image-metadata-viewer/",
+          inspectedAt: new Date().toISOString(),
+          file: {
+            name: rec.fileName,
+            container: rec.container,
+            mimeType: rec.mimeType,
+            sizeBytes: rec.fileSize,
+            width: w,
+            height: h,
+            aspectRatio: computeAspectRatio(w, h),
+            colorInfo: rec.colorSummary || rec.kvFormatted.ColorSpace || null,
+            dpi: rec.dpiSummary || null,
+            lastModified: rec.lastModified
+          },
+          camera: {
+            make: rec.kv.Make || null,
+            model: rec.kv.Model || null,
+            lens: rec.kv.LensModel || rec.kv["aux:Lens"] || null,
+            dateTaken: rec.kv.DateTimeOriginal || rec.kv.DateTime || null,
+            exposureTime: rec.kvFormatted.ExposureTime || null,
+            aperture: rec.kvFormatted.FNumber || null,
+            iso: rec.kv.ISOSpeedRatings || null,
+            focalLength: rec.kvFormatted.FocalLength || null,
+            focalLength35mm: rec.kvFormatted.FocalLengthIn35mmFilm || null,
+            flash: rec.kvFormatted.Flash || null,
+            meteringMode: rec.kvFormatted.MeteringMode || null,
+            whiteBalance: rec.kvFormatted.WhiteBalance || null,
+            software: rec.kv.Software || rec.kv["xmp:CreatorTool"] || null
+          },
+          gps: rec.gps,
+          privacyAssessment: rec.privacy,
+          rawTags: rec.tags
+        };
+      }
+
+      function buildTextSummary(rec) {
+        const obj = buildExportObject(rec);
+        const lines = [
+          "=== Image Metadata Summary (UtilitiBox) ===",
+          "File: " + obj.file.name,
+          "Format: " + obj.file.container + " | Size: " + formatBytes(obj.file.sizeBytes),
+          "Resolution: " + (obj.file.width && obj.file.height ? obj.file.width + " x " + obj.file.height + " px (" + obj.file.aspectRatio + ")" : "N/A"),
+          "Camera: " + ([obj.camera.make, obj.camera.model].filter(Boolean).join(" ") || "N/A"),
+          "Lens: " + (obj.camera.lens || "N/A"),
+          "Exposure: " + ([obj.camera.aperture, obj.camera.exposureTime, obj.camera.iso ? "ISO " + obj.camera.iso : null, obj.camera.focalLength].filter(Boolean).join(" | ") || "N/A"),
+          "Date Taken: " + (obj.camera.dateTaken || "N/A")
+        ];
+
+        if (obj.gps) {
+          lines.push("GPS Decimal: " + obj.gps.decimalStr);
+          lines.push("GPS DMS: " + obj.gps.dmsStr);
+          if (obj.gps.altitude) lines.push("Altitude: " + obj.gps.altitude);
+          lines.push("Google Maps: " + obj.gps.googleMapsUrl);
+          lines.push("OpenStreetMap: " + obj.gps.osmUrl);
+        } else {
+          lines.push("GPS: None");
+        }
+
+        return lines.join("\n");
+      }
+
+      async function copyTextToClipboard(text, successMsg) {
+        try {
+          await navigator.clipboard.writeText(text);
+          showToast(successMsg);
+        } catch (err) {
+          const ta = document.createElement("textarea");
+          ta.value = text;
+          ta.style.position = "fixed";
+          ta.style.opacity = "0";
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand("copy");
+          document.body.removeChild(ta);
+          showToast(successMsg);
+        }
+      }
+
+      function downloadJsonFile(filename, dataObj) {
+        const jsonStr = JSON.stringify(dataObj, null, 2);
+        const blob = new Blob([jsonStr], { type: "application/json;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+        showToast(t("toastDownloadedJson"));
+      }
+
+      /* =====================================================================
+         6. EVENT LISTENERS & SESSION LIFECYCLE
+      ===================================================================== */
+      function clearSession() {
+        state.records.forEach(function (rec) {
+          if (rec.objectUrl) URL.revokeObjectURL(rec.objectUrl);
+        });
+        state.records = [];
+        state.activeIndex = 0;
+        el.fileInput.value = "";
+        el.tagSearchInput.value = "";
+        el.dropzone.classList.remove("compact");
+        el.batchBar.classList.add("hidden");
+        el.inspectorSection.classList.add("hidden");
+      }
+
+      async function handleFiles(fileList) {
+        const files = Array.from(fileList || []).filter(function (f) {
+          return f.type.startsWith("image/") || /\.(jpe?g|png|webp|tiff?|gif|bmp|avif)$/i.test(f.name);
+        });
+        if (files.length === 0) return;
+
+        clearSession();
+        for (let i = 0; i < files.length; i++) {
+          const rec = await analyzeImageFile(files[i]);
+          state.records.push(rec);
+        }
+        state.activeIndex = 0;
+        renderBatchTabs();
+        renderActiveRecord();
+      }
+
+      el.dropzone.addEventListener("click", function () {
+        el.fileInput.click();
+      });
+
+      el.dropzone.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          el.fileInput.click();
+        }
+      });
+
+      el.fileInput.addEventListener("change", function (e) {
+        handleFiles(e.target.files);
+      });
+
+      el.dropzone.addEventListener("dragover", function (e) {
+        e.preventDefault();
+        el.dropzone.classList.add("dragover");
+      });
+
+      el.dropzone.addEventListener("dragleave", function () {
+        el.dropzone.classList.remove("dragover");
+      });
+
+      el.dropzone.addEventListener("drop", function (e) {
+        e.preventDefault();
+        el.dropzone.classList.remove("dragover");
+        if (e.dataTransfer && e.dataTransfer.files) {
+          handleFiles(e.dataTransfer.files);
+        }
+      });
+
+      window.addEventListener("paste", function (e) {
+        if (e.clipboardData && e.clipboardData.files && e.clipboardData.files.length > 0) {
+          handleFiles(e.clipboardData.files);
+        }
+      });
+
+      el.tagSearchInput.addEventListener("input", function () {
+        const rec = state.records[state.activeIndex];
+        if (rec) renderRawTable(rec);
+      });
+
+      el.tagGroupFilter.addEventListener("change", function () {
+        const rec = state.records[state.activeIndex];
+        if (rec) renderRawTable(rec);
+      });
+
+      el.btnCopySummary.addEventListener("click", function () {
+        const rec = state.records[state.activeIndex];
+        if (!rec) return;
+        copyTextToClipboard(buildTextSummary(rec), t("toastCopiedSummary"));
+      });
+
+      el.btnCopyJson.addEventListener("click", function () {
+        const rec = state.records[state.activeIndex];
+        if (!rec) return;
+        copyTextToClipboard(JSON.stringify(buildExportObject(rec), null, 2), t("toastCopiedJson"));
+      });
+
+      el.btnDownloadJson.addEventListener("click", function () {
+        const rec = state.records[state.activeIndex];
+        if (!rec) return;
+        const baseName = rec.fileName.replace(/\.[^/.]+$/, "");
+        downloadJsonFile(baseName + "-metadata.json", buildExportObject(rec));
+      });
+
+      el.btnExportAllJson.addEventListener("click", function () {
+        if (state.records.length === 0) return;
+        const batchExport = {
+          tool: "UtilitiBox Image Metadata Viewer (Batch Export)",
+          exportedAt: new Date().toISOString(),
+          totalFiles: state.records.length,
+          files: state.records.map(buildExportObject)
+        };
+        downloadJsonFile("utilitibox-batch-metadata.json", batchExport);
+      });
+
+      el.btnClear.addEventListener("click", function () {
+        clearSession();
+        showToast(t("toastCleared"));
+      });
+
+      el.langToggle.addEventListener("click", function () {
+        state.lang = state.lang === "id" ? "en" : "id";
+        applyLanguage();
+      });
+
+      el.themeToggle.addEventListener("click", function () {
+        state.theme = state.theme === "dark" ? "light" : "dark";
+        applyTheme();
+      });
+
+      // Initialize UI preferences
+      applyTheme();
+      applyLanguage();
+    })();
+  </script>
+</body>
+</html>
