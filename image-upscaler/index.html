@@ -1,0 +1,2376 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Image Upscaler (Lanczos & Bicubic) - UtilitiBox</title>
+  <meta name="description" content="Perbesar resolusi gambar 2x, 3x, dan 4x tanpa AI menggunakan interpolasi matematis Lanczos-3 dan Bicubic langsung di browser. Mendukung mode batch dan ekspor PNG, JPG, WebP." />
+  <link rel="canonical" href="https://utilitibox.github.io/image-upscaler/" />
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #181b24;
+      --surface-2: #212634;
+      --surface-hover: #293042;
+      --border: #2e3548;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --accent-soft: rgba(59, 130, 246, 0.15);
+      --success: #10b981;
+      --success-soft: rgba(16, 185, 129, 0.15);
+      --warning: #f59e0b;
+      --warning-soft: rgba(245, 158, 11, 0.15);
+      --danger: #ef4444;
+      --danger-soft: rgba(239, 68, 68, 0.15);
+      --checker-1: #1e222d;
+      --checker-2: #262b38;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    [data-theme="light"] {
+      --bg: #f4f6fa;
+      --surface: #ffffff;
+      --surface-2: #f1f5f9;
+      --surface-hover: #e2e8f0;
+      --border: #cbd5e1;
+      --text: #0f172a;
+      --text-muted: #475569;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --accent-soft: rgba(37, 99, 235, 0.1);
+      --success: #059669;
+      --success-soft: rgba(5, 150, 105, 0.12);
+      --warning: #d97706;
+      --warning-soft: rgba(217, 119, 6, 0.12);
+      --danger: #dc2626;
+      --danger-soft: rgba(220, 38, 38, 0.12);
+      --checker-1: #e2e8f0;
+      --checker-2: #f8fafc;
+      --shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    /* Header */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0.85rem 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .header-inner {
+      max-width: 1360px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      text-decoration: none;
+      color: var(--text-muted);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      padding: 0.4rem 0.75rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all 0.15s ease;
+    }
+
+    .back-link:hover {
+      color: var(--text);
+      background: var(--surface-hover);
+      border-color: var(--accent);
+    }
+
+    .title-block h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .title-block p {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .icon-btn {
+      background: var(--surface-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 0.42rem 0.75rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.15s ease;
+    }
+
+    .icon-btn:hover {
+      background: var(--surface-hover);
+      border-color: var(--accent);
+    }
+
+    /* Main Layout */
+    main {
+      max-width: 1360px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 1.25rem 1.5rem 2.5rem;
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 1.25rem;
+      flex: 1;
+    }
+
+    @media (max-width: 960px) {
+      main {
+        grid-template-columns: 1fr;
+        padding: 1rem;
+      }
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.15rem;
+      box-shadow: var(--shadow);
+    }
+
+    .panel-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Form Controls */
+    .control-group {
+      margin-bottom: 1.15rem;
+    }
+
+    .control-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .control-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.86rem;
+      font-weight: 600;
+      margin-bottom: 0.45rem;
+    }
+
+    .control-hint {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      margin-top: 0.35rem;
+      line-height: 1.4;
+    }
+
+    .segmented {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.4rem;
+      background: var(--surface-2);
+      padding: 0.3rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+    }
+
+    .segmented.two-col {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .seg-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 0.48rem 0.5rem;
+      border-radius: 6px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-align: center;
+    }
+
+    .seg-btn:hover {
+      color: var(--text);
+    }
+
+    .seg-btn.active {
+      background: var(--accent);
+      color: #ffffff;
+      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.35);
+    }
+
+    .preset-row {
+      display: flex;
+      gap: 0.35rem;
+      margin-top: 0.45rem;
+    }
+
+    .preset-pill {
+      flex: 1;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 6px;
+      padding: 0.25rem 0.4rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .preset-pill:hover,
+    .preset-pill.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+      cursor: pointer;
+      height: 6px;
+      border-radius: 4px;
+    }
+
+    .badge-val {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      padding: 0.12rem 0.45rem;
+      border-radius: 5px;
+      color: var(--accent);
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 1.1rem 0;
+    }
+
+    /* Primary & Action Buttons */
+    .btn {
+      width: 100%;
+      padding: 0.68rem 1rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: all 0.15s ease;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #ffffff;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--accent-hover);
+    }
+
+    .btn-success {
+      background: var(--success);
+      color: #ffffff;
+    }
+
+    .btn-success:hover:not(:disabled) {
+      filter: brightness(1.08);
+    }
+
+    .btn-secondary {
+      background: var(--surface-2);
+      color: var(--text);
+      border-color: var(--border);
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background: var(--surface-hover);
+      border-color: var(--accent);
+    }
+
+    .btn-danger-ghost {
+      background: transparent;
+      color: var(--danger);
+      border-color: var(--border);
+      padding: 0.35rem 0.65rem;
+      font-size: 0.78rem;
+      width: auto;
+    }
+
+    .btn-danger-ghost:hover:not(:disabled) {
+      background: var(--danger-soft);
+      border-color: var(--danger);
+    }
+
+    .action-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      margin-top: 1rem;
+    }
+
+    /* Workspace Right Column */
+    .workspace {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      min-width: 0;
+    }
+
+    /* Dropzone */
+    .dropzone {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      padding: 2rem 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .dropzone:hover,
+    .dropzone.dragover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .dropzone.compact {
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      text-align: left;
+      flex-wrap: wrap;
+    }
+
+    .dropzone-icon {
+      width: 42px;
+      height: 42px;
+      margin: 0 auto 0.75rem;
+      border-radius: 10px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .dropzone.compact .dropzone-icon {
+      margin: 0;
+      width: 36px;
+      height: 36px;
+      flex-shrink: 0;
+    }
+
+    .dropzone-title {
+      font-size: 0.98rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .dropzone-sub {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    /* Preview Comparator */
+    .preview-card {
+      display: none;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+
+    .preview-card.visible {
+      display: flex;
+    }
+
+    .preview-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .meta-pills {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      flex-wrap: wrap;
+    }
+
+    .meta-pill {
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      padding: 0.25rem 0.55rem;
+      border-radius: 6px;
+      color: var(--text);
+    }
+
+    .meta-pill.accent {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .zoom-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      background: var(--surface-2);
+      padding: 0.25rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+    }
+
+    .zoom-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 0.3rem 0.6rem;
+      border-radius: 5px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .zoom-btn.active {
+      background: var(--accent);
+      color: #ffffff;
+    }
+
+    .compare-viewport {
+      position: relative;
+      width: 100%;
+      height: 440px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      overflow: auto;
+      background-image:
+        linear-gradient(45deg, var(--checker-1) 25%, transparent 25%),
+        linear-gradient(-45deg, var(--checker-1) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, var(--checker-1) 75%),
+        linear-gradient(-45deg, transparent 75%, var(--checker-1) 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0;
+      background-color: var(--checker-2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      touch-action: pan-x pan-y;
+    }
+
+    .compare-viewport.zoomed {
+      display: block;
+    }
+
+    .compare-stage {
+      position: relative;
+      display: inline-block;
+      line-height: 0;
+      margin: auto;
+      cursor: ew-resize;
+    }
+
+    .compare-stage img {
+      display: block;
+      max-width: none;
+      pointer-events: none;
+    }
+
+    .compare-before-wrap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      overflow: hidden;
+      border-right: 2px solid #ffffff;
+      box-shadow: 2px 0 8px rgba(0, 0, 0, 0.45);
+    }
+
+    .compare-before-wrap img {
+      image-rendering: pixelated;
+    }
+
+    .compare-handle {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid #ffffff;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .compare-label {
+      position: absolute;
+      top: 10px;
+      padding: 0.25rem 0.55rem;
+      border-radius: 5px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      background: rgba(15, 17, 23, 0.78);
+      color: #ffffff;
+      pointer-events: none;
+      z-index: 4;
+      letter-spacing: 0.03em;
+    }
+
+    .compare-label.left {
+      left: 10px;
+    }
+
+    .compare-label.right {
+      right: 10px;
+    }
+
+    .preview-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    /* Progress Bar */
+    .progress-wrap {
+      display: none;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .progress-wrap.visible {
+      display: flex;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 8px;
+      background: var(--surface-2);
+      border-radius: 99px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+      transition: width 0.12s linear;
+    }
+
+    /* Batch Queue List */
+    .batch-card {
+      display: none;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .batch-card.visible {
+      display: flex;
+    }
+
+    .batch-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .batch-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      max-height: 420px;
+      overflow-y: auto;
+      padding-right: 0.2rem;
+    }
+
+    .batch-item {
+      display: grid;
+      grid-template-columns: 54px 1fr auto;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.65rem 0.75rem;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      transition: border-color 0.15s ease, background-color 0.15s ease;
+    }
+
+    .batch-item.selected {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .batch-thumb {
+      width: 54px;
+      height: 54px;
+      border-radius: 6px;
+      object-fit: cover;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      cursor: pointer;
+    }
+
+    .batch-info {
+      min-width: 0;
+    }
+
+    .batch-name {
+      font-size: 0.88rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      cursor: pointer;
+    }
+
+    .batch-name:hover {
+      color: var(--accent);
+    }
+
+    .batch-sub {
+      font-size: 0.77rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      margin-top: 0.15rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .status-badge {
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.15rem 0.48rem;
+      border-radius: 5px;
+    }
+
+    .status-pending {
+      background: var(--surface);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+
+    .status-processing {
+      background: var(--warning-soft);
+      color: var(--warning);
+    }
+
+    .status-done {
+      background: var(--success-soft);
+      color: var(--success);
+    }
+
+    .status-error {
+      background: var(--danger-soft);
+      color: var(--danger);
+    }
+
+    .batch-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .mini-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.36rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.77rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .mini-btn:hover:not(:disabled) {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .mini-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .mini-btn.dl {
+      background: var(--success-soft);
+      border-color: var(--success);
+      color: var(--success);
+    }
+
+    .mini-btn.dl:hover:not(:disabled) {
+      background: var(--success);
+      color: #ffffff;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1.25rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 600px) {
+      .compare-viewport {
+        height: 310px;
+      }
+      .batch-item {
+        grid-template-columns: 44px 1fr;
+      }
+      .batch-actions {
+        grid-column: 1 / -1;
+        justify-content: flex-end;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="brand-group">
+        <a href="https://utilitibox.github.io/" class="back-link" id="backLink">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+          <span data-i18n="backHome">UtilitiBox</span>
+        </a>
+        <div class="title-block">
+          <h1>Image Upscaler</h1>
+          <p data-i18n="subtitle">Pembesaran resolusi matematis Lanczos-3 &amp; Bicubic tanpa AI (100% lokal)</p>
+        </div>
+      </div>
+      <div class="header-controls">
+        <button type="button" class="icon-btn" id="langToggle" title="Ganti Bahasa / Switch Language">ID / EN</button>
+        <button type="button" class="icon-btn" id="themeToggle" title="Ubah Tema">
+          <span id="themeIcon"></span>
+          <span id="themeLabel" data-i18n="themeLight">Mode Terang</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Sidebar Settings -->
+    <aside class="panel">
+      <div class="panel-title">
+        <span data-i18n="settingsTitle">Pengaturan Upscale</span>
+      </div>
+
+      <!-- Scale Factor -->
+      <div class="control-group">
+        <div class="control-label">
+          <span data-i18n="scaleLabel">Faktor Skala</span>
+          <span class="badge-val" id="scaleBadge">2x</span>
+        </div>
+        <div class="segmented" id="scaleGroup">
+          <button type="button" class="seg-btn active" data-val="2">2x</button>
+          <button type="button" class="seg-btn" data-val="3">3x</button>
+          <button type="button" class="seg-btn" data-val="4">4x</button>
+        </div>
+        <p class="control-hint" data-i18n="scaleHint">Mengalikan lebar dan tinggi gambar (4x menghasilkan 16x jumlah piksel).</p>
+      </div>
+
+      <!-- Interpolation Method -->
+      <div class="control-group">
+        <div class="control-label">
+          <span data-i18n="algoLabel">Metode Interpolasi</span>
+        </div>
+        <div class="segmented two-col" id="algoGroup">
+          <button type="button" class="seg-btn active" data-val="lanczos3">Lanczos-3</button>
+          <button type="button" class="seg-btn" data-val="bicubic">Bicubic</button>
+        </div>
+        <p class="control-hint" id="algoDesc" data-i18n="algoDescLanczos">Lanczos-3: Ketajaman tepi tinggi, ideal untuk ilustrasi, anime, teks, dan tangkapan layar.</p>
+      </div>
+
+      <!-- Unsharp Mask -->
+      <div class="control-group">
+        <div class="control-label">
+          <span data-i18n="sharpenLabel">Penajaman (Unsharp Mask)</span>
+          <span class="badge-val" id="sharpenBadge">0%</span>
+        </div>
+        <input type="range" id="sharpenRange" min="0" max="100" step="5" value="0" />
+        <div class="preset-row" id="sharpenPresets">
+          <button type="button" class="preset-pill active" data-val="0" data-i18n="presetOff">Mati (0%)</button>
+          <button type="button" class="preset-pill" data-val="25" data-i18n="presetLight">Ringan (25%)</button>
+          <button type="button" class="preset-pill" data-val="50" data-i18n="presetMedium">Sedang (50%)</button>
+        </div>
+        <p class="control-hint" data-i18n="sharpenHint">Penajaman ringan pasca-upscale membantu mempertegas detail halus tanpa artefak AI.</p>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Output Format -->
+      <div class="control-group">
+        <div class="control-label">
+          <span data-i18n="formatLabel">Format Output</span>
+        </div>
+        <div class="segmented" id="formatGroup">
+          <button type="button" class="seg-btn active" data-val="image/png">PNG</button>
+          <button type="button" class="seg-btn" data-val="image/jpeg">JPG</button>
+          <button type="button" class="seg-btn" data-val="image/webp">WebP</button>
+        </div>
+        <p class="control-hint" id="formatHint" data-i18n="formatHintPng">PNG: Kompresi lossless tanpa penurunan kualitas, mendukung transparansi.</p>
+      </div>
+
+      <!-- Compression Quality (JPG / WebP) -->
+      <div class="control-group" id="qualityGroup" style="display: none;">
+        <div class="control-label">
+          <span data-i18n="qualityLabel">Kualitas Kompresi</span>
+          <span class="badge-val" id="qualityBadge">92%</span>
+        </div>
+        <input type="range" id="qualityRange" min="10" max="100" step="2" value="92" />
+      </div>
+
+      <div class="action-stack">
+        <button type="button" class="btn btn-primary" id="processAllBtn" disabled>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          <span id="processAllLabel" data-i18n="processBtn">Proses Gambar</span>
+        </button>
+        <button type="button" class="btn btn-success" id="downloadZipBtn" style="display: none;" disabled>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span id="downloadZipLabel" data-i18n="downloadZipBtn">Unduh Semua (.ZIP)</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <section class="workspace">
+      <!-- Upload Dropzone -->
+      <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Unggah gambar">
+        <input type="file" id="fileInput" accept="image/png,image/jpeg,image/webp,image/bmp,image/gif" multiple hidden />
+        <div class="dropzone-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        </div>
+        <div>
+          <div class="dropzone-title" data-i18n="dropTitle">Klik, seret gambar ke sini, atau tempel (Ctrl+V)</div>
+          <div class="dropzone-sub" data-i18n="dropSub">Mendukung satu atau banyak gambar sekaligus (PNG, JPG, WebP, BMP). Diproses lokal di perangkat Anda.</div>
+        </div>
+      </div>
+
+      <!-- Progress Indicator -->
+      <div class="panel progress-wrap" id="progressWrap">
+        <div class="progress-header">
+          <span id="progressText">Memproses...</span>
+          <span id="progressPercent">0%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+      </div>
+
+      <!-- Interactive Before / After Preview -->
+      <div class="panel preview-card" id="previewCard">
+        <div class="preview-toolbar">
+          <div class="meta-pills">
+            <span class="meta-pill" id="metaName">-</span>
+            <span class="meta-pill" id="metaOrigDim">0 x 0</span>
+            <span class="meta-pill accent" id="metaNewDim">0 x 0</span>
+            <span class="meta-pill" id="metaSize">-</span>
+            <span class="meta-pill" id="metaTime">-</span>
+          </div>
+          <div class="zoom-controls" id="zoomGroup">
+            <button type="button" class="zoom-btn active" data-zoom="fit" data-i18n="zoomFit">Pas Layar</button>
+            <button type="button" class="zoom-btn" data-zoom="1">100%</button>
+            <button type="button" class="zoom-btn" data-zoom="2">200%</button>
+          </div>
+        </div>
+
+        <div class="compare-viewport" id="compareViewport">
+          <div class="compare-stage" id="compareStage">
+            <img id="afterImg" alt="Upscaled result" />
+            <div class="compare-before-wrap" id="beforeWrap">
+              <img id="beforeImg" alt="Original image" />
+            </div>
+            <div class="compare-handle" id="compareHandle">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/><polyline points="9 18 15 12 9 6" style="display:none"/></svg>
+            </div>
+            <span class="compare-label left" data-i18n="beforeLabel">ASLI</span>
+            <span class="compare-label right" id="afterLabel">LANCZOS-3 2X</span>
+          </div>
+        </div>
+
+        <div class="preview-footer">
+          <span class="control-hint" data-i18n="sliderHint">Geser pembatas pada gambar untuk membandingkan ketajaman asli dan hasil upscale.</span>
+          <button type="button" class="btn btn-success" id="downloadSingleBtn" style="width: auto; padding: 0.5rem 1rem;" disabled>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span data-i18n="downloadSingleBtn">Unduh Gambar Ini</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Batch Queue Card -->
+      <div class="panel batch-card" id="batchCard">
+        <div class="batch-header">
+          <div class="panel-title" style="margin-bottom: 0;">
+            <span id="batchCountTitle">Antrean Gambar (0)</span>
+          </div>
+          <button type="button" class="btn btn-danger-ghost" id="clearAllBtn" data-i18n="clearAll">Hapus Semua</button>
+        </div>
+        <div class="batch-list" id="batchList"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span data-i18n="footerText">Bagian dari</span>
+    <a href="https://utilitibox.github.io/">UtilitiBox</a>
+    <span> - </span>
+    <span data-i18n="footerPrivacy">Seluruh pemrosesan gambar berjalan secara lokal di browser Anda tanpa unggahan ke server.</span>
+  </footer>
+
+  <script>
+    (function () {
+      "use strict";
+
+      /* =========================================================
+         1. LOCALIZATION (ID / EN) & THEME MANAGEMENT
+         ========================================================= */
+      const I18N = {
+        id: {
+          backHome: "UtilitiBox",
+          subtitle: "Pembesaran resolusi matematis Lanczos-3 & Bicubic tanpa AI (100% lokal)",
+          themeLight: "Mode Terang",
+          themeDark: "Mode Gelap",
+          settingsTitle: "Pengaturan Upscale",
+          scaleLabel: "Faktor Skala",
+          scaleHint: "Mengalikan lebar dan tinggi gambar (4x menghasilkan 16x jumlah piksel).",
+          algoLabel: "Metode Interpolasi",
+          algoDescLanczos: "Lanczos-3: Ketajaman tepi tinggi, ideal untuk ilustrasi, anime, teks, dan tangkapan layar.",
+          algoDescBicubic: "Bicubic (Catmull-Rom): Gradasi tonal lebih halus, cocok untuk foto pemandangan dan potret.",
+          sharpenLabel: "Penajaman (Unsharp Mask)",
+          presetOff: "Mati (0%)",
+          presetLight: "Ringan (25%)",
+          presetMedium: "Sedang (50%)",
+          sharpenHint: "Penajaman ringan pasca-upscale membantu mempertegas detail halus tanpa artefak AI.",
+          formatLabel: "Format Output",
+          formatHintPng: "PNG: Kompresi lossless tanpa penurunan kualitas, mendukung transparansi.",
+          formatHintJpg: "JPG: Ukuran file kecil, area transparan diisi latar putih.",
+          formatHintWebp: "WebP: Efisiensi ukuran tinggi dengan dukungan transparansi.",
+          qualityLabel: "Kualitas Kompresi",
+          processBtn: "Proses Gambar",
+          processAllBtn: "Proses Semua ({n} Gambar)",
+          reprocessAllBtn: "Proses Ulang Semua ({n})",
+          downloadZipBtn: "Unduh Semua (.ZIP)",
+          dropTitle: "Klik, seret gambar ke sini, atau tempel (Ctrl+V)",
+          dropSub: "Mendukung satu atau banyak gambar sekaligus (PNG, JPG, WebP, BMP). Diproses lokal di perangkat Anda.",
+          zoomFit: "Pas Layar",
+          beforeLabel: "ASLI",
+          sliderHint: "Geser pembatas pada gambar untuk membandingkan ketajaman asli dan hasil upscale.",
+          downloadSingleBtn: "Unduh Gambar Ini",
+          batchQueue: "Antrean Gambar ({n})",
+          clearAll: "Hapus Semua",
+          statusPending: "Menunggu",
+          statusProcessing: "Memproses...",
+          statusDone: "Selesai",
+          statusError: "Batas Resolusi",
+          inspectBtn: "Pratinjau",
+          dlBtn: "Unduh",
+          removeBtn: "Hapus",
+          processingProgress: "Memproses {name} ({idx}/{total})...",
+          zipBuilding: "Membuat arsip ZIP...",
+          limitErrorMsg: "Melebihi batas aman kanvas browser (maks 16.384 px atau 100 MP).",
+          footerText: "Bagian dari",
+          footerPrivacy: "Seluruh pemrosesan gambar berjalan secara lokal di browser Anda tanpa unggahan ke server."
+        },
+        en: {
+          backHome: "UtilitiBox",
+          subtitle: "Mathematical Lanczos-3 & Bicubic resolution upscaling without AI (100% local)",
+          themeLight: "Light Mode",
+          themeDark: "Dark Mode",
+          settingsTitle: "Upscale Settings",
+          scaleLabel: "Scale Factor",
+          scaleHint: "Multiplies image width and height (4x yields 16x total pixel count).",
+          algoLabel: "Interpolation Method",
+          algoDescLanczos: "Lanczos-3: High edge sharpness, ideal for illustrations, anime, text, and screenshots.",
+          algoDescBicubic: "Bicubic (Catmull-Rom): Smoother tonal transitions, well suited for natural photos.",
+          sharpenLabel: "Sharpening (Unsharp Mask)",
+          presetOff: "Off (0%)",
+          presetLight: "Light (25%)",
+          presetMedium: "Medium (50%)",
+          sharpenHint: "Subtle post-upscale sharpening enhances fine edges without AI artifacts.",
+          formatLabel: "Output Format",
+          formatHintPng: "PNG: Lossless compression with zero quality loss and full alpha transparency.",
+          formatHintJpg: "JPG: Compact file size; transparent areas are filled with white.",
+          formatHintWebp: "WebP: High compression efficiency with alpha transparency support.",
+          qualityLabel: "Compression Quality",
+          processBtn: "Process Image",
+          processAllBtn: "Process All ({n} Images)",
+          reprocessAllBtn: "Reprocess All ({n})",
+          downloadZipBtn: "Download All (.ZIP)",
+          dropTitle: "Click, drag images here, or paste (Ctrl+V)",
+          dropSub: "Supports single or batch images (PNG, JPG, WebP, BMP). Processed locally on your device.",
+          zoomFit: "Fit Screen",
+          beforeLabel: "ORIGINAL",
+          sliderHint: "Drag the divider across the image to compare original and upscaled sharpness.",
+          downloadSingleBtn: "Download This Image",
+          batchQueue: "Image Queue ({n})",
+          clearAll: "Clear All",
+          statusPending: "Pending",
+          statusProcessing: "Processing...",
+          statusDone: "Done",
+          statusError: "Size Limit",
+          inspectBtn: "Preview",
+          dlBtn: "Download",
+          removeBtn: "Remove",
+          processingProgress: "Processing {name} ({idx}/{total})...",
+          zipBuilding: "Building ZIP archive...",
+          limitErrorMsg: "Exceeds safe browser canvas limit (max 16,384 px per side or 100 MP).",
+          footerText: "Part of",
+          footerPrivacy: "All image processing runs locally inside your browser with zero server uploads."
+        }
+      };
+
+      let currentLang = localStorage.getItem("utilitibox_lang") || "id";
+      if (!I18N[currentLang]) currentLang = "id";
+
+      let currentTheme = localStorage.getItem("utilitibox_theme") || "dark";
+      document.documentElement.setAttribute("data-theme", currentTheme);
+
+      function t(key, vars) {
+        let str = (I18N[currentLang] && I18N[currentLang][key]) || I18N.id[key] || key;
+        if (vars) {
+          Object.keys(vars).forEach((k) => {
+            str = str.replace("{" + k + "}", vars[k]);
+          });
+        }
+        return str;
+      }
+
+      function applyTranslations() {
+        document.documentElement.lang = currentLang;
+        document.querySelectorAll("[data-i18n]").forEach((el) => {
+          const key = el.getAttribute("data-i18n");
+          el.textContent = t(key);
+        });
+        updateDynamicTexts();
+        updateThemeButton();
+      }
+
+      function updateThemeButton() {
+        const iconEl = document.getElementById("themeIcon");
+        const labelEl = document.getElementById("themeLabel");
+        if (currentTheme === "dark") {
+          iconEl.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
+          labelEl.textContent = t("themeLight");
+        } else {
+          iconEl.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+          labelEl.textContent = t("themeDark");
+        }
+      }
+
+      /* =========================================================
+         2. INLINE WEB WORKER (LANCZOS-3, BICUBIC, UNSHARP MASK)
+         ========================================================= */
+      const workerSource = `
+        function lanczos3(x) {
+          if (x === 0) return 1.0;
+          const ax = Math.abs(x);
+          if (ax >= 3.0) return 0.0;
+          const px = Math.PI * x;
+          return (3.0 * Math.sin(px) * Math.sin(px / 3.0)) / (px * px);
+        }
+
+        function bicubicCatmullRom(x) {
+          const ax = Math.abs(x);
+          if (ax <= 1.0) {
+            return (1.5 * ax - 2.5) * ax * ax + 1.0;
+          }
+          if (ax < 2.0) {
+            return ((-0.5 * ax + 2.5) * ax - 4.0) * ax + 2.0;
+          }
+          return 0.0;
+        }
+
+        function buildWeightTable(srcLen, dstLen, radius, kernelFn) {
+          const scale = dstLen / srcLen;
+          const offsets = new Int32Array(dstLen);
+          const counts = new Int32Array(dstLen);
+          const maxTaps = Math.ceil(radius * 2) + 2;
+          const weights = new Float32Array(dstLen * maxTaps);
+
+          for (let dst = 0; dst < dstLen; dst++) {
+            const center = (dst + 0.5) / scale - 0.5;
+            const start = Math.max(0, Math.floor(center - radius + 1e-6));
+            const end = Math.min(srcLen - 1, Math.ceil(center + radius - 1e-6));
+            const count = end - start + 1;
+
+            offsets[dst] = start;
+            counts[dst] = count;
+
+            let sum = 0.0;
+            const base = dst * maxTaps;
+            for (let i = 0; i < count; i++) {
+              const w = kernelFn(center - (start + i));
+              weights[base + i] = w;
+              sum += w;
+            }
+            if (sum !== 0.0) {
+              const invSum = 1.0 / sum;
+              for (let i = 0; i < count; i++) {
+                weights[base + i] *= invSum;
+              }
+            }
+          }
+
+          return { offsets, counts, weights, maxTaps };
+        }
+
+        function applyUnsharpMask(buf, width, height, amount) {
+          // 5-tap separable Gaussian kernel [1, 4, 6, 4, 1] / 16
+          const blurred = new Float32Array(buf.length);
+          const temp = new Float32Array(buf.length);
+
+          // Horizontal blur
+          for (let y = 0; y < height; y++) {
+            const rowOffset = y * width * 4;
+            for (let x = 0; x < width; x++) {
+              const x0 = Math.max(0, x - 2);
+              const x1 = Math.max(0, x - 1);
+              const x2 = x;
+              const x3 = Math.min(width - 1, x + 1);
+              const x4 = Math.min(width - 1, x + 2);
+
+              const i0 = rowOffset + x0 * 4;
+              const i1 = rowOffset + x1 * 4;
+              const i2 = rowOffset + x2 * 4;
+              const i3 = rowOffset + x3 * 4;
+              const i4 = rowOffset + x4 * 4;
+              const dst = rowOffset + x * 4;
+
+              for (let c = 0; c < 3; c++) {
+                temp[dst + c] = (
+                  buf[i0 + c] +
+                  4.0 * buf[i1 + c] +
+                  6.0 * buf[i2 + c] +
+                  4.0 * buf[i3 + c] +
+                  buf[i4 + c]
+                ) * 0.0625;
+              }
+            }
+          }
+
+          // Vertical blur + unsharp blend
+          for (let y = 0; y < height; y++) {
+            const y0 = Math.max(0, y - 2) * width * 4;
+            const y1 = Math.max(0, y - 1) * width * 4;
+            const y2 = y * width * 4;
+            const y3 = Math.min(height - 1, y + 1) * width * 4;
+            const y4 = Math.min(height - 1, y + 2) * width * 4;
+
+            for (let x = 0; x < width; x++) {
+              const col = x * 4;
+              const dst = y2 + col;
+              for (let c = 0; c < 3; c++) {
+                const blurVal = (
+                  temp[y0 + col + c] +
+                  4.0 * temp[y1 + col + c] +
+                  6.0 * temp[y2 + col + c] +
+                  4.0 * temp[y3 + col + c] +
+                  temp[y4 + col + c]
+                ) * 0.0625;
+                const origVal = buf[dst + c];
+                buf[dst + c] = origVal + amount * (origVal - blurVal);
+              }
+            }
+          }
+        }
+
+        self.onmessage = function (e) {
+          const { id, srcBuffer, srcWidth, srcHeight, scale, method, sharpen } = e.data;
+          const srcData = new Uint8ClampedArray(srcBuffer);
+          const dstWidth = Math.round(srcWidth * scale);
+          const dstHeight = Math.round(srcHeight * scale);
+
+          const isLanczos = method === "lanczos3";
+          const radius = isLanczos ? 3.0 : 2.0;
+          const kernelFn = isLanczos ? lanczos3 : bicubicCatmullRom;
+
+          const hTable = buildWeightTable(srcWidth, dstWidth, radius, kernelFn);
+          const vTable = buildWeightTable(srcHeight, dstHeight, radius, kernelFn);
+
+          // Pass 1: Horizontal resampling with premultiplied alpha
+          const tempBuffer = new Float32Array(dstWidth * srcHeight * 4);
+          const progressStep1 = Math.max(1, Math.floor(srcHeight / 15));
+
+          for (let y = 0; y < srcHeight; y++) {
+            const srcRow = y * srcWidth * 4;
+            const dstRow = y * dstWidth * 4;
+
+            for (let x = 0; x < dstWidth; x++) {
+              const start = hTable.offsets[x];
+              const count = hTable.counts[x];
+              const wBase = x * hTable.maxTaps;
+
+              let r = 0.0, g = 0.0, b = 0.0, a = 0.0;
+              for (let i = 0; i < count; i++) {
+                const w = hTable.weights[wBase + i];
+                const pIdx = srcRow + (start + i) * 4;
+                const alpha = srcData[pIdx + 3];
+                const alphaNorm = alpha * (1.0 / 255.0);
+
+                r += srcData[pIdx] * alphaNorm * w;
+                g += srcData[pIdx + 1] * alphaNorm * w;
+                b += srcData[pIdx + 2] * alphaNorm * w;
+                a += alpha * w;
+              }
+
+              const outIdx = dstRow + x * 4;
+              tempBuffer[outIdx] = r;
+              tempBuffer[outIdx + 1] = g;
+              tempBuffer[outIdx + 2] = b;
+              tempBuffer[outIdx + 3] = a;
+            }
+
+            if (y % progressStep1 === 0) {
+              const pct = Math.round((y / srcHeight) * 45);
+              self.postMessage({ type: "progress", id, percent: pct });
+            }
+          }
+
+          // Pass 2: Vertical resampling
+          const workBuffer = new Float32Array(dstWidth * dstHeight * 4);
+          const progressStep2 = Math.max(1, Math.floor(dstHeight / 15));
+
+          for (let y = 0; y < dstHeight; y++) {
+            const start = vTable.offsets[y];
+            const count = vTable.counts[y];
+            const wBase = y * vTable.maxTaps;
+            const dstRow = y * dstWidth * 4;
+
+            for (let x = 0; x < dstWidth; x++) {
+              const colOffset = x * 4;
+              let r = 0.0, g = 0.0, b = 0.0, a = 0.0;
+
+              for (let i = 0; i < count; i++) {
+                const w = vTable.weights[wBase + i];
+                const pIdx = (start + i) * dstWidth * 4 + colOffset;
+                r += tempBuffer[pIdx] * w;
+                g += tempBuffer[pIdx + 1] * w;
+                b += tempBuffer[pIdx + 2] * w;
+                a += tempBuffer[pIdx + 3] * w;
+              }
+
+              const outIdx = dstRow + colOffset;
+              workBuffer[outIdx] = r;
+              workBuffer[outIdx + 1] = g;
+              workBuffer[outIdx + 2] = b;
+              workBuffer[outIdx + 3] = a;
+            }
+
+            if (y % progressStep2 === 0) {
+              const pct = 45 + Math.round((y / dstHeight) * 45);
+              self.postMessage({ type: "progress", id, percent: pct });
+            }
+          }
+
+          // Optional Unsharp Mask on premultiplied RGB
+          if (sharpen > 0) {
+            applyUnsharpMask(workBuffer, dstWidth, dstHeight, sharpen);
+          }
+
+          // Un-premultiply alpha and pack into Uint8ClampedArray
+          const outBytes = new Uint8ClampedArray(dstWidth * dstHeight * 4);
+          const totalPixels = dstWidth * dstHeight;
+
+          for (let i = 0; i < totalPixels; i++) {
+            const idx = i * 4;
+            const a = workBuffer[idx + 3];
+            if (a <= 0.001) {
+              outBytes[idx] = 0;
+              outBytes[idx + 1] = 0;
+              outBytes[idx + 2] = 0;
+              outBytes[idx + 3] = 0;
+            } else {
+              const clampedA = a > 255.0 ? 255.0 : a;
+              const invA = 255.0 / a;
+              outBytes[idx] = workBuffer[idx] * invA;
+              outBytes[idx + 1] = workBuffer[idx + 1] * invA;
+              outBytes[idx + 2] = workBuffer[idx + 2] * invA;
+              outBytes[idx + 3] = clampedA;
+            }
+          }
+
+          self.postMessage(
+            {
+              type: "done",
+              id,
+              dstBuffer: outBytes.buffer,
+              dstWidth,
+              dstHeight
+            },
+            [outBytes.buffer]
+          );
+        };
+      `;
+
+      const workerBlob = new Blob([workerSource], { type: "application/javascript" });
+      const workerUrl = URL.createObjectURL(workerBlob);
+      const upscaleWorker = new Worker(workerUrl);
+
+      /* =========================================================
+         3. PURE JAVASCRIPT ZIP ARCHIVER (ZERO DEPENDENCIES)
+         ========================================================= */
+      const CRC32_TABLE = (function () {
+        const table = new Uint32Array(256);
+        for (let i = 0; i < 256; i++) {
+          let c = i;
+          for (let k = 0; k < 8; k++) {
+            c = (c & 1) ? (0xedb88320 ^ (c >>> 1)) : (c >>> 1);
+          }
+          table[i] = c >>> 0;
+        }
+        return table;
+      })();
+
+      function computeCrc32(uint8Arr) {
+        let crc = 0xffffffff;
+        for (let i = 0; i < uint8Arr.length; i++) {
+          crc = CRC32_TABLE[(crc ^ uint8Arr[i]) & 0xff] ^ (crc >>> 8);
+        }
+        return (crc ^ 0xffffffff) >>> 0;
+      }
+
+      async function createZipBlob(entries) {
+        // entries: [{ filename: string, blob: Blob }]
+        const encoder = new TextEncoder();
+        const fileParts = [];
+        const centralDirParts = [];
+        let offset = 0;
+
+        const now = new Date();
+        const dosTime =
+          ((now.getHours() & 0x1f) << 11) |
+          ((now.getMinutes() & 0x3f) << 5) |
+          ((Math.floor(now.getSeconds() / 2)) & 0x1f);
+        const dosDate =
+          (((now.getFullYear() - 1980) & 0x7f) << 9) |
+          (((now.getMonth() + 1) & 0x0f) << 5) |
+          (now.getDate() & 0x1f);
+
+        for (const entry of entries) {
+          const nameBytes = encoder.encode(entry.filename);
+          const dataBytes = new Uint8Array(await entry.blob.arrayBuffer());
+          const crc = computeCrc32(dataBytes);
+          const size = dataBytes.length;
+
+          // Local File Header (30 bytes + filename)
+          const localHeader = new ArrayBuffer(30 + nameBytes.length);
+          const lhView = new DataView(localHeader);
+          lhView.setUint32(0, 0x04034b50, true); // signature
+          lhView.setUint16(4, 20, true); // version needed
+          lhView.setUint16(6, 0x0800, true); // UTF-8 flag
+          lhView.setUint16(8, 0, true); // method: STORE (0)
+          lhView.setUint16(10, dosTime, true);
+          lhView.setUint16(12, dosDate, true);
+          lhView.setUint32(14, crc, true);
+          lhView.setUint32(18, size, true); // compressed size
+          lhView.setUint32(22, size, true); // uncompressed size
+          lhView.setUint16(26, nameBytes.length, true);
+          lhView.setUint16(28, 0, true); // extra field length
+          new Uint8Array(localHeader, 30).set(nameBytes);
+
+          fileParts.push(localHeader, dataBytes);
+
+          // Central Directory Header (46 bytes + filename)
+          const cdHeader = new ArrayBuffer(46 + nameBytes.length);
+          const cdView = new DataView(cdHeader);
+          cdView.setUint32(0, 0x02014b50, true); // signature
+          cdView.setUint16(4, 20, true); // version made by
+          cdView.setUint16(6, 20, true); // version needed
+          cdView.setUint16(8, 0x0800, true); // UTF-8 flag
+          cdView.setUint16(10, 0, true); // method: STORE
+          cdView.setUint16(12, dosTime, true);
+          cdView.setUint16(14, dosDate, true);
+          cdView.setUint32(16, crc, true);
+          cdView.setUint32(20, size, true);
+          cdView.setUint32(24, size, true);
+          cdView.setUint16(28, nameBytes.length, true);
+          cdView.setUint16(30, 0, true); // extra
+          cdView.setUint16(32, 0, true); // comment
+          cdView.setUint16(34, 0, true); // disk start
+          cdView.setUint16(36, 0, true); // internal attrs
+          cdView.setUint32(38, 0, true); // external attrs
+          cdView.setUint32(42, offset, true); // relative offset
+          new Uint8Array(cdHeader, 46).set(nameBytes);
+
+          centralDirParts.push(cdHeader);
+          offset += localHeader.byteLength + dataBytes.byteLength;
+        }
+
+        const cdSize = centralDirParts.reduce((acc, buf) => acc + buf.byteLength, 0);
+
+        // End of Central Directory Record (22 bytes)
+        const eocd = new ArrayBuffer(22);
+        const eocdView = new DataView(eocd);
+        eocdView.setUint32(0, 0x06054b50, true);
+        eocdView.setUint16(4, 0, true);
+        eocdView.setUint16(6, 0, true);
+        eocdView.setUint16(8, entries.length, true);
+        eocdView.setUint16(10, entries.length, true);
+        eocdView.setUint32(12, cdSize, true);
+        eocdView.setUint32(16, offset, true);
+        eocdView.setUint16(20, 0, true);
+
+        return new Blob([...fileParts, ...centralDirParts, eocd], { type: "application/zip" });
+      }
+
+      /* =========================================================
+         4. APPLICATION STATE & DOM REFERENCES
+         ========================================================= */
+      const MAX_DIMENSION = 16384;
+      const MAX_PIXELS = 100000000; // 100 MP safe browser limit
+
+      const state = {
+        scale: 2,
+        method: "lanczos3",
+        sharpen: 0,
+        format: "image/png",
+        quality: 0.92,
+        zoom: "fit",
+        sliderPos: 50,
+        items: [], // { id, file, name, origUrl, origWidth, origHeight, status, resultUrl, resultBlob, dstWidth, dstHeight, durationMs, errorMsg }
+        activeId: null,
+        isProcessing: false
+      };
+
+      const el = {
+        dropzone: document.getElementById("dropzone"),
+        fileInput: document.getElementById("fileInput"),
+        scaleGroup: document.getElementById("scaleGroup"),
+        scaleBadge: document.getElementById("scaleBadge"),
+        algoGroup: document.getElementById("algoGroup"),
+        algoDesc: document.getElementById("algoDesc"),
+        sharpenRange: document.getElementById("sharpenRange"),
+        sharpenBadge: document.getElementById("sharpenBadge"),
+        sharpenPresets: document.getElementById("sharpenPresets"),
+        formatGroup: document.getElementById("formatGroup"),
+        formatHint: document.getElementById("formatHint"),
+        qualityGroup: document.getElementById("qualityGroup"),
+        qualityRange: document.getElementById("qualityRange"),
+        qualityBadge: document.getElementById("qualityBadge"),
+        processAllBtn: document.getElementById("processAllBtn"),
+        processAllLabel: document.getElementById("processAllLabel"),
+        downloadZipBtn: document.getElementById("downloadZipBtn"),
+        downloadZipLabel: document.getElementById("downloadZipLabel"),
+        progressWrap: document.getElementById("progressWrap"),
+        progressText: document.getElementById("progressText"),
+        progressPercent: document.getElementById("progressPercent"),
+        progressFill: document.getElementById("progressFill"),
+        previewCard: document.getElementById("previewCard"),
+        metaName: document.getElementById("metaName"),
+        metaOrigDim: document.getElementById("metaOrigDim"),
+        metaNewDim: document.getElementById("metaNewDim"),
+        metaSize: document.getElementById("metaSize"),
+        metaTime: document.getElementById("metaTime"),
+        zoomGroup: document.getElementById("zoomGroup"),
+        compareViewport: document.getElementById("compareViewport"),
+        compareStage: document.getElementById("compareStage"),
+        afterImg: document.getElementById("afterImg"),
+        beforeWrap: document.getElementById("beforeWrap"),
+        beforeImg: document.getElementById("beforeImg"),
+        compareHandle: document.getElementById("compareHandle"),
+        afterLabel: document.getElementById("afterLabel"),
+        downloadSingleBtn: document.getElementById("downloadSingleBtn"),
+        batchCard: document.getElementById("batchCard"),
+        batchCountTitle: document.getElementById("batchCountTitle"),
+        batchList: document.getElementById("batchList"),
+        clearAllBtn: document.getElementById("clearAllBtn"),
+        langToggle: document.getElementById("langToggle"),
+        themeToggle: document.getElementById("themeToggle")
+      };
+
+      /* =========================================================
+         5. HELPER FUNCTIONS
+         ========================================================= */
+      function formatBytes(bytes) {
+        if (!bytes && bytes !== 0) return "-";
+        if (bytes < 1024) return bytes + " B";
+        if (bytes < 1048576) return (bytes / 1024).toFixed(1) + " KB";
+        return (bytes / 1048576).toFixed(2) + " MB";
+      }
+
+      function getExtensionForMime(mime) {
+        if (mime === "image/jpeg") return "jpg";
+        if (mime === "image/webp") return "webp";
+        return "png";
+      }
+
+      function buildOutputFilename(origName, scale, method, mime) {
+        const dotIdx = origName.lastIndexOf(".");
+        const base = dotIdx > 0 ? origName.substring(0, dotIdx) : origName;
+        const ext = getExtensionForMime(mime);
+        return `${base}_${scale}x_${method}.${ext}`;
+      }
+
+      function triggerDownload(blob, filename) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 5000);
+      }
+
+      function loadImageElement(url) {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          img.onload = () => resolve(img);
+          img.onerror = () => reject(new Error("Failed to decode image"));
+          img.src = url;
+        });
+      }
+
+      /* =========================================================
+         6. WORKER EXECUTION & CANVAS ENCODING
+         ========================================================= */
+      const pendingWorkerJobs = new Map();
+
+      upscaleWorker.onmessage = function (e) {
+        const msg = e.data;
+        const job = pendingWorkerJobs.get(msg.id);
+        if (!job) return;
+
+        if (msg.type === "progress") {
+          if (job.onProgress) job.onProgress(msg.percent);
+        } else if (msg.type === "done") {
+          pendingWorkerJobs.delete(msg.id);
+          job.resolve(msg);
+        }
+      };
+
+      function runUpscaleWorker(payload, onProgress) {
+        return new Promise((resolve, reject) => {
+          pendingWorkerJobs.set(payload.id, { resolve, reject, onProgress });
+          upscaleWorker.postMessage(payload, [payload.srcBuffer]);
+        });
+      }
+
+      async function processSingleItem(item, index, total) {
+        const targetW = Math.round(item.origWidth * state.scale);
+        const targetH = Math.round(item.origHeight * state.scale);
+
+        if (targetW > MAX_DIMENSION || targetH > MAX_DIMENSION || targetW * targetH > MAX_PIXELS) {
+          item.status = "error";
+          item.errorMsg = t("limitErrorMsg");
+          return;
+        }
+
+        item.status = "processing";
+        item.errorMsg = null;
+        renderBatchList();
+
+        const startTime = performance.now();
+        el.progressText.textContent = t("processingProgress", {
+          name: item.name,
+          idx: index + 1,
+          total
+        });
+        el.progressPercent.textContent = "0%";
+        el.progressFill.style.width = "0%";
+
+        try {
+          const img = await loadImageElement(item.origUrl);
+          const srcCanvas = document.createElement("canvas");
+          srcCanvas.width = item.origWidth;
+          srcCanvas.height = item.origHeight;
+          const srcCtx = srcCanvas.getContext("2d", { willReadFrequently: true });
+          srcCtx.drawImage(img, 0, 0);
+          const srcImageData = srcCtx.getImageData(0, 0, item.origWidth, item.origHeight);
+
+          const workerRes = await runUpscaleWorker(
+            {
+              id: item.id,
+              srcBuffer: srcImageData.data.buffer,
+              srcWidth: item.origWidth,
+              srcHeight: item.origHeight,
+              scale: state.scale,
+              method: state.method,
+              sharpen: state.sharpen / 100
+            },
+            (pct) => {
+              el.progressPercent.textContent = pct + "%";
+              el.progressFill.style.width = pct + "%";
+            }
+          );
+
+          el.progressPercent.textContent = "95%";
+          el.progressFill.style.width = "95%";
+
+          const outCanvas = document.createElement("canvas");
+          outCanvas.width = workerRes.dstWidth;
+          outCanvas.height = workerRes.dstHeight;
+          const outCtx = outCanvas.getContext("2d");
+
+          const outImageData = new ImageData(
+            new Uint8ClampedArray(workerRes.dstBuffer),
+            workerRes.dstWidth,
+            workerRes.dstHeight
+          );
+
+          if (state.format === "image/jpeg") {
+            // Composite over white background for JPEG output
+            const tempCanvas = document.createElement("canvas");
+            tempCanvas.width = workerRes.dstWidth;
+            tempCanvas.height = workerRes.dstHeight;
+            tempCanvas.getContext("2d").putImageData(outImageData, 0, 0);
+
+            outCtx.fillStyle = "#ffffff";
+            outCtx.fillRect(0, 0, workerRes.dstWidth, workerRes.dstHeight);
+            outCtx.drawImage(tempCanvas, 0, 0);
+          } else {
+            outCtx.putImageData(outImageData, 0, 0);
+          }
+
+          const blob = await new Promise((resolve) => {
+            outCanvas.toBlob((b) => resolve(b), state.format, state.quality);
+          });
+
+          if (item.resultUrl) {
+            URL.revokeObjectURL(item.resultUrl);
+          }
+
+          item.resultBlob = blob;
+          item.resultUrl = URL.createObjectURL(blob);
+          item.dstWidth = workerRes.dstWidth;
+          item.dstHeight = workerRes.dstHeight;
+          item.appliedScale = state.scale;
+          item.appliedMethod = state.method;
+          item.appliedFormat = state.format;
+          item.durationMs = Math.round(performance.now() - startTime);
+          item.status = "done";
+
+          el.progressPercent.textContent = "100%";
+          el.progressFill.style.width = "100%";
+        } catch (err) {
+          item.status = "error";
+          item.errorMsg = err.message || "Error";
+        }
+      }
+
+      async function processQueue(onlyPending) {
+        if (state.isProcessing || state.items.length === 0) return;
+
+        const targets = onlyPending
+          ? state.items.filter((it) => it.status === "pending")
+          : state.items.slice();
+
+        if (targets.length === 0) return;
+
+        state.isProcessing = true;
+        updateControlsState();
+        el.progressWrap.classList.add("visible");
+
+        for (let i = 0; i < targets.length; i++) {
+          await processSingleItem(targets[i], i, targets.length);
+          renderBatchList();
+          if (targets[i].id === state.activeId) {
+            renderActivePreview();
+          }
+        }
+
+        state.isProcessing = false;
+        setTimeout(() => {
+          if (!state.isProcessing) {
+            el.progressWrap.classList.remove("visible");
+          }
+        }, 600);
+        updateControlsState();
+      }
+
+      /* =========================================================
+         7. FILE INGESTION (UPLOAD, DRAG-DROP, PASTE)
+         ========================================================= */
+      async function handleFiles(fileList) {
+        const validFiles = Array.from(fileList).filter((f) => f.type.startsWith("image/"));
+        if (validFiles.length === 0) return;
+
+        const newItems = [];
+        for (const file of validFiles) {
+          const origUrl = URL.createObjectURL(file);
+          try {
+            const img = await loadImageElement(origUrl);
+            const item = {
+              id: "img_" + Date.now() + "_" + Math.random().toString(36).slice(2, 8),
+              file,
+              name: file.name || "pasted-image.png",
+              origUrl,
+              origWidth: img.naturalWidth,
+              origHeight: img.naturalHeight,
+              status: "pending",
+              resultUrl: null,
+              resultBlob: null,
+              dstWidth: Math.round(img.naturalWidth * state.scale),
+              dstHeight: Math.round(img.naturalHeight * state.scale),
+              durationMs: 0,
+              errorMsg: null
+            };
+            state.items.push(item);
+            newItems.push(item);
+          } catch (e) {
+            URL.revokeObjectURL(origUrl);
+          }
+        }
+
+        if (newItems.length === 0) return;
+
+        if (!state.activeId || state.items.length === newItems.length) {
+          state.activeId = newItems[0].id;
+        }
+
+        el.dropzone.classList.add("compact");
+        renderBatchList();
+        renderActivePreview();
+        updateControlsState();
+
+        // Automatically process newly added images
+        await processQueue(true);
+      }
+
+      /* =========================================================
+         8. UI RENDERING (PREVIEW COMPARATOR & BATCH QUEUE)
+         ========================================================= */
+      function updateDynamicTexts() {
+        const count = state.items.length;
+        const doneCount = state.items.filter((it) => it.status === "done").length;
+
+        el.batchCountTitle.textContent = t("batchQueue", { n: count });
+
+        if (count <= 1) {
+          el.processAllLabel.textContent = t("processBtn");
+        } else if (doneCount === count && count > 0) {
+          el.processAllLabel.textContent = t("reprocessAllBtn", { n: count });
+        } else {
+          el.processAllLabel.textContent = t("processAllBtn", { n: count });
+        }
+
+        el.downloadZipLabel.textContent = `${t("downloadZipBtn")} (${doneCount})`;
+
+        if (state.method === "lanczos3") {
+          el.algoDesc.textContent = t("algoDescLanczos");
+        } else {
+          el.algoDesc.textContent = t("algoDescBicubic");
+        }
+
+        if (state.format === "image/png") {
+          el.formatHint.textContent = t("formatHintPng");
+        } else if (state.format === "image/jpeg") {
+          el.formatHint.textContent = t("formatHintJpg");
+        } else {
+          el.formatHint.textContent = t("formatHintWebp");
+        }
+      }
+
+      function updateControlsState() {
+        const count = state.items.length;
+        const doneCount = state.items.filter((it) => it.status === "done").length;
+
+        el.processAllBtn.disabled = state.isProcessing || count === 0;
+        el.clearAllBtn.disabled = state.isProcessing;
+
+        if (count > 1) {
+          el.downloadZipBtn.style.display = "inline-flex";
+          el.downloadZipBtn.disabled = state.isProcessing || doneCount === 0;
+        } else {
+          el.downloadZipBtn.style.display = "none";
+        }
+
+        if (count > 0) {
+          el.previewCard.classList.add("visible");
+          el.batchCard.classList.add("visible");
+        } else {
+          el.previewCard.classList.remove("visible");
+          el.batchCard.classList.remove("visible");
+          el.dropzone.classList.remove("compact");
+        }
+
+        updateDynamicTexts();
+      }
+
+      function applyZoomAndDimensions() {
+        const item = state.items.find((it) => it.id === state.activeId);
+        if (!item) return;
+
+        const targetW = item.status === "done" ? item.dstWidth : Math.round(item.origWidth * state.scale);
+        const targetH = item.status === "done" ? item.dstHeight : Math.round(item.origHeight * state.scale);
+
+        let displayW = targetW;
+        let displayH = targetH;
+
+        if (state.zoom === "fit") {
+          el.compareViewport.classList.remove("zoomed");
+          const maxW = Math.max(240, el.compareViewport.clientWidth - 16);
+          const maxH = Math.max(200, el.compareViewport.clientHeight - 16);
+          const ratio = Math.min(maxW / targetW, maxH / targetH, 1);
+          displayW = Math.round(targetW * ratio);
+          displayH = Math.round(targetH * ratio);
+        } else {
+          el.compareViewport.classList.add("zoomed");
+          const z = Number(state.zoom) || 1;
+          displayW = Math.round(targetW * z);
+          displayH = Math.round(targetH * z);
+        }
+
+        el.compareStage.style.width = displayW + "px";
+        el.compareStage.style.height = displayH + "px";
+        el.afterImg.style.width = displayW + "px";
+        el.afterImg.style.height = displayH + "px";
+        el.beforeImg.style.width = displayW + "px";
+        el.beforeImg.style.height = displayH + "px";
+
+        updateSliderPosition(state.sliderPos);
+      }
+
+      function updateSliderPosition(percent) {
+        const clamped = Math.max(0, Math.min(100, percent));
+        state.sliderPos = clamped;
+        el.beforeWrap.style.width = clamped + "%";
+        el.compareHandle.style.left = clamped + "%";
+      }
+
+      function renderActivePreview() {
+        const item = state.items.find((it) => it.id === state.activeId);
+        if (!item) return;
+
+        el.metaName.textContent = item.name;
+        el.metaOrigDim.textContent = `${item.origWidth} x ${item.origHeight}`;
+
+        const targetW = item.status === "done" ? item.dstWidth : Math.round(item.origWidth * state.scale);
+        const targetH = item.status === "done" ? item.dstHeight : Math.round(item.origHeight * state.scale);
+        const activeScale = item.status === "done" ? item.appliedScale : state.scale;
+        const activeMethod = item.status === "done" ? item.appliedMethod : state.method;
+
+        el.metaNewDim.textContent = `${targetW} x ${targetH} (${activeScale}x)`;
+        el.afterLabel.textContent = `${activeMethod.toUpperCase()} ${activeScale}X`;
+
+        el.beforeImg.src = item.origUrl;
+        if (item.status === "done" && item.resultUrl) {
+          el.afterImg.src = item.resultUrl;
+          el.metaSize.textContent = formatBytes(item.resultBlob.size);
+          el.metaTime.textContent = item.durationMs + " ms";
+          el.downloadSingleBtn.disabled = false;
+        } else {
+          el.afterImg.src = item.origUrl;
+          el.metaSize.textContent = formatBytes(item.file.size);
+          el.metaTime.textContent = item.status === "error" ? t("statusError") : "-";
+          el.downloadSingleBtn.disabled = true;
+        }
+
+        applyZoomAndDimensions();
+      }
+
+      function renderBatchList() {
+        el.batchList.innerHTML = "";
+
+        state.items.forEach((item) => {
+          const row = document.createElement("div");
+          row.className = "batch-item" + (item.id === state.activeId ? " selected" : "");
+
+          const thumb = document.createElement("img");
+          thumb.className = "batch-thumb";
+          thumb.src = item.resultUrl || item.origUrl;
+          thumb.alt = item.name;
+          thumb.onclick = () => {
+            state.activeId = item.id;
+            renderBatchList();
+            renderActivePreview();
+          };
+
+          const info = document.createElement("div");
+          info.className = "batch-info";
+
+          const nameEl = document.createElement("div");
+          nameEl.className = "batch-name";
+          nameEl.textContent = item.name;
+          nameEl.onclick = () => {
+            state.activeId = item.id;
+            renderBatchList();
+            renderActivePreview();
+          };
+
+          const subEl = document.createElement("div");
+          subEl.className = "batch-sub";
+
+          const targetW = item.status === "done" ? item.dstWidth : Math.round(item.origWidth * state.scale);
+          const targetH = item.status === "done" ? item.dstHeight : Math.round(item.origHeight * state.scale);
+          const dimSpan = document.createElement("span");
+          dimSpan.textContent = `${item.origWidth}x${item.origHeight} -> ${targetW}x${targetH}`;
+          subEl.appendChild(dimSpan);
+
+          if (item.status === "done" && item.resultBlob) {
+            const sizeSpan = document.createElement("span");
+            sizeSpan.textContent = `(${formatBytes(item.resultBlob.size)})`;
+            subEl.appendChild(sizeSpan);
+          }
+
+          const statusSpan = document.createElement("span");
+          statusSpan.className = "status-badge";
+          if (item.status === "pending") {
+            statusSpan.classList.add("status-pending");
+            statusSpan.textContent = t("statusPending");
+          } else if (item.status === "processing") {
+            statusSpan.classList.add("status-processing");
+            statusSpan.textContent = t("statusProcessing");
+          } else if (item.status === "done") {
+            statusSpan.classList.add("status-done");
+            statusSpan.textContent = t("statusDone");
+          } else {
+            statusSpan.classList.add("status-error");
+            statusSpan.textContent = item.errorMsg || t("statusError");
+          }
+          subEl.appendChild(statusSpan);
+
+          info.appendChild(nameEl);
+          info.appendChild(subEl);
+
+          const actions = document.createElement("div");
+          actions.className = "batch-actions";
+
+          const previewBtn = document.createElement("button");
+          previewBtn.type = "button";
+          previewBtn.className = "mini-btn";
+          previewBtn.textContent = t("inspectBtn");
+          previewBtn.onclick = () => {
+            state.activeId = item.id;
+            renderBatchList();
+            renderActivePreview();
+          };
+
+          const dlBtn = document.createElement("button");
+          dlBtn.type = "button";
+          dlBtn.className = "mini-btn dl";
+          dlBtn.textContent = t("dlBtn");
+          dlBtn.disabled = item.status !== "done" || !item.resultBlob;
+          dlBtn.onclick = () => {
+            if (!item.resultBlob) return;
+            const outName = buildOutputFilename(
+              item.name,
+              item.appliedScale,
+              item.appliedMethod,
+              item.appliedFormat
+            );
+            triggerDownload(item.resultBlob, outName);
+          };
+
+          const delBtn = document.createElement("button");
+          delBtn.type = "button";
+          delBtn.className = "mini-btn";
+          delBtn.textContent = "X";
+          delBtn.title = t("removeBtn");
+          delBtn.disabled = state.isProcessing;
+          delBtn.onclick = () => removeItem(item.id);
+
+          actions.appendChild(previewBtn);
+          actions.appendChild(dlBtn);
+          actions.appendChild(delBtn);
+
+          row.appendChild(thumb);
+          row.appendChild(info);
+          row.appendChild(actions);
+
+          el.batchList.appendChild(row);
+        });
+      }
+
+      function removeItem(id) {
+        const idx = state.items.findIndex((it) => it.id === id);
+        if (idx === -1) return;
+        const [removed] = state.items.splice(idx, 1);
+        if (removed.origUrl) URL.revokeObjectURL(removed.origUrl);
+        if (removed.resultUrl) URL.revokeObjectURL(removed.resultUrl);
+
+        if (state.activeId === id) {
+          state.activeId = state.items.length > 0 ? state.items[0].id : null;
+        }
+
+        renderBatchList();
+        renderActivePreview();
+        updateControlsState();
+      }
+
+      /* =========================================================
+         9. EVENT LISTENERS
+         ========================================================= */
+      // Language & Theme Toggles
+      el.langToggle.addEventListener("click", () => {
+        currentLang = currentLang === "id" ? "en" : "id";
+        localStorage.setItem("utilitibox_lang", currentLang);
+        applyTranslations();
+        renderBatchList();
+        renderActivePreview();
+      });
+
+      el.themeToggle.addEventListener("click", () => {
+        currentTheme = currentTheme === "dark" ? "light" : "dark";
+        localStorage.setItem("utilitibox_theme", currentTheme);
+        document.documentElement.setAttribute("data-theme", currentTheme);
+        updateThemeButton();
+      });
+
+      // Scale Segmented Control
+      el.scaleGroup.addEventListener("click", (e) => {
+        const btn = e.target.closest(".seg-btn");
+        if (!btn) return;
+        el.scaleGroup.querySelectorAll(".seg-btn").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        state.scale = Number(btn.dataset.val);
+        el.scaleBadge.textContent = state.scale + "x";
+        renderBatchList();
+        if (state.items.length === 1 && !state.isProcessing) {
+          processQueue(false);
+        }
+      });
+
+      // Algorithm Segmented Control
+      el.algoGroup.addEventListener("click", (e) => {
+        const btn = e.target.closest(".seg-btn");
+        if (!btn) return;
+        el.algoGroup.querySelectorAll(".seg-btn").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        state.method = btn.dataset.val;
+        updateDynamicTexts();
+        if (state.items.length === 1 && !state.isProcessing) {
+          processQueue(false);
+        }
+      });
+
+      // Unsharp Mask Slider & Presets
+      function setSharpenValue(val) {
+        state.sharpen = Number(val);
+        el.sharpenRange.value = state.sharpen;
+        el.sharpenBadge.textContent = state.sharpen + "%";
+        el.sharpenPresets.querySelectorAll(".preset-pill").forEach((p) => {
+          p.classList.toggle("active", Number(p.dataset.val) === state.sharpen);
+        });
+      }
+
+      el.sharpenRange.addEventListener("input", (e) => {
+        setSharpenValue(e.target.value);
+      });
+
+      el.sharpenRange.addEventListener("change", () => {
+        if (state.items.length === 1 && !state.isProcessing) {
+          processQueue(false);
+        }
+      });
+
+      el.sharpenPresets.addEventListener("click", (e) => {
+        const pill = e.target.closest(".preset-pill");
+        if (!pill) return;
+        setSharpenValue(pill.dataset.val);
+        if (state.items.length === 1 && !state.isProcessing) {
+          processQueue(false);
+        }
+      });
+
+      // Output Format & Quality
+      el.formatGroup.addEventListener("click", (e) => {
+        const btn = e.target.closest(".seg-btn");
+        if (!btn) return;
+        el.formatGroup.querySelectorAll(".seg-btn").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        state.format = btn.dataset.val;
+        el.qualityGroup.style.display = state.format === "image/png" ? "none" : "block";
+        updateDynamicTexts();
+        if (state.items.length === 1 && !state.isProcessing) {
+          processQueue(false);
+        }
+      });
+
+      el.qualityRange.addEventListener("input", (e) => {
+        const q = Number(e.target.value);
+        state.quality = q / 100;
+        el.qualityBadge.textContent = q + "%";
+      });
+
+      el.qualityRange.addEventListener("change", () => {
+        if (state.items.length === 1 && !state.isProcessing) {
+          processQueue(false);
+        }
+      });
+
+      // Zoom Controls
+      el.zoomGroup.addEventListener("click", (e) => {
+        const btn = e.target.closest(".zoom-btn");
+        if (!btn) return;
+        el.zoomGroup.querySelectorAll(".zoom-btn").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        state.zoom = btn.dataset.zoom;
+        applyZoomAndDimensions();
+      });
+
+      window.addEventListener("resize", () => {
+        if (state.zoom === "fit" && state.activeId) {
+          applyZoomAndDimensions();
+        }
+      });
+
+      // Before / After Interactive Slider Drag
+      let isDraggingSlider = false;
+
+      function handlePointerMove(clientX) {
+        const rect = el.compareStage.getBoundingClientRect();
+        if (rect.width <= 0) return;
+        const pct = ((clientX - rect.left) / rect.width) * 100;
+        updateSliderPosition(pct);
+      }
+
+      el.compareStage.addEventListener("mousedown", (e) => {
+        isDraggingSlider = true;
+        handlePointerMove(e.clientX);
+      });
+
+      window.addEventListener("mousemove", (e) => {
+        if (!isDraggingSlider) return;
+        handlePointerMove(e.clientX);
+      });
+
+      window.addEventListener("mouseup", () => {
+        isDraggingSlider = false;
+      });
+
+      el.compareStage.addEventListener(
+        "touchstart",
+        (e) => {
+          if (e.touches.length === 1) {
+            isDraggingSlider = true;
+            handlePointerMove(e.touches[0].clientX);
+          }
+        },
+        { passive: true }
+      );
+
+      window.addEventListener(
+        "touchmove",
+        (e) => {
+          if (!isDraggingSlider || e.touches.length !== 1) return;
+          handlePointerMove(e.touches[0].clientX);
+        },
+        { passive: true }
+      );
+
+      window.addEventListener("touchend", () => {
+        isDraggingSlider = false;
+      });
+
+      // Dropzone, File Input, and Clipboard Paste
+      el.dropzone.addEventListener("click", () => el.fileInput.click());
+      el.dropzone.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          el.fileInput.click();
+        }
+      });
+
+      el.fileInput.addEventListener("change", (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+          handleFiles(e.target.files);
+          el.fileInput.value = "";
+        }
+      });
+
+      el.dropzone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        el.dropzone.classList.add("dragover");
+      });
+
+      el.dropzone.addEventListener("dragleave", () => {
+        el.dropzone.classList.remove("dragover");
+      });
+
+      el.dropzone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        el.dropzone.classList.remove("dragover");
+        if (e.dataTransfer && e.dataTransfer.files) {
+          handleFiles(e.dataTransfer.files);
+        }
+      });
+
+      window.addEventListener("paste", (e) => {
+        if (e.clipboardData && e.clipboardData.files && e.clipboardData.files.length > 0) {
+          handleFiles(e.clipboardData.files);
+        }
+      });
+
+      // Process All, Single Download, Batch ZIP Download, Clear All
+      el.processAllBtn.addEventListener("click", () => {
+        processQueue(false);
+      });
+
+      el.downloadSingleBtn.addEventListener("click", () => {
+        const item = state.items.find((it) => it.id === state.activeId);
+        if (!item || !item.resultBlob) return;
+        const outName = buildOutputFilename(
+          item.name,
+          item.appliedScale,
+          item.appliedMethod,
+          item.appliedFormat
+        );
+        triggerDownload(item.resultBlob, outName);
+      });
+
+      el.downloadZipBtn.addEventListener("click", async () => {
+        const completed = state.items.filter((it) => it.status === "done" && it.resultBlob);
+        if (completed.length === 0) return;
+
+        el.downloadZipBtn.disabled = true;
+        const prevText = el.downloadZipLabel.textContent;
+        el.downloadZipLabel.textContent = t("zipBuilding");
+
+        try {
+          const usedNames = new Set();
+          const entries = completed.map((item) => {
+            let filename = buildOutputFilename(
+              item.name,
+              item.appliedScale,
+              item.appliedMethod,
+              item.appliedFormat
+            );
+            let counter = 1;
+            while (usedNames.has(filename.toLowerCase())) {
+              const dot = filename.lastIndexOf(".");
+              const base = filename.slice(0, dot);
+              const ext = filename.slice(dot);
+              filename = `${base}_(${counter})${ext}`;
+              counter++;
+            }
+            usedNames.add(filename.toLowerCase());
+            return { filename, blob: item.resultBlob };
+          });
+
+          const zipBlob = await createZipBlob(entries);
+          triggerDownload(zipBlob, `utilitibox-upscaled-${Date.now()}.zip`);
+        } finally {
+          el.downloadZipLabel.textContent = prevText;
+          updateControlsState();
+        }
+      });
+
+      el.clearAllBtn.addEventListener("click", () => {
+        if (state.isProcessing) return;
+        state.items.forEach((it) => {
+          if (it.origUrl) URL.revokeObjectURL(it.origUrl);
+          if (it.resultUrl) URL.revokeObjectURL(it.resultUrl);
+        });
+        state.items = [];
+        state.activeId = null;
+        renderBatchList();
+        updateControlsState();
+      });
+
+      // Initialize UI
+      applyTranslations();
+      updateControlsState();
+    })();
+  </script>
+</body>
+</html>
