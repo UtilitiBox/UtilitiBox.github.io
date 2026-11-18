@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Image Metadata Viewer - UtilitiBox</title>
-  <meta name="description" content="Lihat metadata EXIF, koordinat GPS, kamera, tanggal pengambilan, resolusi, dan tag mentah gambar (JPEG, PNG, WebP) secara lokal tanpa mengubah file asli.">
+  <meta name="description" content="Lihat metadata EXIF, koordinat GPS, kamera, tanggal pengambilan, resolusi, dan tag mentah gambar (JPEG, PNG, WebP, atau arsip ZIP) secara lokal tanpa mengubah file asli.">
   <link rel="canonical" href="https://utilitibox.github.io/image-metadata-viewer/">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; connect-src 'none'; frame-src 'none';">
   <style>
@@ -198,7 +198,7 @@
       background: var(--bg-secondary);
       border: 2px dashed var(--border-color);
       border-radius: var(--radius-lg);
-      padding: 2.2rem 1.25rem;
+      padding: 2.1rem 1.25rem;
       text-align: center;
       cursor: pointer;
       transition: all 0.2s ease;
@@ -293,6 +293,20 @@
       white-space: nowrap;
     }
 
+    .android-tip {
+      margin-top: 0.85rem;
+      padding: 0.75rem 0.95rem;
+      border-radius: var(--radius-md);
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .android-tip strong {
+      color: var(--text-primary);
+    }
+
     .batch-bar {
       margin-top: 0.9rem;
       background: var(--bg-secondary);
@@ -327,7 +341,7 @@
       background: var(--bg-tertiary);
       color: var(--text-secondary);
       cursor: pointer;
-      max-width: 200px;
+      max-width: 220px;
     }
 
     .batch-tab span {
@@ -693,10 +707,11 @@
     .warning-state {
       color: var(--text-primary);
       font-size: 0.84rem;
-      padding: 0.8rem 0.9rem;
+      padding: 0.85rem 0.95rem;
       background: var(--warning-soft);
       border-radius: var(--radius-sm);
       border: 1px solid rgba(245, 158, 11, 0.45);
+      line-height: 1.55;
     }
 
     .raw-controls {
@@ -897,23 +912,27 @@
   </header>
 
   <main class="container">
-    <!-- Upload / Dropzone (No restrictive accept attribute so Android opens full File Manager) -->
-    <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="Pilih atau jatuhkan gambar">
+    <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="Pilih atau jatuhkan gambar atau file ZIP">
       <input type="file" id="fileInput" multiple class="hidden">
       <div class="dropzone-main">
         <div class="dropzone-icon">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
         </div>
         <div>
-          <h2 data-i18n="dropTitle">Jatuhkan gambar di sini, tempel (Ctrl+V), atau klik untuk memilih</h2>
-          <p data-i18n="dropSubtitle">Di ponsel Android, pilih menu File / Dokumen (bukan Galeri) agar koordinat GPS tidak disensor oleh sistem.</p>
+          <h2 data-i18n="dropTitle">Jatuhkan gambar atau file .ZIP di sini, atau klik untuk memilih</h2>
+          <p data-i18n="dropSubtitle">Mendukung pembacaan langsung foto di dalam arsip .ZIP untuk menghindari sensor lokasi Android.</p>
         </div>
       </div>
       <div class="format-pills">
         <span class="pill">JPEG / JPG (EXIF, GPS, XMP)</span>
-        <span class="pill">PNG (IHDR, eXIf, tEXt, iTXt, pHYs)</span>
-        <span class="pill">WebP (VP8/VP8L/VP8X, EXIF, XMP)</span>
+        <span class="pill">PNG (IHDR, eXIf, tEXt, iTXt)</span>
+        <span class="pill">WebP (EXIF, XMP)</span>
+        <span class="pill">ZIP Archive (Android Bypass)</span>
       </div>
+    </div>
+
+    <div class="android-tip" data-i18n="androidTip">
+      <strong>Tips Pengguna Android:</strong> Sistem Android otomatis menyensor koordinat GPS saat foto dipilih lewat Galeri. Untuk membaca GPS asli di HP: (1) Pilih menu garis tiga di pemilih file lalu buka <strong>Penyimpanan Internal</strong> (bukan Gambar/Galeri), atau (2) <strong>Kompres foto ke .ZIP</strong> di File Manager lalu unggah file .ZIP tersebut ke sini.
     </div>
 
     <!-- Batch File Switcher -->
@@ -948,7 +967,6 @@
         </button>
       </div>
 
-      <!-- Privacy & Cross-Tool Integration Banner -->
       <div id="privacyBanner" class="privacy-banner risk-low">
         <div class="privacy-info">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:2px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
@@ -965,7 +983,6 @@
       </div>
 
       <div class="main-stack">
-        <!-- Top Overview: Preview + File & Resolution -->
         <div class="top-overview-grid">
           <div class="card">
             <div class="card-header">
@@ -997,7 +1014,6 @@
           </div>
         </div>
 
-        <!-- GPS & Location Card -->
         <div class="card">
           <div class="card-header">
             <div class="card-title">
@@ -1010,7 +1026,6 @@
           </div>
         </div>
 
-        <!-- Camera & Exposure Card -->
         <div class="card">
           <div class="card-header">
             <div class="card-title">
@@ -1023,7 +1038,6 @@
           </div>
         </div>
 
-        <!-- Raw Tags Explorer Card -->
         <div class="card">
           <div class="card-header">
             <div class="card-title">
@@ -1080,8 +1094,9 @@
         id: {
           appTitle: "Image Metadata Viewer",
           localBadge: "100% Lokal & Read-Only",
-          dropTitle: "Jatuhkan gambar di sini, tempel (Ctrl+V), atau klik untuk memilih",
-          dropSubtitle: "Di ponsel Android, pilih menu File / Dokumen (bukan Galeri) agar koordinat GPS tidak disensor oleh sistem.",
+          dropTitle: "Jatuhkan gambar atau file .ZIP di sini, atau klik untuk memilih",
+          dropSubtitle: "Mendukung pembacaan langsung foto di dalam arsip .ZIP untuk menghindari sensor lokasi Android.",
+          androidTipHtml: "<strong>Tips Pengguna Android:</strong> Sistem Android otomatis menyensor koordinat GPS saat foto dipilih lewat Galeri. Untuk membaca GPS asli di HP: (1) Pilih menu garis tiga di pemilih file lalu buka <strong>Penyimpanan Internal</strong> (bukan Gambar/Galeri), atau (2) <strong>Kompres foto ke .ZIP</strong> di File Manager lalu unggah file .ZIP tersebut ke sini.",
           exportBatchJson: "Unduh JSON Semua File",
           copySummary: "Salin Ringkasan Teks",
           copyJson: "Salin JSON",
@@ -1126,8 +1141,8 @@
           camSoftware: "Software / Firmware",
           cameraEmpty: "Tidak ada metadata kamera atau pengaturan eksposur yang ditemukan pada gambar ini.",
           notAvailable: "Tidak tersedia",
-          gpsEmpty: "Tidak ada koordinat GPS di dalam biner file ini.",
-          gpsRedactedZero: "Tag struktur GPS ditemukan, tetapi nilainya dinolkan (0, 0) oleh pemilih galeri Android (Photo Picker). Klik kotak unggah di atas lalu pilih gambar melalui menu File / Dokumen (Pengelola File) untuk membaca koordinat aslinya.",
+          gpsEmpty: "Tidak ada data GPS di dalam file ini (kemungkinan besar telah disensor/dihapus oleh pemilih galeri Android). Gunakan cara Penyimpanan Internal atau unggah foto dalam bentuk file .ZIP.",
+          gpsRedactedZero: "Tag GPS ditemukan, tetapi nilainya dinolkan (0, 0) oleh sistem Android. Solusi: kompres foto menjadi file .ZIP lewat File Manager Android lalu unggah file .ZIP tersebut ke halaman ini.",
           gpsDecimal: "Koordinat Desimal (Lat, Lon)",
           gpsDms: "Koordinat DMS",
           gpsAltitude: "Ketinggian (Altitude)",
@@ -1147,13 +1162,15 @@
           toastCopiedCoords: "Koordinat GPS disalin ke clipboard.",
           toastDownloadedJson: "File JSON metadata berhasil diunduh.",
           toastCleared: "Sesi dibersihkan.",
+          toastZipEmpty: "Tidak ada file gambar (JPG/PNG/WebP) yang ditemukan di dalam arsip ZIP.",
           noRawTags: "Tidak ada tag metadata biner yang cocok dengan filter."
         },
         en: {
           appTitle: "Image Metadata Viewer",
           localBadge: "100% Local & Read-Only",
-          dropTitle: "Drop images here, paste (Ctrl+V), or click to select",
-          dropSubtitle: "On Android, choose File / Documents (not Gallery) so the system does not redact GPS coordinates.",
+          dropTitle: "Drop images or a .ZIP archive here, or click to select",
+          dropSubtitle: "Supports inspecting photos directly inside .ZIP files to bypass Android OS GPS redaction.",
+          androidTipHtml: "<strong>Android Tip:</strong> Android automatically strips or zeroes out GPS tags when picking images via Gallery. To read unredacted GPS on mobile: (1) Open the file picker drawer and browse <strong>Internal Storage</strong> directly (not Images/Gallery), or (2) <strong>Compress the photo into a .ZIP</strong> in your File Manager and upload that .ZIP here.",
           exportBatchJson: "Download All Files JSON",
           copySummary: "Copy Text Summary",
           copyJson: "Copy JSON",
@@ -1198,8 +1215,8 @@
           camSoftware: "Software / Firmware",
           cameraEmpty: "No camera or exposure settings metadata found in this image.",
           notAvailable: "Not available",
-          gpsEmpty: "No GPS coordinates found inside this file's binary data.",
-          gpsRedactedZero: "GPS tag headers exist in this file, but the values were zeroed out (0, 0) by the Android Gallery Photo Picker. Tap the upload area above and pick the file via Files / Documents to read the unredacted coordinates.",
+          gpsEmpty: "No GPS data found in this file (likely stripped by the Android gallery picker). Browse Internal Storage directly or upload the photo inside a .ZIP archive.",
+          gpsRedactedZero: "GPS tag headers exist, but values were zeroed out (0, 0) by Android OS. Solution: compress the photo into a .ZIP file in your Android File Manager and upload the .ZIP here.",
           gpsDecimal: "Decimal Coordinates (Lat, Lon)",
           gpsDms: "DMS Coordinates",
           gpsAltitude: "Altitude",
@@ -1219,9 +1236,104 @@
           toastCopiedCoords: "GPS coordinates copied to clipboard.",
           toastDownloadedJson: "Metadata JSON downloaded.",
           toastCleared: "Session cleared.",
+          toastZipEmpty: "No supported images (JPG/PNG/WebP) found inside the ZIP archive.",
           noRawTags: "No metadata tags match the current filter."
         }
       };
+
+      /* =====================================================================
+         ZERO-DEPENDENCY CLIENT-SIDE ZIP EXTRACTOR (BYPASSES ANDROID MEDIASTORE)
+      ===================================================================== */
+      function guessImageMime(filename) {
+        const lower = filename.toLowerCase();
+        if (lower.endsWith(".jpg") || lower.endsWith(".jpeg")) return "image/jpeg";
+        if (lower.endsWith(".png")) return "image/png";
+        if (lower.endsWith(".webp")) return "image/webp";
+        if (lower.endsWith(".gif")) return "image/gif";
+        if (lower.endsWith(".bmp")) return "image/bmp";
+        if (lower.endsWith(".tif") || lower.endsWith(".tiff")) return "image/tiff";
+        return "application/octet-stream";
+      }
+
+      async function extractImagesFromZip(zipFile) {
+        const buffer = await zipFile.arrayBuffer();
+        const view = new DataView(buffer);
+        const extractedFiles = [];
+
+        // Locate End of Central Directory (0x06054b50)
+        const minSearch = Math.max(0, buffer.byteLength - 65557);
+        let eocdOffset = -1;
+        for (let i = buffer.byteLength - 22; i >= minSearch; i--) {
+          if (view.getUint32(i, true) === 0x06054b50) {
+            eocdOffset = i;
+            break;
+          }
+        }
+        if (eocdOffset < 0) return extractedFiles;
+
+        const totalEntries = view.getUint16(eocdOffset + 10, true);
+        const cdSize = view.getUint32(eocdOffset + 12, true);
+        const cdOffset = view.getUint32(eocdOffset + 16, true);
+        if (cdOffset + cdSize > buffer.byteLength) return extractedFiles;
+
+        let cursor = cdOffset;
+        const decoder = new TextDecoder("utf-8", { fatal: false });
+
+        for (let idx = 0; idx < totalEntries && cursor + 46 <= buffer.byteLength; idx++) {
+          if (view.getUint32(cursor, true) !== 0x02014b50) break;
+
+          const method = view.getUint16(cursor + 10, true);
+          const compressedSize = view.getUint32(cursor + 20, true);
+          const uncompressedSize = view.getUint32(cursor + 24, true);
+          const nameLen = view.getUint16(cursor + 28, true);
+          const extraLen = view.getUint16(cursor + 30, true);
+          const commentLen = view.getUint16(cursor + 32, true);
+          const localHeaderOffset = view.getUint32(cursor + 42, true);
+
+          const entryName = decoder.decode(new Uint8Array(buffer, cursor + 46, nameLen));
+          cursor += 46 + nameLen + extraLen + commentLen;
+
+          if (entryName.endsWith("/") || entryName.startsWith("__MACOSX/")) continue;
+          if (!/\.(jpe?g|png|webp|tiff?|gif|bmp)$/i.test(entryName)) continue;
+          if (uncompressedSize > 80 * 1024 * 1024) continue; // Safety cap 80MB per entry
+
+          if (localHeaderOffset + 30 > buffer.byteLength) continue;
+          if (view.getUint32(localHeaderOffset, true) !== 0x04034b50) continue;
+
+          const localNameLen = view.getUint16(localHeaderOffset + 26, true);
+          const localExtraLen = view.getUint16(localHeaderOffset + 28, true);
+          const dataStart = localHeaderOffset + 30 + localNameLen + localExtraLen;
+          if (dataStart + compressedSize > buffer.byteLength) continue;
+
+          const compressedSlice = new Uint8Array(buffer, dataStart, compressedSize);
+          let rawBytes = null;
+
+          if (method === 0) {
+            rawBytes = compressedSlice;
+          } else if (method === 8 && typeof DecompressionStream !== "undefined") {
+            try {
+              const ds = new DecompressionStream("deflate-raw");
+              const writer = ds.writable.getWriter();
+              const readPromise = new Response(ds.readable).arrayBuffer();
+              writer.write(compressedSlice);
+              writer.close();
+              rawBytes = new Uint8Array(await readPromise);
+            } catch (e) {
+              rawBytes = null;
+            }
+          }
+
+          if (rawBytes && rawBytes.byteLength > 0) {
+            const baseName = entryName.split("/").pop() || entryName;
+            extractedFiles.push(new File([rawBytes], baseName, {
+              type: guessImageMime(baseName),
+              lastModified: zipFile.lastModified
+            }));
+          }
+        }
+
+        return extractedFiles;
+      }
 
       const TAG_NAMES = {
         IFD0: {
@@ -1418,18 +1530,8 @@
       const RESOLUTION_UNIT_MAP = { 1: "No absolute unit", 2: "inches (DPI)", 3: "centimeters (DPCM)" };
 
       const TYPE_SIZES = {
-        1: 1,
-        2: 1,
-        3: 2,
-        4: 4,
-        5: 8,
-        6: 1,
-        7: 1,
-        8: 2,
-        9: 4,
-        10: 8,
-        11: 4,
-        12: 8
+        1: 1, 2: 1, 3: 2, 4: 4, 5: 8, 6: 1,
+        7: 1, 8: 2, 9: 4, 10: 8, 11: 4, 12: 8
       };
 
       function decodeAscii(view, offset, length) {
@@ -1531,42 +1633,26 @@
         for (let i = 0; i < count; i++) {
           const pos = valueOffset + i * unitSize;
           switch (type) {
-            case 1:
-              values.push(view.getUint8(pos));
-              break;
-            case 3:
-              values.push(view.getUint16(pos, littleEndian));
-              break;
-            case 4:
-              values.push(view.getUint32(pos, littleEndian));
-              break;
+            case 1: values.push(view.getUint8(pos)); break;
+            case 3: values.push(view.getUint16(pos, littleEndian)); break;
+            case 4: values.push(view.getUint32(pos, littleEndian)); break;
             case 5: {
               const num = view.getUint32(pos, littleEndian);
               const den = view.getUint32(pos + 4, littleEndian);
               values.push(den === 0 ? 0 : num / den);
               break;
             }
-            case 6:
-              values.push(view.getInt8(pos));
-              break;
-            case 8:
-              values.push(view.getInt16(pos, littleEndian));
-              break;
-            case 9:
-              values.push(view.getInt32(pos, littleEndian));
-              break;
+            case 6: values.push(view.getInt8(pos)); break;
+            case 8: values.push(view.getInt16(pos, littleEndian)); break;
+            case 9: values.push(view.getInt32(pos, littleEndian)); break;
             case 10: {
               const num = view.getInt32(pos, littleEndian);
               const den = view.getInt32(pos + 4, littleEndian);
               values.push(den === 0 ? 0 : num / den);
               break;
             }
-            case 11:
-              values.push(view.getFloat32(pos, littleEndian));
-              break;
-            case 12:
-              values.push(view.getFloat64(pos, littleEndian));
-              break;
+            case 11: values.push(view.getFloat32(pos, littleEndian)); break;
+            case 12: values.push(view.getFloat64(pos, littleEndian)); break;
           }
         }
 
@@ -1811,7 +1897,7 @@
             }
           }
         } catch (e) {
-          // Ignore malformed XMP safely
+          // Ignore malformed XMP
         }
       }
 
@@ -2185,7 +2271,6 @@
           return null;
         }
 
-        /* Detect Android Photo Picker / OS redaction where GPS tags are zeroed out (0, 0) */
         if (lat === 0 && lon === 0) {
           return {
             isRedactedZero: true,
@@ -2338,6 +2423,7 @@
       const el = {
         dropzone: document.getElementById("dropzone"),
         fileInput: document.getElementById("fileInput"),
+        androidTip: document.querySelector(".android-tip"),
         batchBar: document.getElementById("batchBar"),
         batchTabs: document.getElementById("batchTabs"),
         btnExportAllJson: document.getElementById("btnExportAllJson"),
@@ -2379,7 +2465,7 @@
         clearTimeout(toastTimer);
         toastTimer = setTimeout(function () {
           el.toast.classList.remove("show");
-        }, 2500);
+        }, 2800);
       }
 
       function formatBytes(bytes) {
@@ -2424,7 +2510,11 @@
         const nodes = document.querySelectorAll("[data-i18n]");
         for (let i = 0; i < nodes.length; i++) {
           const key = nodes[i].getAttribute("data-i18n");
+          if (key === "androidTip") continue;
           nodes[i].textContent = t(key);
+        }
+        if (el.androidTip) {
+          el.androidTip.innerHTML = t("androidTipHtml");
         }
         el.tagSearchInput.placeholder = t("searchPlaceholder");
 
@@ -2907,14 +2997,35 @@
       }
 
       async function handleFiles(fileList) {
-        const files = Array.from(fileList || []).filter(function (f) {
-          return f.type.startsWith("image/") || /\.(jpe?g|png|webp|tiff?|gif|bmp|avif)$/i.test(f.name);
-        });
-        if (files.length === 0) return;
+        const inputFiles = Array.from(fileList || []);
+        if (inputFiles.length === 0) return;
+
+        const resolvedImages = [];
+        let zipHadNoImages = false;
+
+        for (let i = 0; i < inputFiles.length; i++) {
+          const f = inputFiles[i];
+          const isZip = f.type === "application/zip" || f.type === "application/x-zip-compressed" || /\.zip$/i.test(f.name);
+          if (isZip) {
+            const inner = await extractImagesFromZip(f);
+            if (inner.length === 0) {
+              zipHadNoImages = true;
+            } else {
+              inner.forEach(function (imgFile) { resolvedImages.push(imgFile); });
+            }
+          } else if (f.type.startsWith("image/") || /\.(jpe?g|png|webp|tiff?|gif|bmp|avif)$/i.test(f.name)) {
+            resolvedImages.push(f);
+          }
+        }
+
+        if (resolvedImages.length === 0) {
+          if (zipHadNoImages) showToast(t("toastZipEmpty"));
+          return;
+        }
 
         clearSession();
-        for (let i = 0; i < files.length; i++) {
-          const rec = await analyzeImageFile(files[i]);
+        for (let i = 0; i < resolvedImages.length; i++) {
+          const rec = await analyzeImageFile(resolvedImages[i]);
           state.records.push(rec);
         }
         state.activeIndex = 0;
