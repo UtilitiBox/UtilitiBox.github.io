@@ -3,15 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Penggabung Gambar - UtilitiBox</title>
+    <title>Image Merger Utility - UtilitiBox</title>
 
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-    <!-- FontAwesome 6 CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Tailwind CSS CDN dengan konfigurasi darkMode: 'class' -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -28,7 +25,7 @@
         }
     </script>
 
-    <!-- Inisialisasi Tema Awal sebelum render untuk mencegah kedipan layar (FOUC) -->
+    <!-- Inisialisasi Tema Awal sebelum render untuk mencegah kedipan layar -->
     <script>
         (function () {
             const savedTheme = localStorage.getItem('color-theme');
@@ -99,7 +96,7 @@
             background: #94a3b8;
         }
 
-        /* Hilangkan panah spinner bawaan pada input number agar lebih rapi */
+        /* Hilangkan panah spinner bawaan pada input number */
         input[type="number"]::-webkit-inner-spin-button,
         input[type="number"]::-webkit-outer-spin-button {
             -webkit-appearance: none;
@@ -127,44 +124,69 @@
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen transition-colors duration-200 flex flex-col">
 
     <!-- ==================== HEADER / NAVBAR ==================== -->
-    <header class="sticky top-0 z-30 bg-white/85 dark:bg-slate-900/85 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+    <header class="sticky top-0 z-30 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between gap-3">
             <!-- Identitas Aplikasi -->
             <div class="flex items-center gap-3 min-w-0">
-                <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center shadow-md shadow-emerald-500/20 shrink-0">
-                    <i class="fa-solid fa-layer-group text-lg sm:text-xl"></i>
+                <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-600 text-white flex items-center justify-center shadow-md shadow-emerald-600/20 shrink-0">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="8" rx="1.5"></rect>
+                        <rect x="3" y="14" width="7.5" height="7" rx="1.5"></rect>
+                        <rect x="13.5" y="14" width="7.5" height="7" rx="1.5"></rect>
+                    </svg>
                 </div>
                 <div class="min-w-0">
                     <div class="flex items-center gap-2">
-                        <h1 class="text-lg sm:text-xl font-extrabold tracking-tight text-slate-900 dark:text-white truncate">
-                            Penggabung Gambar
+                        <h1 class="text-base sm:text-xl font-extrabold tracking-tight text-slate-900 dark:text-white truncate">
+                            Image Merger Utility
                         </h1>
                         <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60">
-                            Client-Side
+                            100% Client-Side
                         </span>
                     </div>
                     <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 truncate">
-                        UtilitiBox - 100% Client-Side, Privasi Terjaga
+                        UtilitiBox - Penggabung Gambar & Kolase Presisi
                     </p>
                 </div>
             </div>
 
-            <!-- Kontrol Kanan: Beranda & Toggle Mode Malam -->
+            <!-- Kontrol Kanan: Tombol Kembali ke Beranda & Mode Malam -->
             <div class="flex items-center gap-2 shrink-0">
                 <a href="https://utilitibox.github.io/" title="Kembali ke Beranda UtilitiBox"
-                   class="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-                    <i class="fa-solid fa-box-open text-blue-600 dark:text-blue-400"></i>
-                    <span class="hidden md:inline">UtilitiBox</span>
+                   class="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                    <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    <span class="hidden sm:inline">Beranda UtilitiBox</span>
+                    <span class="sm:hidden">Beranda</span>
                 </a>
 
-                <button id="themeToggle" type="button" title="Ganti Mode Malam / Terang"
+                <button id="themeToggle" type="button" title="Ganti Mode Malam / Mode Terang"
                         class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                    <i id="themeLightIcon" class="fa-solid fa-sun hidden text-amber-400 text-base"></i>
-                    <i id="themeDarkIcon" class="fa-solid fa-moon hidden text-slate-700 text-base"></i>
+                    <!-- Ikon Matahari (Mode Terang) -->
+                    <svg id="themeLightIcon" class="w-5 h-5 hidden text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="4"></circle>
+                        <line x1="12" y1="2" x2="12" y2="4"></line>
+                        <line x1="12" y1="20" x2="12" y2="22"></line>
+                        <line x1="4.93" y1="4.93" x2="6.34" y2="6.34"></line>
+                        <line x1="17.66" y1="17.66" x2="19.07" y2="19.07"></line>
+                        <line x1="2" y1="12" x2="4" y2="12"></line>
+                        <line x1="20" y1="12" x2="22" y2="12"></line>
+                        <line x1="4.93" y1="19.07" x2="6.34" y2="17.66"></line>
+                        <line x1="17.66" y1="6.34" x2="19.07" y2="4.93"></line>
+                    </svg>
+                    <!-- Ikon Bulan (Mode Malam) -->
+                    <svg id="themeDarkIcon" class="w-5 h-5 hidden text-slate-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
                 </button>
             </div>
         </div>
     </header>
+
+    <!-- Input Tersembunyi untuk Penggantian Satu Gambar Tertentu -->
+    <input id="replaceFileInput" type="file" accept="image/jpeg,image/png,image/webp,image/gif" class="hidden">
 
     <!-- ==================== MAIN WORKSPACE ==================== -->
     <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8">
@@ -177,10 +199,14 @@
                 <section class="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
                     <div class="flex items-center justify-between mb-4">
                         <h2 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                            <span class="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xs">
-                                <i class="fa-solid fa-images"></i>
+                            <span class="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                    <polyline points="21 15 16 10 5 21"></polyline>
+                                </svg>
                             </span>
-                            Daftar Gambar
+                            Daftar & Urutan Gambar
                             <span id="imageCountBadge" class="ml-1 px-2 py-0.5 text-xs font-semibold rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
                                 0
                             </span>
@@ -188,7 +214,10 @@
 
                         <button id="clearAllBtn" type="button" disabled
                                 class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/50 hover:bg-rose-100 dark:hover:bg-rose-900/40 disabled:opacity-40 disabled:pointer-events-none transition-colors">
-                            <i class="fa-solid fa-trash-can"></i>
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            </svg>
                             Hapus Semua
                         </button>
                     </div>
@@ -196,158 +225,378 @@
                     <!-- Area Dropzone Unggah Gambar -->
                     <div id="dropZone" role="button" tabindex="0"
                          class="group relative border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-500 rounded-2xl p-5 sm:p-6 text-center cursor-pointer bg-slate-50/70 dark:bg-slate-800/40 hover:bg-emerald-50/40 dark:hover:bg-emerald-950/20 transition-all">
-                        <input id="fileInput" type="file" accept="image/png,image/jpeg,image/webp" multiple class="hidden">
+                        <input id="fileInput" type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple class="hidden">
 
-                        <div class="w-12 h-12 mx-auto mb-3 rounded-2xl bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl group-hover:scale-105 transition-transform">
-                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <div class="w-12 h-12 mx-auto mb-3 rounded-2xl bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 text-emerald-600 dark:text-emerald-400 flex items-center justify-center group-hover:scale-105 transition-transform">
+                            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
                         </div>
                         <p class="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">
-                            Klik untuk pilih gambar atau seret ke sini
+                            Klik untuk memilih gambar atau seret ke sini
                         </p>
                         <p class="text-xs text-slate-500 dark:text-slate-400">
-                            Mendukung format PNG, JPG, WebP (Bisa pilih banyak sekaligus)
+                            Pilih hingga 5 gambar sekaligus untuk Kolase Utama (JPG, PNG, WebP, GIF, atau Ctrl+V)
                         </p>
                     </div>
 
                     <!-- Daftar Thumbnail & Kontrol Urutan -->
                     <div id="imageListWrapper" class="mt-4 hidden">
                         <div class="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 mb-2 px-1">
-                            <span><i class="fa-solid fa-arrows-up-down mr-1"></i>Geser (desktop) atau klik panah (HP) untuk urutkan</span>
+                            <span>Seret baris (laptop) atau gunakan tombol panah/ganti (HP)</span>
                         </div>
-                        <ul id="imageList" class="space-y-2.5 max-h-[340px] overflow-y-auto pr-1">
+                        <ul id="imageList" class="space-y-2.5 max-h-[380px] overflow-y-auto pr-1">
                             <!-- Item gambar dirender secara dinamis oleh JavaScript -->
                         </ul>
                     </div>
                 </section>
 
-                <!-- 2. PANEL PENGATURAN TATA LETAK (LAYOUT) -->
+                <!-- 2. PANEL MODE TATA LETAK & PENYESUAIAN SLOT -->
                 <section class="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5">
                     <h2 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        <span class="w-7 h-7 rounded-lg bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xs">
-                            <i class="fa-solid fa-table-cells-large"></i>
+                        <span class="w-7 h-7 rounded-lg bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="14" width="7" height="7"></rect>
+                                <rect x="3" y="14" width="7" height="7"></rect>
+                            </svg>
                         </span>
-                        Pengaturan Tata Letak
+                        Mode Tata Letak
                     </h2>
 
-                    <!-- Pilihan Mode Penggabungan -->
-                    <div>
-                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
-                            Arah Penggabungan
-                        </label>
-                        <div class="grid grid-cols-3 gap-2">
-                            <button type="button" data-mode="vertical"
-                                    class="mode-btn flex flex-col items-center justify-center gap-1.5 py-3 px-2 rounded-2xl border-2 text-xs font-semibold transition-all border-emerald-500 bg-emerald-50/70 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300">
-                                <i class="fa-solid fa-arrows-up-down text-base"></i>
-                                <span>Vertikal</span>
-                            </button>
+                    <!-- Pilihan 4 Mode Penggabungan (Kolase Utama 1+4 Aktif Secara Default) -->
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <button type="button" data-mode="featured"
+                                class="mode-btn flex items-center gap-2.5 p-3 rounded-2xl border-2 text-left transition-all border-emerald-500 bg-emerald-50/70 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300">
+                            <span class="w-8 h-8 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center shrink-0">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="3" width="18" height="8" rx="1"></rect>
+                                    <rect x="3" y="14" width="7.5" height="7" rx="1"></rect>
+                                    <rect x="13.5" y="14" width="7.5" height="7" rx="1"></rect>
+                                </svg>
+                            </span>
+                            <div class="min-w-0">
+                                <div class="text-xs font-bold truncate">Kolase Utama (1+4)</div>
+                                <div class="text-[10px] opacity-80 truncate">1 Besar + 4 Grid</div>
+                            </div>
+                        </button>
 
-                            <button type="button" data-mode="horizontal"
-                                    class="mode-btn flex flex-col items-center justify-center gap-1.5 py-3 px-2 rounded-2xl border-2 text-xs font-semibold transition-all border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700">
-                                <i class="fa-solid fa-arrows-left-right text-base"></i>
-                                <span>Horizontal</span>
-                            </button>
+                        <button type="button" data-mode="vertical"
+                                class="mode-btn flex items-center gap-2.5 p-3 rounded-2xl border-2 text-left transition-all border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700">
+                            <span class="w-8 h-8 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center shrink-0">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="12" y1="3" x2="12" y2="21"></line>
+                                    <polyline points="8 7 12 3 16 7"></polyline>
+                                    <polyline points="8 17 12 21 16 17"></polyline>
+                                </svg>
+                            </span>
+                            <div class="min-w-0">
+                                <div class="text-xs font-bold truncate">Vertikal</div>
+                                <div class="text-[10px] opacity-80 truncate">Susun ke Bawah</div>
+                            </div>
+                        </button>
 
-                            <button type="button" data-mode="grid"
-                                    class="mode-btn flex flex-col items-center justify-center gap-1.5 py-3 px-2 rounded-2xl border-2 text-xs font-semibold transition-all border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700">
-                                <i class="fa-solid fa-grip text-base"></i>
-                                <span>Grid Kolase</span>
-                            </button>
-                        </div>
+                        <button type="button" data-mode="horizontal"
+                                class="mode-btn flex items-center gap-2.5 p-3 rounded-2xl border-2 text-left transition-all border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700">
+                            <span class="w-8 h-8 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center shrink-0">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                                    <polyline points="7 8 3 12 7 16"></polyline>
+                                    <polyline points="17 8 21 12 17 16"></polyline>
+                                </svg>
+                            </span>
+                            <div class="min-w-0">
+                                <div class="text-xs font-bold truncate">Horizontal</div>
+                                <div class="text-[10px] opacity-80 truncate">Susun ke Samping</div>
+                            </div>
+                        </button>
+
+                        <button type="button" data-mode="grid"
+                                class="mode-btn flex items-center gap-2.5 p-3 rounded-2xl border-2 text-left transition-all border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700">
+                            <span class="w-8 h-8 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center shrink-0">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="3" width="7" height="7"></rect>
+                                    <rect x="14" y="3" width="7" height="7"></rect>
+                                    <rect x="14" y="14" width="7" height="7"></rect>
+                                    <rect x="3" y="14" width="7" height="7"></rect>
+                                </svg>
+                            </span>
+                            <div class="min-w-0">
+                                <div class="text-xs font-bold truncate">Grid Standar</div>
+                                <div class="text-[10px] opacity-80 truncate">Kisi 2 - 5 Kolom</div>
+                            </div>
+                        </button>
                     </div>
 
-                    <!-- Pilihan Jumlah Kolom (Khusus Mode Grid) -->
-                    <div id="gridColumnsContainer" class="hidden pt-1">
-                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
-                            Jumlah Kolom Grid
-                        </label>
-                        <div class="grid grid-cols-3 gap-2">
-                            <button type="button" data-cols="2"
-                                    class="grid-col-btn py-2.5 px-3 rounded-xl border-2 text-xs font-bold transition-all border-emerald-500 bg-emerald-50/70 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300">
-                                2 Kolom
-                            </button>
-                            <button type="button" data-cols="3"
-                                    class="grid-col-btn py-2.5 px-3 rounded-xl border-2 text-xs font-bold transition-all border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700">
-                                3 Kolom
-                            </button>
-                            <button type="button" data-cols="4"
-                                    class="grid-col-btn py-2.5 px-3 rounded-xl border-2 text-xs font-bold transition-all border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700">
-                                4 Kolom
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Toggle Auto-Resize Proporsional -->
-                    <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800 flex items-start justify-between gap-3">
-                        <div class="space-y-0.5">
-                            <label for="autoResizeToggle" class="text-sm font-semibold text-slate-800 dark:text-slate-100 cursor-pointer block">
-                                Auto-Resize Proporsional
+                    <!-- SUB-PANEL A: OPSI UNTUK MODE VERTIKAL, HORIZONTAL & GRID STANDAR -->
+                    <div id="standardLayoutControls" class="hidden space-y-4 pt-1">
+                        <!-- Pilihan Jumlah Kolom (Khusus Mode Grid Standar) -->
+                        <div id="gridColumnsContainer" class="hidden">
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
+                                Jumlah Kolom Grid
                             </label>
-                            <p id="autoResizeDesc" class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                                Menyamakan lebar semua gambar mengikuti gambar pertama tanpa distorsi.
-                            </p>
+                            <div class="grid grid-cols-4 gap-2">
+                                <button type="button" data-cols="2"
+                                        class="grid-col-btn py-2.5 px-2 rounded-xl border-2 text-xs font-bold transition-all border-emerald-500 bg-emerald-50/70 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300">
+                                    2 Kolom
+                                </button>
+                                <button type="button" data-cols="3"
+                                        class="grid-col-btn py-2.5 px-2 rounded-xl border-2 text-xs font-bold transition-all border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700">
+                                    3 Kolom
+                                </button>
+                                <button type="button" data-cols="4"
+                                        class="grid-col-btn py-2.5 px-2 rounded-xl border-2 text-xs font-bold transition-all border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700">
+                                    4 Kolom
+                                </button>
+                                <button type="button" data-cols="5"
+                                        class="grid-col-btn py-2.5 px-2 rounded-xl border-2 text-xs font-bold transition-all border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700">
+                                    5 Kolom
+                                </button>
+                            </div>
                         </div>
 
-                        <label class="relative inline-flex items-center cursor-pointer shrink-0 mt-0.5">
-                            <input id="autoResizeToggle" type="checkbox" checked class="sr-only peer">
-                            <div class="w-11 h-6 bg-slate-300 dark:bg-slate-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-emerald-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
-                        </label>
+                        <!-- Checkbox Auto-Resize -->
+                        <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800 flex items-start justify-between gap-3">
+                            <div class="space-y-0.5">
+                                <label for="autoResizeToggle" id="autoResizeTitle" class="text-sm font-semibold text-slate-800 dark:text-slate-100 cursor-pointer block">
+                                    Samakan Lebar Otomatis (Auto-Resize)
+                                </label>
+                                <p id="autoResizeDesc" class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                                    Menyesuaikan ukuran semua gambar mengikuti dimensi gambar urutan pertama tanpa distorsi.
+                                </p>
+                            </div>
+
+                            <label class="relative inline-flex items-center cursor-pointer shrink-0 mt-0.5">
+                                <input id="autoResizeToggle" type="checkbox" checked class="sr-only peer">
+                                <div class="w-11 h-6 bg-slate-300 dark:bg-slate-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-emerald-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- SUB-PANEL B: KONTROL KHUSUS MODE KOLASE UTAMA (1+4) -->
+                    <div id="featuredLayoutControls" class="space-y-5 pt-2 border-t border-slate-100 dark:border-slate-800">
+
+                        <!-- 1. Mode Pengisian Gambar di Dalam Kotak (Cover vs Contain) -->
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
+                                Mode Pengisian Gambar di Kotak
+                            </label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button type="button" data-fit="cover"
+                                        class="fit-mode-btn flex flex-col items-start p-2.5 rounded-xl border-2 text-left transition-all border-emerald-500 bg-emerald-50/70 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300">
+                                    <span class="text-xs font-bold">Penuh & Pas (Cover)</span>
+                                    <span class="text-[10px] opacity-80">Isi penuh tanpa ruang kosong</span>
+                                </button>
+                                <button type="button" data-fit="contain"
+                                        class="fit-mode-btn flex flex-col items-start p-2.5 rounded-xl border-2 text-left transition-all border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700">
+                                    <span class="text-xs font-bold">Tampilkan Utuh (Fit)</span>
+                                    <span class="text-[10px] opacity-80">Seluruh gambar terlihat</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 2. Posisi Gambar Utama (Atas / Bawah) -->
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
+                                Posisi Gambar Utama
+                            </label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button type="button" data-hero-pos="top"
+                                        class="hero-pos-btn flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border-2 text-xs font-bold transition-all border-emerald-500 bg-emerald-50/70 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300">
+                                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="12" y1="19" x2="12" y2="5"></line>
+                                        <polyline points="5 12 12 5 19 12"></polyline>
+                                    </svg>
+                                    <span>Utama di Atas</span>
+                                </button>
+                                <button type="button" data-hero-pos="bottom"
+                                        class="hero-pos-btn flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border-2 text-xs font-bold transition-all border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700">
+                                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <polyline points="19 12 12 19 5 12"></polyline>
+                                    </svg>
+                                    <span>Utama di Bawah</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 3. Rasio Kanvas (Auto-Pas Sesuai Rasio Gambar sebagai default) & Resolusi -->
+                        <div class="grid grid-cols-1 sm:grid-cols-12 gap-3">
+                            <div class="sm:col-span-7">
+                                <label for="canvasRatioPreset" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                                    Proporsi Kanvas
+                                </label>
+                                <select id="canvasRatioPreset"
+                                        class="w-full h-10 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                    <option value="auto" selected>Auto-Pas Sesuai Rasio Gambar</option>
+                                    <option value="4:5">4:5 Portrait Sosial Media</option>
+                                    <option value="1:1">1:1 Persegi (Square)</option>
+                                    <option value="3:4">3:4 Portrait Standar</option>
+                                    <option value="16:9">16:9 Landscape Lebar</option>
+                                    <option value="9:16">9:16 Story Vertikal</option>
+                                </select>
+                            </div>
+
+                            <div class="sm:col-span-5">
+                                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                                    Resolusi Output
+                                </label>
+                                <div class="grid grid-cols-3 gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700 h-10">
+                                    <button type="button" data-scale="1"
+                                            class="res-scale-btn rounded-lg text-[11px] font-bold transition-all bg-white dark:bg-slate-700 text-emerald-700 dark:text-emerald-300 shadow-xs">
+                                        1x
+                                    </button>
+                                    <button type="button" data-scale="1.5"
+                                            class="res-scale-btn rounded-lg text-[11px] font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+                                        1.5x
+                                    </button>
+                                    <button type="button" data-scale="2"
+                                            class="res-scale-btn rounded-lg text-[11px] font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+                                        2x HD
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 4. Panel Slider Proporsi & Ukuran Area Gambar -->
+                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 space-y-4">
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                                    Ukuran Tiap Area Gambar
+                                </span>
+                                <button id="resetAreaBtn" type="button"
+                                        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-100/80 dark:bg-emerald-950/70 hover:bg-emerald-200/70 dark:hover:bg-emerald-900/60 transition-colors">
+                                    <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="1 4 1 10 7 10"></polyline>
+                                        <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                                    </svg>
+                                    Reset Ukuran Area
+                                </button>
+                            </div>
+
+                            <!-- Slider 1: Tinggi Area Gambar Utama -->
+                            <div>
+                                <div class="flex items-center justify-between text-xs mb-1.5">
+                                    <label for="heroHeightScaleSlider" class="font-semibold text-slate-700 dark:text-slate-300">
+                                        Tinggi Area Utama
+                                    </label>
+                                    <span id="heroHeightScaleLabel" class="font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                                        100% (Auto-Pas)
+                                    </span>
+                                </div>
+                                <input id="heroHeightScaleSlider" type="range" min="50" max="150" value="100"
+                                       class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-600">
+                            </div>
+
+                            <!-- Slider 2: Tinggi Baris 1 (Kiri Atas & Kanan Atas) -->
+                            <div>
+                                <div class="flex items-center justify-between text-xs mb-1.5">
+                                    <label for="row1HeightScaleSlider" class="font-semibold text-slate-700 dark:text-slate-300">
+                                        Tinggi Baris 1 (Slot 2 & 3)
+                                    </label>
+                                    <span id="row1HeightScaleLabel" class="font-mono font-bold text-blue-600 dark:text-blue-400">
+                                        100% (Auto-Pas)
+                                    </span>
+                                </div>
+                                <input id="row1HeightScaleSlider" type="range" min="50" max="150" value="100"
+                                       class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                            </div>
+
+                            <!-- Slider 3: Tinggi Baris 2 (Kiri Bawah & Kanan Bawah) -->
+                            <div>
+                                <div class="flex items-center justify-between text-xs mb-1.5">
+                                    <label for="row2HeightScaleSlider" class="font-semibold text-slate-700 dark:text-slate-300">
+                                        Tinggi Baris 2 (Slot 4 & 5)
+                                    </label>
+                                    <span id="row2HeightScaleLabel" class="font-mono font-bold text-blue-600 dark:text-blue-400">
+                                        100% (Auto-Pas)
+                                    </span>
+                                </div>
+                                <input id="row2HeightScaleSlider" type="range" min="50" max="150" value="100"
+                                       class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                            </div>
+
+                            <!-- Slider 4: Rasio Lebar Kolom Kiri vs Kanan -->
+                            <div>
+                                <div class="flex items-center justify-between text-xs mb-1.5">
+                                    <label for="colSplitSlider" class="font-semibold text-slate-700 dark:text-slate-300">
+                                        Lebar Kolom Kiri : Kanan
+                                    </label>
+                                    <span id="colSplitLabel" class="font-mono font-bold text-indigo-600 dark:text-indigo-400">
+                                        50% : 50%
+                                    </span>
+                                </div>
+                                <input id="colSplitSlider" type="range" min="25" max="75" value="50"
+                                       class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-600">
+                            </div>
+                        </div>
                     </div>
                 </section>
 
-                <!-- 3. PANEL TEPIAN & WARNA (BORDER & SPACING CONTROLS) -->
+                <!-- 3. PANEL GARIS PEMISAH DALAM, TEPIAN LUAR & WARNA -->
                 <section class="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5">
-                    <h2 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        <span class="w-7 h-7 rounded-lg bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 flex items-center justify-center text-xs">
-                            <i class="fa-solid fa-border-all"></i>
-                        </span>
-                        Tepian & Warna Latar
-                    </h2>
+                    <div class="flex items-center justify-between gap-2">
+                        <h2 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                            <span class="w-7 h-7 rounded-lg bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 flex items-center justify-center">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                                    <line x1="12" y1="3" x2="12" y2="21"></line>
+                                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                                </svg>
+                            </span>
+                            Garis Pemisah & Tepian
+                        </h2>
 
-                    <!-- Ketebalan Tepian Luar (Outer Border / Padding) -->
-                    <div>
-                        <div class="flex items-center justify-between mb-2">
-                            <label for="outerBorderSlider" class="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                                Ketebalan Tepian Luar (Padding)
-                            </label>
-                            <div class="flex items-center bg-slate-100 dark:bg-slate-800 rounded-xl px-2.5 py-1 border border-slate-200 dark:border-slate-700">
-                                <input id="outerBorderInput" type="number" min="0" max="150" value="16"
-                                       class="w-11 text-right text-xs font-bold bg-transparent text-slate-800 dark:text-slate-100 focus:outline-none">
-                                <span class="text-[11px] font-medium text-slate-400 ml-1">px</span>
-                            </div>
-                        </div>
-                        <input id="outerBorderSlider" type="range" min="0" max="150" value="16"
-                               class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-600">
+                        <!-- Tombol Kunci Sinkronisasi Tepian & Jarak -->
+                        <button id="syncLockBtn" type="button" title="Kunci atau buka sinkronisasi Garis Pemisah Dalam dan Tepian Luar"
+                                class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[11px] font-semibold border transition-colors bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700">
+                            <svg id="syncLockIcon" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 9.9-1"></path>
+                            </svg>
+                            <span>Atur Terpisah</span>
+                        </button>
                     </div>
 
-                    <!-- Jarak Antar Gambar (Inner Gap / Spacing) -->
+                    <!-- Garis Pemisah Dalam (Inner Gap - Default 5px) -->
                     <div>
                         <div class="flex items-center justify-between mb-2">
                             <label for="innerGapSlider" class="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                                Jarak Antar Gambar (Spacing)
+                                Garis Pemisah Dalam (Inner Gap)
                             </label>
                             <div class="flex items-center bg-slate-100 dark:bg-slate-800 rounded-xl px-2.5 py-1 border border-slate-200 dark:border-slate-700">
-                                <input id="innerGapInput" type="number" min="0" max="150" value="16"
+                                <input id="innerGapInput" type="number" min="0" max="150" value="5"
                                        class="w-11 text-right text-xs font-bold bg-transparent text-slate-800 dark:text-slate-100 focus:outline-none">
                                 <span class="text-[11px] font-medium text-slate-400 ml-1">px</span>
                             </div>
                         </div>
-                        <input id="innerGapSlider" type="range" min="0" max="150" value="16"
+                        <input id="innerGapSlider" type="range" min="0" max="150" value="5"
                                class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-600">
-
-                        <!-- Opsi Centang: Samakan jarak antar gambar dengan tepian luar -->
-                        <label class="mt-3 inline-flex items-center gap-2.5 cursor-pointer select-none">
-                            <input id="syncSpacingCheckbox" type="checkbox" checked
-                                   class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 border-slate-300 dark:border-slate-600 dark:bg-slate-800">
-                            <span class="text-xs font-medium text-slate-600 dark:text-slate-400">
-                                Samakan jarak antar gambar dengan tepian luar
-                            </span>
-                        </label>
                     </div>
 
-                    <!-- Pemilih Warna Tepian / Latar -->
-                    <div class="pt-1 border-t border-slate-100 dark:border-slate-800">
+                    <!-- Tepian Luar Kanvas (Outer Margin - Default 0px) -->
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <label for="outerBorderSlider" class="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                                Tepian Luar Kanvas (Outer Margin)
+                            </label>
+                            <div class="flex items-center bg-slate-100 dark:bg-slate-800 rounded-xl px-2.5 py-1 border border-slate-200 dark:border-slate-700">
+                                <input id="outerBorderInput" type="number" min="0" max="150" value="0"
+                                       class="w-11 text-right text-xs font-bold bg-transparent text-slate-800 dark:text-slate-100 focus:outline-none">
+                                <span class="text-[11px] font-medium text-slate-400 ml-1">px</span>
+                            </div>
+                        </div>
+                        <input id="outerBorderSlider" type="range" min="0" max="150" value="0"
+                               class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-600">
+                    </div>
+
+                    <!-- Pemilih Warna Garis Pemisah & Tepian -->
+                    <div class="pt-2 border-t border-slate-100 dark:border-slate-800">
                         <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2.5">
-                            Warna Tepian & Latar Belakang
+                            Warna Garis Pemisah & Latar
                         </label>
 
                         <!-- Input Color Picker + Hex Text Input Tersinkronisasi -->
@@ -359,49 +608,56 @@
 
                             <div class="flex-grow flex items-center bg-slate-100 dark:bg-slate-800 rounded-xl px-3 h-11 border border-slate-200 dark:border-slate-700 focus-within:ring-2 focus-within:ring-emerald-500">
                                 <span class="text-xs font-semibold text-slate-400 mr-2">HEX</span>
-                                <input id="bgColorHex" type="text" value="#FFFFFF" maxlength="10" placeholder="#FFFFFF"
+                                <input id="bgColorHex" type="text" value="#FFFFFF" maxlength="12" placeholder="#FFFFFF"
                                        class="w-full bg-transparent text-sm font-mono font-bold uppercase text-slate-800 dark:text-slate-100 focus:outline-none">
                             </div>
                         </div>
 
-                        <!-- Tombol Preset Warna Cepat -->
+                        <!-- Preset Warna Cepat & Opsi Transparan -->
                         <div>
                             <span class="block text-[11px] font-medium text-slate-500 dark:text-slate-400 mb-2">
-                                Preset Warna Cepat:
+                                Preset Cepat:
                             </span>
-                            <div class="grid grid-cols-5 gap-2">
+                            <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
                                 <!-- Putih -->
                                 <button type="button" data-preset="#FFFFFF" title="Putih (#FFFFFF)"
                                         class="preset-color-btn flex flex-col items-center gap-1 p-2 rounded-xl border-2 border-emerald-500 bg-slate-50 dark:bg-slate-800/80 transition-all">
-                                    <span class="w-6 h-6 rounded-full bg-white border border-slate-300 shadow-xs"></span>
+                                    <span class="w-5 h-5 rounded-full bg-white border border-slate-300 shadow-xs"></span>
                                     <span class="text-[10px] font-semibold text-slate-700 dark:text-slate-300">Putih</span>
                                 </button>
 
                                 <!-- Hitam -->
                                 <button type="button" data-preset="#000000" title="Hitam (#000000)"
                                         class="preset-color-btn flex flex-col items-center gap-1 p-2 rounded-xl border-2 border-transparent bg-slate-50 dark:bg-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 transition-all">
-                                    <span class="w-6 h-6 rounded-full bg-black border border-slate-600 shadow-xs"></span>
+                                    <span class="w-5 h-5 rounded-full bg-black border border-slate-600 shadow-xs"></span>
                                     <span class="text-[10px] font-semibold text-slate-700 dark:text-slate-300">Hitam</span>
                                 </button>
 
-                                <!-- Abu-abu Terang -->
-                                <button type="button" data-preset="#E2E8F0" title="Abu-abu Terang (#E2E8F0)"
+                                <!-- Abu Gelap -->
+                                <button type="button" data-preset="#1E293B" title="Abu Gelap (#1E293B)"
                                         class="preset-color-btn flex flex-col items-center gap-1 p-2 rounded-xl border-2 border-transparent bg-slate-50 dark:bg-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 transition-all">
-                                    <span class="w-6 h-6 rounded-full bg-[#E2E8F0] border border-slate-300 shadow-xs"></span>
-                                    <span class="text-[10px] font-semibold text-slate-700 dark:text-slate-300">Terang</span>
+                                    <span class="w-5 h-5 rounded-full bg-[#1E293B] border border-slate-600 shadow-xs"></span>
+                                    <span class="text-[10px] font-semibold text-slate-700 dark:text-slate-300">Abu Gelap</span>
                                 </button>
 
-                                <!-- Abu-abu Gelap -->
-                                <button type="button" data-preset="#1E293B" title="Abu-abu Gelap (#1E293B)"
+                                <!-- Abu Terang -->
+                                <button type="button" data-preset="#F1F5F9" title="Abu Terang (#F1F5F9)"
                                         class="preset-color-btn flex flex-col items-center gap-1 p-2 rounded-xl border-2 border-transparent bg-slate-50 dark:bg-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 transition-all">
-                                    <span class="w-6 h-6 rounded-full bg-[#1E293B] border border-slate-600 shadow-xs"></span>
-                                    <span class="text-[10px] font-semibold text-slate-700 dark:text-slate-300">Gelap</span>
+                                    <span class="w-5 h-5 rounded-full bg-[#F1F5F9] border border-slate-300 shadow-xs"></span>
+                                    <span class="text-[10px] font-semibold text-slate-700 dark:text-slate-300">Abu Terang</span>
+                                </button>
+
+                                <!-- Teal -->
+                                <button type="button" data-preset="#0D9488" title="Teal (#0D9488)"
+                                        class="preset-color-btn flex flex-col items-center gap-1 p-2 rounded-xl border-2 border-transparent bg-slate-50 dark:bg-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 transition-all">
+                                    <span class="w-5 h-5 rounded-full bg-[#0D9488] border border-teal-700 shadow-xs"></span>
+                                    <span class="text-[10px] font-semibold text-slate-700 dark:text-slate-300">Teal</span>
                                 </button>
 
                                 <!-- Transparan -->
                                 <button type="button" data-preset="transparent" title="Transparan (Tanpa Latar)"
                                         class="preset-color-btn flex flex-col items-center gap-1 p-2 rounded-xl border-2 border-transparent bg-slate-50 dark:bg-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 transition-all">
-                                    <span class="w-6 h-6 rounded-full checkerboard-swatch border border-slate-300 dark:border-slate-600 shadow-xs"></span>
+                                    <span class="w-5 h-5 rounded-full checkerboard-swatch border border-slate-300 dark:border-slate-600 shadow-xs"></span>
                                     <span class="text-[10px] font-semibold text-slate-700 dark:text-slate-300">Transparan</span>
                                 </button>
                             </div>
@@ -411,50 +667,64 @@
 
             </div>
 
-            <!-- ==================== KOLOM KANAN: PRATINJAU & EKSPOR ==================== -->
+            <!-- ==================== KOLOM KANAN: PRATINJAU, FOKUS SLOT & EKSPOR ==================== -->
             <div class="lg:col-span-7 lg:sticky lg:top-24 space-y-6">
 
-                <!-- 4. PANEL PRATINJAU REAL-TIME -->
+                <!-- 4. PANEL PRATINJAU REAL-TIME & PENYESUAIAN TITIK FOKUS -->
                 <section class="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
-                    <!-- Header Pratinjau & Info Dimensi -->
+                    <!-- Header Pratinjau, Indikator Mode & Info Dimensi -->
                     <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
-                        <h2 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                            <span class="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xs">
-                                <i class="fa-solid fa-eye"></i>
+                        <div class="flex items-center gap-2">
+                            <h2 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                <span class="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>
+                                </span>
+                                Pratinjau Real-Time
+                            </h2>
+                            <span id="activeModeIndicator" class="px-2.5 py-0.5 rounded-lg text-[11px] font-semibold bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300">
+                                Kolase Utama (1+4)
                             </span>
-                            Pratinjau Real-Time
-                        </h2>
+                        </div>
 
-                        <!-- Badge Dimensi Hasil -->
+                        <!-- Badge Transparan & Dimensi Hasil -->
                         <div class="flex items-center gap-2">
                             <span id="transparentBadge" class="hidden items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-semibold bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300">
-                                <i class="fa-solid fa-chess-board text-[10px]"></i>
                                 Transparan
                             </span>
                             <div class="px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-mono font-bold text-slate-700 dark:text-slate-200">
-                                <i class="fa-solid fa-expand text-slate-400 mr-1.5"></i>
-                                <span id="dimensionDisplay">0 × 0 px</span>
+                                <span id="dimensionDisplay">1.200 x 1.357 px</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- Peringatan Batas Ukuran Kanvas Browser (>16.000 px) -->
                     <div id="sizeWarningBanner" class="hidden mb-4 p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-800 text-amber-800 dark:text-amber-200 text-xs flex items-start gap-3">
-                        <i class="fa-solid fa-triangle-exclamation text-amber-500 text-base mt-0.5 shrink-0"></i>
+                        <svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
                         <div>
-                            <p class="font-bold mb-0.5">Ukuran Kanvas Mendekati Batas Maksimum Browser!</p>
+                            <p class="font-bold mb-0.5">Ukuran Kanvas Mendekati Batas Maksimum Browser</p>
                             <p id="sizeWarningText" class="leading-relaxed opacity-90">
-                                Dimensi gambar melebihi 16.000 px. Beberapa browser mungkin membatasi ukuran ekspor. Aktifkan Auto-Resize atau kurangi resolusi gambar jika hasil terpotong.
+                                Dimensi gambar melebihi 16.000 px. Beberapa browser membatasi ukuran ekspor kanvas terlalu besar.
                             </p>
                         </div>
                     </div>
 
-                    <!-- Wadah Kanvas Pratinjau (dengan pola papan catur untuk transparansi) -->
-                    <div class="relative rounded-2xl border border-slate-200 dark:border-slate-800 checkerboard-bg min-h-[300px] sm:min-h-[400px] max-h-[65vh] flex items-center justify-center p-4 sm:p-6 overflow-auto">
-                        <!-- Placeholder saat belum ada gambar -->
-                        <div id="emptyPreviewState" class="text-center max-w-xs py-10 px-4 rounded-2xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-xs border border-slate-200/80 dark:border-slate-800 shadow-xs">
-                            <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center text-2xl">
-                                <i class="fa-regular fa-image"></i>
+                    <!-- Wadah Kanvas Pratinjau Interaktif -->
+                    <div class="relative rounded-2xl border border-slate-200 dark:border-slate-800 checkerboard-bg min-h-[320px] sm:min-h-[420px] max-h-[65vh] flex items-center justify-center p-4 sm:p-6 overflow-auto">
+                        <!-- Placeholder saat belum ada gambar pada mode standar -->
+                        <div id="emptyPreviewState" class="hidden text-center max-w-xs py-10 px-4 rounded-2xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-xs border border-slate-200/80 dark:border-slate-800 shadow-xs">
+                            <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center">
+                                <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                    <polyline points="21 15 16 10 5 21"></polyline>
+                                </svg>
                             </div>
                             <p class="text-sm font-bold text-slate-800 dark:text-slate-200 mb-1">
                                 Belum Ada Gambar
@@ -464,22 +734,122 @@
                             </p>
                         </div>
 
-                        <!-- Kanvas Utama -->
-                        <canvas id="previewCanvas" class="hidden max-w-full max-h-[58vh] w-auto h-auto rounded-lg shadow-lg"></canvas>
+                        <!-- Kanvas Utama Interaktif -->
+                        <canvas id="previewCanvas" class="max-w-full max-h-[58vh] w-auto h-auto rounded-lg shadow-lg cursor-pointer"></canvas>
+                    </div>
+
+                    <!-- PANEL PENYESUAIAN TITIK FOKUS & ZOOM PER SLOT (KHUSUS KOLASE UTAMA 1+4) -->
+                    <div id="slotFramingPanel" class="mt-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-800 space-y-3.5">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-200">
+                                    Posisi & Zoom Foto per Slot
+                                </span>
+                                <span id="selectedSlotBadge" class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300">
+                                    Slot 1: Utama
+                                </span>
+                            </div>
+
+                            <div class="flex items-center gap-1.5">
+                                <button id="replaceSelectedSlotBtn" type="button"
+                                        class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold text-blue-700 dark:text-blue-300 bg-blue-100/80 dark:bg-blue-950/70 hover:bg-blue-200/70 dark:hover:bg-blue-900/60 transition-colors">
+                                    <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                        <polyline points="17 8 12 3 7 8"></polyline>
+                                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                                    </svg>
+                                    <span>Isi / Ganti Slot</span>
+                                </button>
+
+                                <button id="resetSlotFocusBtn" type="button"
+                                        class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-100/80 dark:bg-emerald-950/70 hover:bg-emerald-200/70 dark:hover:bg-emerald-900/60 transition-colors">
+                                    <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="1 4 1 10 7 10"></polyline>
+                                        <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                                    </svg>
+                                    <span>Reset Posisi Foto</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Pemilih Cepat Slot 1 - Slot 5 -->
+                        <div class="grid grid-cols-5 gap-1.5">
+                            <button type="button" data-slot-idx="0"
+                                    class="slot-select-btn py-1.5 px-1 rounded-xl border text-[11px] font-bold transition-all border-emerald-500 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 truncate">
+                                1. Utama
+                            </button>
+                            <button type="button" data-slot-idx="1"
+                                    class="slot-select-btn py-1.5 px-1 rounded-xl border text-[11px] font-bold transition-all border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 truncate">
+                                2. Kiri Atas
+                            </button>
+                            <button type="button" data-slot-idx="2"
+                                    class="slot-select-btn py-1.5 px-1 rounded-xl border text-[11px] font-bold transition-all border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 truncate">
+                                3. Kanan Atas
+                            </button>
+                            <button type="button" data-slot-idx="3"
+                                    class="slot-select-btn py-1.5 px-1 rounded-xl border text-[11px] font-bold transition-all border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 truncate">
+                                4. Kiri Bawah
+                            </button>
+                            <button type="button" data-slot-idx="4"
+                                    class="slot-select-btn py-1.5 px-1 rounded-xl border text-[11px] font-bold transition-all border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 truncate">
+                                5. Kanan Bawah
+                            </button>
+                        </div>
+
+                        <!-- Slider Pan X, Pan Y & Zoom -->
+                        <div id="slotSlidersContainer" class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                            <!-- Geser Horizontal (X) -->
+                            <div>
+                                <div class="flex items-center justify-between text-[11px] mb-1">
+                                    <label for="slotPanXSlider" class="font-semibold text-slate-600 dark:text-slate-300">Geser Kiri/Kanan</label>
+                                    <span id="slotPanXLabel" class="font-mono font-bold text-slate-800 dark:text-slate-100">0%</span>
+                                </div>
+                                <input id="slotPanXSlider" type="range" min="-100" max="100" value="0"
+                                       class="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-600">
+                            </div>
+
+                            <!-- Geser Vertikal (Y) -->
+                            <div>
+                                <div class="flex items-center justify-between text-[11px] mb-1">
+                                    <label for="slotPanYSlider" class="font-semibold text-slate-600 dark:text-slate-300">Geser Atas/Bawah</label>
+                                    <span id="slotPanYLabel" class="font-mono font-bold text-slate-800 dark:text-slate-100">0%</span>
+                                </div>
+                                <input id="slotPanYSlider" type="range" min="-100" max="100" value="0"
+                                       class="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-600">
+                            </div>
+
+                            <!-- Zoom (100% - 200%) -->
+                            <div>
+                                <div class="flex items-center justify-between text-[11px] mb-1">
+                                    <label for="slotZoomSlider" class="font-semibold text-slate-600 dark:text-slate-300">Perbesar (Zoom)</label>
+                                    <span id="slotZoomLabel" class="font-mono font-bold text-slate-800 dark:text-slate-100">100%</span>
+                                </div>
+                                <input id="slotZoomSlider" type="range" min="100" max="200" value="100"
+                                       class="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-600">
+                            </div>
+                        </div>
+
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400">
+                            Tips: Klik kotak pada pratinjau untuk memilih slot, lalu seret langsung gambar di dalam kotak (atau gunakan slider di atas) untuk memposisikan wajah/objek dengan presisi. Garis pilihan hijau tidak ikut diunduh.
+                        </p>
                     </div>
                 </section>
 
                 <!-- 5. PANEL EKSPOR & UNDUH -->
                 <section class="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
-                    <div class="flex items-center justify-between">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
                         <h2 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                            <span class="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xs">
-                                <i class="fa-solid fa-download"></i>
+                            <span class="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
                             </span>
-                            Ekspor Hasil Gambar
+                            Ekspor & Unduh File
                         </h2>
-                        <span id="pngSuggestNote" class="hidden text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-lg">
-                            <i class="fa-solid fa-circle-info mr-1"></i>PNG disarankan untuk latar transparan
+                        <span id="pngSuggestNote" class="hidden text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-lg border border-emerald-200 dark:border-emerald-800/60">
+                            PNG disarankan untuk latar transparan
                         </span>
                     </div>
 
@@ -491,8 +861,8 @@
                             </label>
                             <select id="exportFormat"
                                     class="w-full h-11 px-3.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-semibold text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                                <option value="image/png">PNG (Lossless • Transparan)</option>
-                                <option value="image/jpeg">JPEG (Ukuran Ringan)</option>
+                                <option value="image/png">PNG (Lossless / Mendukung Transparan)</option>
+                                <option value="image/jpeg">JPG (Ukuran Ringan)</option>
                                 <option value="image/webp">WebP (Modern & Efisien)</option>
                             </select>
                         </div>
@@ -517,7 +887,11 @@
                     <!-- Tombol Unduh Gambar Gabungan -->
                     <button id="downloadBtn" type="button" disabled
                             class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:from-slate-300 disabled:to-slate-300 dark:disabled:from-slate-800 dark:disabled:to-slate-800 disabled:text-slate-500 text-white font-bold text-sm sm:text-base shadow-lg shadow-emerald-600/20 disabled:shadow-none flex items-center justify-center gap-2.5 transition-all active:scale-[0.99] cursor-pointer disabled:cursor-not-allowed">
-                        <i class="fa-solid fa-download"></i>
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
                         <span>Unduh Gambar Gabungan</span>
                     </button>
                 </section>
@@ -529,15 +903,18 @@
     <!-- ==================== FOOTER ==================== -->
     <footer class="mt-12 border-t border-slate-200 dark:border-slate-800/80 py-6 px-4 text-center text-xs text-slate-500 dark:text-slate-400">
         <p>
-            &copy; <span id="currentYear"></span> <strong>UtilitiBox</strong> &mdash; Seluruh gambar diproses secara lokal di browser Anda tanpa unggahan ke server.
+            &copy; <span id="currentYear"></span> <strong>UtilitiBox</strong> - Seluruh gambar diproses 100% secara lokal di perangkat Anda tanpa unggahan ke server.
         </p>
     </footer>
 
     <!-- ==================== CUSTOM CONFIRMATION MODAL (PENGGANTI confirm()) ==================== -->
     <div id="confirmModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs">
         <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-sm w-full p-6 shadow-2xl transform transition-all">
-            <div class="w-12 h-12 rounded-2xl bg-rose-100 dark:bg-rose-950/70 text-rose-600 dark:text-rose-400 flex items-center justify-center text-xl mb-4">
-                <i class="fa-solid fa-trash-can"></i>
+            <div class="w-12 h-12 rounded-2xl bg-rose-100 dark:bg-rose-950/70 text-rose-600 dark:text-rose-400 flex items-center justify-center mb-4">
+                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
             </div>
             <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-1.5">Hapus Semua Gambar?</h3>
             <p class="text-sm text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">
@@ -562,64 +939,131 @@
     <!-- ==================== JAVASCRIPT APPLICATION LOGIC ==================== -->
     <script>
         /**
-         * UtilitiBox - Image Merger Utility (Client-Side)
-         * Arsitektur berbasis State tunggal dengan pembaruan DOM & Canvas reaktif.
+         * Image Merger Utility - UtilitiBox (100% Client-Side)
+         * Smart Auto-Fit & Full-Bleed Collage Engine:
+         * - Mode Kolase Utama (1+4) dengan rasio adaptif otomatis (Auto-Pas) atau preset rasio tetap
+         * - Mode Cover (Penuh & Pas tanpa ruang kosong) dan Contain (Tampilkan Utuh)
+         * - Penyesuaian titik fokus (Pan X/Y) & Zoom per slot langsung di kanvas atau via slider
+         * - Mode Vertikal, Horizontal, dan Grid Standar tetap tersedia penuh
          */
         document.addEventListener('DOMContentLoaded', () => {
-            // Set tahun pada footer
             document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+            const SLOT_ROLE_NAMES = [
+                'Utama',
+                'Kiri Atas',
+                'Kanan Atas',
+                'Kiri Bawah',
+                'Kanan Bawah'
+            ];
+
+            const RATIO_PRESETS = {
+                'auto': { width: 1200, height: null },
+                '4:5':  { width: 1200, height: 1500 },
+                '1:1':  { width: 1200, height: 1200 },
+                '3:4':  { width: 1200, height: 1600 },
+                '16:9': { width: 1600, height: 900 },
+                '9:16': { width: 1080, height: 1920 }
+            };
 
             // -------------------- 1. STATE APLIKASI --------------------
             const state = {
-                images: [],               // Array objek: { id, name, size, width, height, url, img }
-                mode: 'vertical',         // 'vertical' | 'horizontal' | 'grid'
-                gridCols: 2,              // 2 | 3 | 4
-                autoResize: true,         // true | false
-                outerBorder: 16,          // 0 - 150 px
-                innerGap: 16,             // 0 - 150 px
-                syncSpacing: true,        // Samakan innerGap dengan outerBorder
+                images: [],               // Array objek: { id, name, size, width, height, url, img, panX, panY, zoom }
+                mode: 'featured',         // Default: 'featured' (Kolase Utama 1+4)
+                gridCols: 2,              // 2 | 3 | 4 | 5
+                autoResize: true,         // true | false (untuk mode standar)
+
+                // State Khusus Mode Kolase Utama (1+4)
+                fitMode: 'cover',         // 'cover' (Penuh & Pas) | 'contain' (Tampilkan Utuh)
+                heroPosition: 'top',      // 'top' | 'bottom'
+                canvasRatio: 'auto',      // 'auto' | '4:5' | '1:1' | '3:4' | '16:9' | '9:16'
+                resolutionScale: 1,       // 1 | 1.5 | 2
+                heroHeightScale: 100,     // 50 - 150 (%)
+                row1HeightScale: 100,     // 50 - 150 (%)
+                row2HeightScale: 100,     // 50 - 150 (%)
+                colSplitPct: 50,          // 25 - 75 (%) Kolom Kiri vs Kolom Kanan
+                selectedSlot: 0,          // 0 - 4 (Slot aktif untuk Pan/Zoom)
+                replaceTargetIndex: null, // Indeks gambar yang sedang diganti
+
+                // State Garis Pemisah & Tepian Luar (Default 5px garis putih dalam, 0px tepian luar)
+                innerGap: 5,              // 0 - 150 px
+                outerBorder: 0,           // 0 - 150 px
+                syncSpacing: false,       // Sinkronisasi innerGap & outerBorder
                 bgColor: '#FFFFFF',       // Kode Hex valid
-                isTransparent: false,     // true jika memilih preset Transparan
-                exportFormat: 'image/png',// 'image/png' | 'image/jpeg' | 'image/webp'
-                exportQuality: 0.92,      // 0.10 - 1.00
-                draggedIndex: null        // Indeks item yang sedang di-drag untuk reorder
+                isTransparent: false,     // true jika memilih Transparan
+
+                // State Ekspor
+                exportFormat: 'image/png',
+                exportQuality: 0.92,
+                draggedIndex: null
             };
+
+            // Cache layout slot terakhir untuk interaksi klik & geser pada kanvas
+            let lastFeaturedLayout = null;
 
             // -------------------- 2. REFERENSI ELEMEN DOM --------------------
             const el = {
-                // Tema
                 themeToggle: document.getElementById('themeToggle'),
                 themeLightIcon: document.getElementById('themeLightIcon'),
                 themeDarkIcon: document.getElementById('themeDarkIcon'),
 
-                // Upload & Daftar Gambar
                 dropZone: document.getElementById('dropZone'),
                 fileInput: document.getElementById('fileInput'),
+                replaceFileInput: document.getElementById('replaceFileInput'),
                 imageCountBadge: document.getElementById('imageCountBadge'),
                 clearAllBtn: document.getElementById('clearAllBtn'),
                 imageListWrapper: document.getElementById('imageListWrapper'),
                 imageList: document.getElementById('imageList'),
 
-                // Tata Letak
                 modeBtns: document.querySelectorAll('.mode-btn'),
+                standardLayoutControls: document.getElementById('standardLayoutControls'),
                 gridColumnsContainer: document.getElementById('gridColumnsContainer'),
                 gridColBtns: document.querySelectorAll('.grid-col-btn'),
                 autoResizeToggle: document.getElementById('autoResizeToggle'),
+                autoResizeTitle: document.getElementById('autoResizeTitle'),
                 autoResizeDesc: document.getElementById('autoResizeDesc'),
 
-                // Tepian & Warna
-                outerBorderSlider: document.getElementById('outerBorderSlider'),
-                outerBorderInput: document.getElementById('outerBorderInput'),
+                featuredLayoutControls: document.getElementById('featuredLayoutControls'),
+                fitModeBtns: document.querySelectorAll('.fit-mode-btn'),
+                heroPosBtns: document.querySelectorAll('.hero-pos-btn'),
+                canvasRatioPreset: document.getElementById('canvasRatioPreset'),
+                resScaleBtns: document.querySelectorAll('.res-scale-btn'),
+                resetAreaBtn: document.getElementById('resetAreaBtn'),
+                heroHeightScaleSlider: document.getElementById('heroHeightScaleSlider'),
+                heroHeightScaleLabel: document.getElementById('heroHeightScaleLabel'),
+                row1HeightScaleSlider: document.getElementById('row1HeightScaleSlider'),
+                row1HeightScaleLabel: document.getElementById('row1HeightScaleLabel'),
+                row2HeightScaleSlider: document.getElementById('row2HeightScaleSlider'),
+                row2HeightScaleLabel: document.getElementById('row2HeightScaleLabel'),
+                colSplitSlider: document.getElementById('colSplitSlider'),
+                colSplitLabel: document.getElementById('colSplitLabel'),
+
+                syncLockBtn: document.getElementById('syncLockBtn'),
+                syncLockIcon: document.getElementById('syncLockIcon'),
                 innerGapSlider: document.getElementById('innerGapSlider'),
                 innerGapInput: document.getElementById('innerGapInput'),
-                syncSpacingCheckbox: document.getElementById('syncSpacingCheckbox'),
+                outerBorderSlider: document.getElementById('outerBorderSlider'),
+                outerBorderInput: document.getElementById('outerBorderInput'),
                 bgColorPicker: document.getElementById('bgColorPicker'),
                 bgColorHex: document.getElementById('bgColorHex'),
                 presetColorBtns: document.querySelectorAll('.preset-color-btn'),
 
-                // Pratinjau & Ekspor
+                activeModeIndicator: document.getElementById('activeModeIndicator'),
                 previewCanvas: document.getElementById('previewCanvas'),
                 emptyPreviewState: document.getElementById('emptyPreviewState'),
+                slotFramingPanel: document.getElementById('slotFramingPanel'),
+                selectedSlotBadge: document.getElementById('selectedSlotBadge'),
+                replaceSelectedSlotBtn: document.getElementById('replaceSelectedSlotBtn'),
+                resetSlotFocusBtn: document.getElementById('resetSlotFocusBtn'),
+                slotSelectBtns: document.querySelectorAll('.slot-select-btn'),
+                slotSlidersContainer: document.getElementById('slotSlidersContainer'),
+                slotPanXSlider: document.getElementById('slotPanXSlider'),
+                slotPanXLabel: document.getElementById('slotPanXLabel'),
+                slotPanYSlider: document.getElementById('slotPanYSlider'),
+                slotPanYLabel: document.getElementById('slotPanYLabel'),
+                slotZoomSlider: document.getElementById('slotZoomSlider'),
+                slotZoomLabel: document.getElementById('slotZoomLabel'),
+
                 dimensionDisplay: document.getElementById('dimensionDisplay'),
                 transparentBadge: document.getElementById('transparentBadge'),
                 sizeWarningBanner: document.getElementById('sizeWarningBanner'),
@@ -631,7 +1075,6 @@
                 exportQualityValue: document.getElementById('exportQualityValue'),
                 downloadBtn: document.getElementById('downloadBtn'),
 
-                // Modal & Toast
                 confirmModal: document.getElementById('confirmModal'),
                 cancelClearBtn: document.getElementById('cancelClearBtn'),
                 confirmClearBtn: document.getElementById('confirmClearBtn'),
@@ -641,9 +1084,6 @@
             const ctx = el.previewCanvas.getContext('2d');
 
             // -------------------- 3. SISTEM NOTIFIKASI TOAST --------------------
-            /**
-             * Menampilkan pesan notifikasi non-intrusif (pengganti alert()).
-             */
             function showToast(message, type = 'info') {
                 const styles = {
                     info: 'bg-slate-900 dark:bg-slate-800 text-white border-slate-700',
@@ -651,19 +1091,10 @@
                     warning: 'bg-amber-500 text-slate-950 border-amber-400',
                     error: 'bg-rose-600 text-white border-rose-500'
                 };
-                const icons = {
-                    info: 'fa-circle-info',
-                    success: 'fa-circle-check',
-                    warning: 'fa-triangle-exclamation',
-                    error: 'fa-circle-xmark'
-                };
 
                 const toast = document.createElement('div');
                 toast.className = `pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-2xl border shadow-xl text-xs sm:text-sm font-medium transition-all duration-300 translate-y-2 opacity-0 ${styles[type] || styles.info}`;
-                toast.innerHTML = `
-                    <i class="fa-solid ${icons[type] || icons.info} text-base shrink-0"></i>
-                    <span class="leading-snug">${message}</span>
-                `;
+                toast.innerHTML = `<span class="leading-snug">${escapeHtml(message)}</span>`;
 
                 el.toastContainer.appendChild(toast);
                 requestAnimationFrame(() => {
@@ -676,7 +1107,7 @@
                 }, 3200);
             }
 
-            // -------------------- 4. PENGATURAN TEMA (DARK MODE) --------------------
+            // -------------------- 4. PENGATURAN TEMA (DARK / LIGHT MODE) --------------------
             function syncThemeIcons() {
                 const isDark = document.documentElement.classList.contains('dark');
                 if (isDark) {
@@ -693,9 +1124,12 @@
                 const isDark = document.documentElement.classList.toggle('dark');
                 localStorage.setItem('color-theme', isDark ? 'dark' : 'light');
                 syncThemeIcons();
+                if (state.mode === 'featured') {
+                    updatePreview();
+                }
             });
 
-            // -------------------- 5. UTILITAS FORMATTER --------------------
+            // -------------------- 5. UTILITAS UMUM --------------------
             function formatFileSize(bytes) {
                 if (bytes < 1024) return bytes + ' B';
                 if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
@@ -708,12 +1142,24 @@
                 return Math.min(max, Math.max(min, num));
             }
 
-            // -------------------- 6. UNGGAH & PEMUATAN GAMBAR --------------------
-            /**
-             * Memproses FileList dari input file, drag-and-drop, atau paste.
-             */
+            function escapeHtml(str) {
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            }
+
+            function isHexColorDark(hex) {
+                const clean = hex.replace('#', '');
+                const r = parseInt(clean.substring(0, 2), 16);
+                const g = parseInt(clean.substring(2, 4), 16);
+                const b = parseInt(clean.substring(4, 6), 16);
+                const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+                return luminance < 0.5;
+            }
+
+            // -------------------- 6. UNGGAH, GANTI & PEMUATAN GAMBAR --------------------
             async function handleFiles(fileList) {
-                const validTypes = ['image/png', 'image/jpeg', 'image/webp'];
+                const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
                 const files = Array.from(fileList || []);
                 if (files.length === 0) return;
 
@@ -725,7 +1171,7 @@
                 });
 
                 if (skippedCount > 0) {
-                    showToast(`${skippedCount} file dilewati karena bukan format PNG, JPG, atau WebP.`, 'warning');
+                    showToast(`${skippedCount} file dilewati karena bukan format JPG, PNG, WebP, atau GIF.`, 'warning');
                 }
 
                 if (validFiles.length === 0) return;
@@ -737,14 +1183,52 @@
 
                     if (successfulItems.length > 0) {
                         state.images.push(...successfulItems);
+                        // Otomatis pilih slot pertama yang baru terisi jika slot aktif sebelumnya kosong
+                        if (!state.images[state.selectedSlot]) {
+                            state.selectedSlot = Math.min(4, state.images.length - 1);
+                        }
                         renderImageList();
-                        renderCanvas();
+                        syncSlotFramingUI();
+                        updatePreview();
                         showToast(`${successfulItems.length} gambar berhasil ditambahkan.`, 'success');
                     }
                 } catch (err) {
                     console.error('Gagal memuat gambar:', err);
-                    showToast('Terjadi kesalahan saat membaca salah satu gambar.', 'error');
+                    showToast('Terjadi kesalahan saat membaca file gambar.', 'error');
                 }
+            }
+
+            async function handleReplaceSingleFile(file) {
+                if (!file) return;
+                const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+                if (!validTypes.includes(file.type)) {
+                    showToast('Format file tidak didukung. Gunakan JPG, PNG, WebP, atau GIF.', 'warning');
+                    return;
+                }
+
+                const loaded = await loadSingleImage(file);
+                if (!loaded) {
+                    showToast('Gagal membaca file gambar pengganti.', 'error');
+                    return;
+                }
+
+                const targetIdx = state.replaceTargetIndex;
+                state.replaceTargetIndex = null;
+
+                if (targetIdx !== null && targetIdx >= 0 && targetIdx < state.images.length) {
+                    URL.revokeObjectURL(state.images[targetIdx].url);
+                    state.images[targetIdx] = loaded;
+                    state.selectedSlot = Math.min(4, targetIdx);
+                    showToast(`Gambar #${targetIdx + 1} berhasil diganti.`, 'success');
+                } else {
+                    state.images.push(loaded);
+                    state.selectedSlot = Math.min(4, state.images.length - 1);
+                    showToast('Gambar berhasil ditambahkan ke slot.', 'success');
+                }
+
+                renderImageList();
+                syncSlotFramingUI();
+                updatePreview();
             }
 
             function loadSingleImage(file) {
@@ -760,7 +1244,10 @@
                             width: img.naturalWidth,
                             height: img.naturalHeight,
                             url: objectUrl,
-                            img: img
+                            img: img,
+                            panX: 0,
+                            panY: 0,
+                            zoom: 1
                         });
                     };
 
@@ -773,7 +1260,6 @@
                 });
             }
 
-            // Event klik & drag-and-drop pada DropZone unggah
             el.dropZone.addEventListener('click', () => el.fileInput.click());
             el.dropZone.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
@@ -784,7 +1270,14 @@
 
             el.fileInput.addEventListener('change', (e) => {
                 handleFiles(e.target.files);
-                el.fileInput.value = ''; // Reset agar file yang sama bisa dipilih ulang
+                el.fileInput.value = '';
+            });
+
+            el.replaceFileInput.addEventListener('change', (e) => {
+                if (e.target.files && e.target.files[0]) {
+                    handleReplaceSingleFile(e.target.files[0]);
+                }
+                el.replaceFileInput.value = '';
             });
 
             ['dragenter', 'dragover'].forEach(evtName => {
@@ -809,7 +1302,6 @@
                 }
             });
 
-            // Dukungan tempel gambar dari clipboard (Ctrl+V)
             window.addEventListener('paste', (e) => {
                 if (e.clipboardData && e.clipboardData.files && e.clipboardData.files.length > 0) {
                     handleFiles(e.clipboardData.files);
@@ -825,20 +1317,46 @@
                 state.images[index] = state.images[targetIndex];
                 state.images[targetIndex] = temp;
 
+                if (targetIndex <= 4) {
+                    state.selectedSlot = targetIndex;
+                }
+
                 renderImageList();
-                renderCanvas();
+                syncSlotFramingUI();
+                updatePreview();
+            }
+
+            function makeImagePrimary(index) {
+                if (index <= 0 || index >= state.images.length) return;
+                const [selected] = state.images.splice(index, 1);
+                state.images.unshift(selected);
+                state.selectedSlot = 0;
+
+                renderImageList();
+                syncSlotFramingUI();
+                updatePreview();
+                showToast(`"${selected.name}" dipindahkan ke slot Utama.`, 'info');
+            }
+
+            function triggerReplaceImage(index) {
+                state.replaceTargetIndex = index;
+                el.replaceFileInput.click();
             }
 
             function removeImage(index) {
                 const item = state.images[index];
                 if (!item) return;
 
-                // Bebaskan memori Object URL
                 URL.revokeObjectURL(item.url);
                 state.images.splice(index, 1);
 
+                if (state.selectedSlot >= state.images.length && state.images.length > 0) {
+                    state.selectedSlot = Math.min(4, state.images.length - 1);
+                }
+
                 renderImageList();
-                renderCanvas();
+                syncSlotFramingUI();
+                updatePreview();
             }
 
             function clearAllImages() {
@@ -850,13 +1368,14 @@
                     }
                 });
                 state.images = [];
+                state.selectedSlot = 0;
                 el.fileInput.value = '';
                 renderImageList();
-                renderCanvas();
+                syncSlotFramingUI();
+                updatePreview();
                 showToast('Semua gambar dihapus dan memori dibersihkan.', 'info');
             }
 
-            // Modal konfirmasi Hapus Semua
             el.clearAllBtn.addEventListener('click', () => {
                 if (state.images.length === 0) return;
                 el.confirmModal.classList.remove('hidden');
@@ -881,10 +1400,24 @@
                 }
             });
 
-            /**
-             * Merender daftar item gambar dengan dukungan Drag-and-Drop (desktop)
-             * serta tombol Naik, Turun, dan Hapus (mobile/sentuh).
-             */
+            function getRoleBadgeHtml(index) {
+                if (state.mode !== 'featured') return '';
+
+                if (index === 0) {
+                    return `<span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-700/60">
+                        Utama
+                    </span>`;
+                }
+                if (index >= 1 && index <= 4) {
+                    return `<span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/60">
+                        ${SLOT_ROLE_NAMES[index]}
+                    </span>`;
+                }
+                return `<span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                    Cadangan
+                </span>`;
+            }
+
             function renderImageList() {
                 const count = state.images.length;
                 el.imageCountBadge.textContent = count;
@@ -901,54 +1434,105 @@
                 el.imageList.innerHTML = '';
 
                 state.images.forEach((item, index) => {
+                    const isPrimaryInFeatured = state.mode === 'featured' && index === 0;
+                    const isBackupInFeatured = state.mode === 'featured' && index >= 5;
+
                     const li = document.createElement('li');
                     li.draggable = true;
                     li.dataset.index = index;
-                    li.className = 'group flex items-center gap-2.5 p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700/80 hover:border-emerald-400 dark:hover:border-emerald-600 transition-all select-none';
+                    li.className = `group flex items-center gap-2 p-2.5 rounded-2xl border transition-all select-none ${
+                        isPrimaryInFeatured
+                            ? 'bg-emerald-50/50 dark:bg-emerald-950/25 border-emerald-300 dark:border-emerald-800'
+                            : isBackupInFeatured
+                                ? 'bg-slate-50/60 dark:bg-slate-800/40 border-slate-200/80 dark:border-slate-800 opacity-75'
+                                : 'bg-slate-50 dark:bg-slate-800/70 border-slate-200 dark:border-slate-700/80 hover:border-emerald-400 dark:hover:border-emerald-600'
+                    }`;
+
+                    const roleBadge = getRoleBadgeHtml(index);
+                    const makePrimaryBtnHtml = index > 0
+                        ? `<button type="button" data-action="primary" title="Jadikan Utama (Urutan ke-1)"
+                                   class="px-2 h-8 rounded-xl bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800/70 text-amber-700 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-900/50 text-[10px] font-bold flex items-center gap-1 transition-colors">
+                               <span>Jadikan Utama</span>
+                           </button>`
+                        : '';
 
                     li.innerHTML = `
                         <!-- Handle Drag & Nomor Urut -->
                         <div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 cursor-grab active:cursor-grabbing px-1" title="Seret untuk mengubah urutan">
                             <span class="text-[10px] font-extrabold text-emerald-600 dark:text-emerald-400 leading-none mb-1">#${index + 1}</span>
-                            <i class="fa-solid fa-grip-vertical text-xs"></i>
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="9" cy="5" r="1"></circle>
+                                <circle cx="9" cy="12" r="1"></circle>
+                                <circle cx="9" cy="19" r="1"></circle>
+                                <circle cx="15" cy="5" r="1"></circle>
+                                <circle cx="15" cy="12" r="1"></circle>
+                                <circle cx="15" cy="19" r="1"></circle>
+                            </svg>
                         </div>
 
                         <!-- Thumbnail Gambar -->
                         <img src="${item.url}" alt="${escapeHtml(item.name)}"
-                             class="w-12 h-12 rounded-xl object-cover bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shrink-0">
+                             class="w-11 h-11 rounded-xl object-cover bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shrink-0">
 
-                        <!-- Nama File & Resolusi Asli -->
+                        <!-- Nama File, Lencana Peran & Resolusi Asli -->
                         <div class="flex-grow min-w-0">
-                            <p class="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 truncate" title="${escapeHtml(item.name)}">
-                                ${escapeHtml(item.name)}
-                            </p>
-                            <div class="flex items-center gap-2 mt-0.5 text-[11px] text-slate-500 dark:text-slate-400 font-mono">
-                                <span>${item.width} × ${item.height} px</span>
-                                <span>•</span>
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <p class="text-xs font-semibold text-slate-800 dark:text-slate-100 truncate max-w-[120px] sm:max-w-[140px]" title="${escapeHtml(item.name)}">
+                                    ${escapeHtml(item.name)}
+                                </p>
+                                ${roleBadge}
+                            </div>
+                            <div class="flex items-center gap-1.5 mt-0.5 text-[10px] text-slate-500 dark:text-slate-400 font-mono">
+                                <span>${item.width}x${item.height}</span>
+                                <span>-</span>
                                 <span>${formatFileSize(item.size)}</span>
                             </div>
                         </div>
 
-                        <!-- Tombol Kontrol Sentuh / Klik: Naik, Turun, Hapus -->
-                        <div class="flex items-center gap-1 shrink-0">
-                            <button type="button" data-action="up" ${index === 0 ? 'disabled' : ''} title="Geser Naik"
-                                    class="w-8 h-8 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/60 hover:text-emerald-600 disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center transition-colors">
-                                <i class="fa-solid fa-arrow-up text-xs"></i>
+                        <!-- Tombol Kontrol: Jadikan Utama, Ganti, Naik, Turun, Hapus -->
+                        <div class="flex items-center gap-1 shrink-0 flex-wrap justify-end">
+                            ${makePrimaryBtnHtml}
+
+                            <button type="button" data-action="replace" title="Ganti Gambar Ini"
+                                    class="w-8 h-8 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/60 flex items-center justify-center transition-colors">
+                                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="23 4 23 10 17 10"></polyline>
+                                    <polyline points="1 20 1 14 7 14"></polyline>
+                                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                                </svg>
                             </button>
 
-                            <button type="button" data-action="down" ${index === count - 1 ? 'disabled' : ''} title="Geser Turun"
+                            <button type="button" data-action="up" ${index === 0 ? 'disabled' : ''} title="Naik"
                                     class="w-8 h-8 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/60 hover:text-emerald-600 disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center transition-colors">
-                                <i class="fa-solid fa-arrow-down text-xs"></i>
+                                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="12" y1="19" x2="12" y2="5"></line>
+                                    <polyline points="5 12 12 5 19 12"></polyline>
+                                </svg>
                             </button>
 
-                            <button type="button" data-action="delete" title="Hapus Gambar"
+                            <button type="button" data-action="down" ${index === count - 1 ? 'disabled' : ''} title="Turun"
+                                    class="w-8 h-8 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/60 hover:text-emerald-600 disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center transition-colors">
+                                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <polyline points="19 12 12 19 5 12"></polyline>
+                                </svg>
+                            </button>
+
+                            <button type="button" data-action="delete" title="Hapus"
                                     class="w-8 h-8 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/60 flex items-center justify-center transition-colors">
-                                <i class="fa-solid fa-xmark text-xs"></i>
+                                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
                             </button>
                         </div>
                     `;
 
-                    // Event tombol Naik / Turun / Hapus
+                    const primaryBtn = li.querySelector('[data-action="primary"]');
+                    if (primaryBtn) {
+                        primaryBtn.addEventListener('click', () => makeImagePrimary(index));
+                    }
+                    li.querySelector('[data-action="replace"]').addEventListener('click', () => triggerReplaceImage(index));
                     li.querySelector('[data-action="up"]').addEventListener('click', () => moveImage(index, -1));
                     li.querySelector('[data-action="down"]').addEventListener('click', () => moveImage(index, 1));
                     li.querySelector('[data-action="delete"]').addEventListener('click', () => removeImage(index));
@@ -990,52 +1574,65 @@
                         state.images.splice(toIndex, 0, movedItem);
                         state.draggedIndex = null;
 
+                        if (toIndex <= 4) {
+                            state.selectedSlot = toIndex;
+                        }
+
                         renderImageList();
-                        renderCanvas();
+                        syncSlotFramingUI();
+                        updatePreview();
                     });
 
                     el.imageList.appendChild(li);
                 });
             }
 
-            function escapeHtml(str) {
-                const div = document.createElement('div');
-                div.textContent = str;
-                return div.innerHTML;
-            }
+            // -------------------- 8. KONTROL MODE TATA LETAK --------------------
+            function syncLayoutModeUI() {
+                el.modeBtns.forEach(btn => {
+                    const active = btn.dataset.mode === state.mode;
+                    btn.className = active
+                        ? 'mode-btn flex items-center gap-2.5 p-3 rounded-2xl border-2 text-left transition-all border-emerald-500 bg-emerald-50/70 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300'
+                        : 'mode-btn flex items-center gap-2.5 p-3 rounded-2xl border-2 text-left transition-all border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700';
+                });
 
-            // -------------------- 8. KONTROL TATA LETAK --------------------
-            function updateAutoResizeDescription() {
-                if (state.mode === 'vertical') {
-                    el.autoResizeDesc.textContent = 'Menyamakan lebar semua gambar mengikuti gambar pertama tanpa distorsi.';
-                } else if (state.mode === 'horizontal') {
-                    el.autoResizeDesc.textContent = 'Menyamakan tinggi semua gambar mengikuti gambar pertama tanpa distorsi.';
+                if (state.mode === 'featured') {
+                    el.standardLayoutControls.classList.add('hidden');
+                    el.featuredLayoutControls.classList.remove('hidden');
+                    el.slotFramingPanel.classList.remove('hidden');
+                    el.activeModeIndicator.textContent = `Kolase Utama (1+4) - ${state.heroPosition === 'top' ? 'Utama di Atas' : 'Utama di Bawah'}`;
                 } else {
-                    el.autoResizeDesc.textContent = 'Menyamakan lebar tiap sel kolom mengikuti gambar pertama secara proporsional.';
+                    el.standardLayoutControls.classList.remove('hidden');
+                    el.featuredLayoutControls.classList.add('hidden');
+                    el.slotFramingPanel.classList.add('hidden');
+
+                    if (state.mode === 'grid') {
+                        el.gridColumnsContainer.classList.remove('hidden');
+                        el.autoResizeTitle.textContent = 'Samakan Lebar Kolom (Auto-Resize)';
+                        el.autoResizeDesc.textContent = 'Menyesuaikan lebar setiap gambar mengikuti lebar kolom gambar pertama secara proporsional.';
+                        el.activeModeIndicator.textContent = `Grid ${state.gridCols} Kolom`;
+                    } else if (state.mode === 'vertical') {
+                        el.gridColumnsContainer.classList.add('hidden');
+                        el.autoResizeTitle.textContent = 'Samakan Lebar Otomatis (Auto-Resize)';
+                        el.autoResizeDesc.textContent = 'Menyamakan lebar semua gambar mengikuti gambar pertama tanpa distorsi.';
+                        el.activeModeIndicator.textContent = 'Vertikal';
+                    } else {
+                        el.gridColumnsContainer.classList.add('hidden');
+                        el.autoResizeTitle.textContent = 'Samakan Tinggi Otomatis (Auto-Resize)';
+                        el.autoResizeDesc.textContent = 'Menyamakan tinggi semua gambar mengikuti gambar pertama tanpa distorsi.';
+                        el.activeModeIndicator.textContent = 'Horizontal';
+                    }
                 }
+
+                renderImageList();
+                syncSlotFramingUI();
+                updatePreview();
             }
 
             el.modeBtns.forEach(btn => {
                 btn.addEventListener('click', () => {
                     state.mode = btn.dataset.mode;
-
-                    // Perbarui gaya tombol aktif
-                    el.modeBtns.forEach(b => {
-                        const active = b.dataset.mode === state.mode;
-                        b.className = active
-                            ? 'mode-btn flex flex-col items-center justify-center gap-1.5 py-3 px-2 rounded-2xl border-2 text-xs font-semibold transition-all border-emerald-500 bg-emerald-50/70 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300'
-                            : 'mode-btn flex flex-col items-center justify-center gap-1.5 py-3 px-2 rounded-2xl border-2 text-xs font-semibold transition-all border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700';
-                    });
-
-                    // Tampilkan pilihan kolom jika mode Grid dipilih
-                    if (state.mode === 'grid') {
-                        el.gridColumnsContainer.classList.remove('hidden');
-                    } else {
-                        el.gridColumnsContainer.classList.add('hidden');
-                    }
-
-                    updateAutoResizeDescription();
-                    renderCanvas();
+                    syncLayoutModeUI();
                 });
             });
 
@@ -1046,72 +1643,445 @@
                     el.gridColBtns.forEach(b => {
                         const active = parseInt(b.dataset.cols, 10) === state.gridCols;
                         b.className = active
-                            ? 'grid-col-btn py-2.5 px-3 rounded-xl border-2 text-xs font-bold transition-all border-emerald-500 bg-emerald-50/70 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300'
-                            : 'grid-col-btn py-2.5 px-3 rounded-xl border-2 text-xs font-bold transition-all border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700';
+                            ? 'grid-col-btn py-2.5 px-2 rounded-xl border-2 text-xs font-bold transition-all border-emerald-500 bg-emerald-50/70 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300'
+                            : 'grid-col-btn py-2.5 px-2 rounded-xl border-2 text-xs font-bold transition-all border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700';
                     });
 
-                    renderCanvas();
+                    el.activeModeIndicator.textContent = `Grid ${state.gridCols} Kolom`;
+                    updatePreview();
                 });
             });
 
             el.autoResizeToggle.addEventListener('change', (e) => {
                 state.autoResize = e.target.checked;
-                renderCanvas();
+                updatePreview();
             });
 
-            // -------------------- 9. KONTROL TEPIAN & WARNA --------------------
-            function setOuterBorder(val) {
-                const clamped = clampNumber(val, 0, 150, 0);
-                state.outerBorder = clamped;
-                el.outerBorderSlider.value = clamped;
-                el.outerBorderInput.value = clamped;
+            // -------------------- 9. KONTROL KHUSUS KOLASE UTAMA (1+4) --------------------
+            el.fitModeBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    state.fitMode = btn.dataset.fit;
 
-                if (state.syncSpacing) {
-                    state.innerGap = clamped;
-                    el.innerGapSlider.value = clamped;
-                    el.innerGapInput.value = clamped;
-                }
-                renderCanvas();
+                    el.fitModeBtns.forEach(b => {
+                        const active = b.dataset.fit === state.fitMode;
+                        b.className = active
+                            ? 'fit-mode-btn flex flex-col items-start p-2.5 rounded-xl border-2 text-left transition-all border-emerald-500 bg-emerald-50/70 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300'
+                            : 'fit-mode-btn flex flex-col items-start p-2.5 rounded-xl border-2 text-left transition-all border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700';
+                    });
+
+                    syncSlotFramingUI();
+                    updatePreview();
+                });
+            });
+
+            el.heroPosBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    state.heroPosition = btn.dataset.heroPos;
+
+                    el.heroPosBtns.forEach(b => {
+                        const active = b.dataset.heroPos === state.heroPosition;
+                        b.className = active
+                            ? 'hero-pos-btn flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border-2 text-xs font-bold transition-all border-emerald-500 bg-emerald-50/70 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300'
+                            : 'hero-pos-btn flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border-2 text-xs font-bold transition-all border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700';
+                    });
+
+                    el.activeModeIndicator.textContent = `Kolase Utama (1+4) - ${state.heroPosition === 'top' ? 'Utama di Atas' : 'Utama di Bawah'}`;
+                    updatePreview();
+                });
+            });
+
+            el.canvasRatioPreset.addEventListener('change', (e) => {
+                state.canvasRatio = e.target.value;
+                updateAreaScaleLabels();
+                updatePreview();
+            });
+
+            el.resScaleBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    state.resolutionScale = parseFloat(btn.dataset.scale);
+
+                    el.resScaleBtns.forEach(b => {
+                        const active = parseFloat(b.dataset.scale) === state.resolutionScale;
+                        b.className = active
+                            ? 'res-scale-btn rounded-lg text-[11px] font-bold transition-all bg-white dark:bg-slate-700 text-emerald-700 dark:text-emerald-300 shadow-xs'
+                            : 'res-scale-btn rounded-lg text-[11px] font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white';
+                    });
+
+                    updatePreview();
+                });
+            });
+
+            function updateAreaScaleLabels() {
+                const suffix = state.canvasRatio === 'auto' ? ' (Auto-Pas)' : '';
+                el.heroHeightScaleLabel.textContent = `${state.heroHeightScale}%${suffix}`;
+                el.row1HeightScaleLabel.textContent = `${state.row1HeightScale}%${suffix}`;
+                el.row2HeightScaleLabel.textContent = `${state.row2HeightScale}%${suffix}`;
+                el.colSplitLabel.textContent = `${state.colSplitPct}% : ${100 - state.colSplitPct}%`;
             }
 
-            function setInnerGap(val, breakSync = true) {
+            el.heroHeightScaleSlider.addEventListener('input', (e) => {
+                state.heroHeightScale = clampNumber(e.target.value, 50, 150, 100);
+                updateAreaScaleLabels();
+                updatePreview();
+            });
+
+            el.row1HeightScaleSlider.addEventListener('input', (e) => {
+                state.row1HeightScale = clampNumber(e.target.value, 50, 150, 100);
+                updateAreaScaleLabels();
+                updatePreview();
+            });
+
+            el.row2HeightScaleSlider.addEventListener('input', (e) => {
+                state.row2HeightScale = clampNumber(e.target.value, 50, 150, 100);
+                updateAreaScaleLabels();
+                updatePreview();
+            });
+
+            el.colSplitSlider.addEventListener('input', (e) => {
+                state.colSplitPct = clampNumber(e.target.value, 25, 75, 50);
+                updateAreaScaleLabels();
+                updatePreview();
+            });
+
+            el.resetAreaBtn.addEventListener('click', () => {
+                state.heroHeightScale = 100;
+                state.row1HeightScale = 100;
+                state.row2HeightScale = 100;
+                state.colSplitPct = 50;
+
+                el.heroHeightScaleSlider.value = 100;
+                el.row1HeightScaleSlider.value = 100;
+                el.row2HeightScaleSlider.value = 100;
+                el.colSplitSlider.value = 50;
+
+                updateAreaScaleLabels();
+                updatePreview();
+                showToast('Ukuran area gambar dikembalikan ke proporsi seimbang.', 'info');
+            });
+
+            // -------------------- 10. KONTROL TITIK FOKUS (PAN X/Y) & ZOOM PER SLOT --------------------
+            function syncSlotFramingUI() {
+                const idx = state.selectedSlot;
+                const roleName = SLOT_ROLE_NAMES[idx] || `Slot ${idx + 1}`;
+                el.selectedSlotBadge.textContent = `Slot ${idx + 1}: ${roleName}`;
+
+                el.slotSelectBtns.forEach(btn => {
+                    const btnIdx = parseInt(btn.dataset.slotIdx, 10);
+                    const isSelected = btnIdx === idx;
+                    btn.className = isSelected
+                        ? 'slot-select-btn py-1.5 px-1 rounded-xl border text-[11px] font-bold transition-all border-emerald-500 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 truncate'
+                        : 'slot-select-btn py-1.5 px-1 rounded-xl border text-[11px] font-bold transition-all border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 truncate';
+                });
+
+                const item = state.images[idx];
+                const isCoverAndHasImage = Boolean(item) && state.fitMode === 'cover';
+
+                if (isCoverAndHasImage) {
+                    el.slotSlidersContainer.classList.remove('opacity-45', 'pointer-events-none');
+                    el.slotPanXSlider.value = item.panX;
+                    el.slotPanXLabel.textContent = `${item.panX > 0 ? '+' : ''}${item.panX}%`;
+                    el.slotPanYSlider.value = item.panY;
+                    el.slotPanYLabel.textContent = `${item.panY > 0 ? '+' : ''}${item.panY}%`;
+                    const zoomPct = Math.round(item.zoom * 100);
+                    el.slotZoomSlider.value = zoomPct;
+                    el.slotZoomLabel.textContent = `${zoomPct}%`;
+                } else {
+                    el.slotSlidersContainer.classList.add('opacity-45', 'pointer-events-none');
+                    el.slotPanXSlider.value = 0;
+                    el.slotPanXLabel.textContent = '0%';
+                    el.slotPanYSlider.value = 0;
+                    el.slotPanYLabel.textContent = '0%';
+                    el.slotZoomSlider.value = 100;
+                    el.slotZoomLabel.textContent = '100%';
+                }
+            }
+
+            el.slotSelectBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    state.selectedSlot = parseInt(btn.dataset.slotIdx, 10);
+                    syncSlotFramingUI();
+                    updatePreview();
+                });
+            });
+
+            el.replaceSelectedSlotBtn.addEventListener('click', () => {
+                const idx = state.selectedSlot;
+                if (idx < state.images.length) {
+                    triggerReplaceImage(idx);
+                } else {
+                    el.fileInput.click();
+                }
+            });
+
+            el.slotPanXSlider.addEventListener('input', (e) => {
+                const item = state.images[state.selectedSlot];
+                if (!item) return;
+                item.panX = clampNumber(e.target.value, -100, 100, 0);
+                el.slotPanXLabel.textContent = `${item.panX > 0 ? '+' : ''}${item.panX}%`;
+                updatePreview();
+            });
+
+            el.slotPanYSlider.addEventListener('input', (e) => {
+                const item = state.images[state.selectedSlot];
+                if (!item) return;
+                item.panY = clampNumber(e.target.value, -100, 100, 0);
+                el.slotPanYLabel.textContent = `${item.panY > 0 ? '+' : ''}${item.panY}%`;
+                updatePreview();
+            });
+
+            el.slotZoomSlider.addEventListener('input', (e) => {
+                const item = state.images[state.selectedSlot];
+                if (!item) return;
+                const zoomPct = clampNumber(e.target.value, 100, 200, 100);
+                item.zoom = zoomPct / 100;
+                el.slotZoomLabel.textContent = `${zoomPct}%`;
+                updatePreview();
+            });
+
+            el.resetSlotFocusBtn.addEventListener('click', () => {
+                const item = state.images[state.selectedSlot];
+                if (!item) return;
+                item.panX = 0;
+                item.panY = 0;
+                item.zoom = 1;
+                syncSlotFramingUI();
+                updatePreview();
+                showToast(`Posisi & zoom Slot ${state.selectedSlot + 1} dikembalikan ke tengah.`, 'info');
+            });
+
+            // -------------------- 11. INTERAKSI LANGSUNG DI ATAS KANVAS PRATINJAU --------------------
+            let canvasDragState = {
+                active: false,
+                moved: false,
+                slotIdx: null,
+                startClientX: 0,
+                startClientY: 0,
+                startPanX: 0,
+                startPanY: 0,
+                maxOffsetX: 0,
+                maxOffsetY: 0
+            };
+
+            function getCanvasCoordsFromClient(clientX, clientY) {
+                const rect = el.previewCanvas.getBoundingClientRect();
+                if (rect.width === 0 || rect.height === 0) return { x: 0, y: 0, scaleX: 1, scaleY: 1 };
+                const scaleX = el.previewCanvas.width / rect.width;
+                const scaleY = el.previewCanvas.height / rect.height;
+                return {
+                    x: (clientX - rect.left) * scaleX,
+                    y: (clientY - rect.top) * scaleY,
+                    scaleX,
+                    scaleY
+                };
+            }
+
+            function findSlotAtCanvasPoint(cx, cy) {
+                if (!lastFeaturedLayout || !lastFeaturedLayout.slots) return -1;
+                for (let i = 0; i < lastFeaturedLayout.slots.length; i++) {
+                    const s = lastFeaturedLayout.slots[i];
+                    if (cx >= s.x && cx <= s.x + s.w && cy >= s.y && cy <= s.y + s.h) {
+                        return i;
+                    }
+                }
+                return -1;
+            }
+
+            function handleCanvasPointerDown(clientX, clientY) {
+                if (state.mode !== 'featured') return;
+                const { x, y } = getCanvasCoordsFromClient(clientX, clientY);
+                const slotIdx = findSlotAtCanvasPoint(x, y);
+                if (slotIdx === -1) return;
+
+                state.selectedSlot = slotIdx;
+                syncSlotFramingUI();
+                updatePreview();
+
+                const item = state.images[slotIdx];
+                const slot = lastFeaturedLayout.slots[slotIdx];
+                if (item && slot && state.fitMode === 'cover') {
+                    const baseScale = Math.max(slot.w / item.width, slot.h / item.height);
+                    const finalScale = baseScale * item.zoom;
+                    const drawW = item.width * finalScale;
+                    const drawH = item.height * finalScale;
+
+                    canvasDragState = {
+                        active: true,
+                        moved: false,
+                        slotIdx,
+                        startClientX: clientX,
+                        startClientY: clientY,
+                        startPanX: item.panX,
+                        startPanY: item.panY,
+                        maxOffsetX: Math.max(0, (drawW - slot.w) / 2),
+                        maxOffsetY: Math.max(0, (drawH - slot.h) / 2)
+                    };
+                } else {
+                    canvasDragState = {
+                        active: true,
+                        moved: false,
+                        slotIdx,
+                        startClientX: clientX,
+                        startClientY: clientY,
+                        startPanX: 0,
+                        startPanY: 0,
+                        maxOffsetX: 0,
+                        maxOffsetY: 0
+                    };
+                }
+            }
+
+            function handleCanvasPointerMove(clientX, clientY, preventDefaultFn) {
+                if (!canvasDragState.active) return;
+
+                const dxScreen = clientX - canvasDragState.startClientX;
+                const dyScreen = clientY - canvasDragState.startClientY;
+
+                if (Math.abs(dxScreen) > 3 || Math.abs(dyScreen) > 3) {
+                    canvasDragState.moved = true;
+                }
+
+                const item = state.images[canvasDragState.slotIdx];
+                if (!item || state.fitMode !== 'cover') return;
+
+                if (preventDefaultFn) preventDefaultFn();
+
+                const rect = el.previewCanvas.getBoundingClientRect();
+                const scaleX = rect.width > 0 ? el.previewCanvas.width / rect.width : 1;
+                const scaleY = rect.height > 0 ? el.previewCanvas.height / rect.height : 1;
+
+                const dxCanvas = dxScreen * scaleX;
+                const dyCanvas = dyScreen * scaleY;
+
+                if (canvasDragState.maxOffsetX > 0.5) {
+                    const deltaPctX = (dxCanvas / canvasDragState.maxOffsetX) * 100;
+                    item.panX = Math.round(Math.min(100, Math.max(-100, canvasDragState.startPanX + deltaPctX)));
+                }
+                if (canvasDragState.maxOffsetY > 0.5) {
+                    const deltaPctY = (dyCanvas / canvasDragState.maxOffsetY) * 100;
+                    item.panY = Math.round(Math.min(100, Math.max(-100, canvasDragState.startPanY + deltaPctY)));
+                }
+
+                syncSlotFramingUI();
+                updatePreview();
+            }
+
+            function handleCanvasPointerUp() {
+                if (!canvasDragState.active) return;
+                const wasMoved = canvasDragState.moved;
+                const slotIdx = canvasDragState.slotIdx;
+                canvasDragState.active = false;
+
+                // Jika pengguna mengklik slot yang masih kosong (tanpa menyeret), buka pemilih gambar
+                if (!wasMoved && slotIdx !== null && !state.images[slotIdx]) {
+                    el.fileInput.click();
+                }
+            }
+
+            el.previewCanvas.addEventListener('mousedown', (e) => {
+                if (e.button !== 0) return;
+                handleCanvasPointerDown(e.clientX, e.clientY);
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                if (canvasDragState.active) {
+                    handleCanvasPointerMove(e.clientX, e.clientY, null);
+                }
+            });
+
+            window.addEventListener('mouseup', () => {
+                handleCanvasPointerUp();
+            });
+
+            el.previewCanvas.addEventListener('touchstart', (e) => {
+                if (e.touches && e.touches.length === 1) {
+                    const t = e.touches[0];
+                    handleCanvasPointerDown(t.clientX, t.clientY);
+                }
+            }, { passive: true });
+
+            el.previewCanvas.addEventListener('touchmove', (e) => {
+                if (canvasDragState.active && e.touches && e.touches.length === 1) {
+                    const t = e.touches[0];
+                    handleCanvasPointerMove(t.clientX, t.clientY, () => e.preventDefault());
+                }
+            }, { passive: false });
+
+            el.previewCanvas.addEventListener('touchend', () => {
+                handleCanvasPointerUp();
+            });
+
+            // -------------------- 12. KONTROL GARIS PEMISAH, TEPIAN & WARNA --------------------
+            function updateSyncLockUI() {
+                if (state.syncSpacing) {
+                    el.syncLockBtn.className = 'inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[11px] font-semibold border transition-colors bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800';
+                    el.syncLockBtn.querySelector('span').textContent = 'Tersinkronisasi';
+                } else {
+                    el.syncLockBtn.className = 'inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[11px] font-semibold border transition-colors bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700';
+                    el.syncLockBtn.querySelector('span').textContent = 'Atur Terpisah';
+                }
+            }
+
+            el.syncLockBtn.addEventListener('click', () => {
+                state.syncSpacing = !state.syncSpacing;
+                updateSyncLockUI();
+                if (state.syncSpacing) {
+                    setOuterBorder(state.innerGap, false);
+                }
+            });
+
+            function setInnerGap(val) {
                 const clamped = clampNumber(val, 0, 150, 0);
                 state.innerGap = clamped;
                 el.innerGapSlider.value = clamped;
                 el.innerGapInput.value = clamped;
 
-                if (breakSync && state.syncSpacing && clamped !== state.outerBorder) {
-                    state.syncSpacing = false;
-                    el.syncSpacingCheckbox.checked = false;
+                if (state.syncSpacing) {
+                    state.outerBorder = clamped;
+                    el.outerBorderSlider.value = clamped;
+                    el.outerBorderInput.value = clamped;
                 }
-                renderCanvas();
+                updatePreview();
             }
 
-            el.outerBorderSlider.addEventListener('input', (e) => setOuterBorder(e.target.value));
-            el.outerBorderInput.addEventListener('input', (e) => {
-                if (e.target.value === '') return;
-                setOuterBorder(e.target.value);
-            });
-            el.outerBorderInput.addEventListener('blur', (e) => setOuterBorder(e.target.value));
+            function setOuterBorder(val, breakSync = true) {
+                const clamped = clampNumber(val, 0, 150, 0);
+                state.outerBorder = clamped;
+                el.outerBorderSlider.value = clamped;
+                el.outerBorderInput.value = clamped;
 
-            el.innerGapSlider.addEventListener('input', (e) => setInnerGap(e.target.value, true));
+                if (breakSync && state.syncSpacing && clamped !== state.innerGap) {
+                    state.syncSpacing = false;
+                    updateSyncLockUI();
+                }
+                updatePreview();
+            }
+
+            el.innerGapSlider.addEventListener('input', (e) => setInnerGap(e.target.value));
             el.innerGapInput.addEventListener('input', (e) => {
                 if (e.target.value === '') return;
-                setInnerGap(e.target.value, true);
+                setInnerGap(e.target.value);
             });
-            el.innerGapInput.addEventListener('blur', (e) => setInnerGap(e.target.value, true));
+            el.innerGapInput.addEventListener('blur', (e) => setInnerGap(e.target.value));
 
-            el.syncSpacingCheckbox.addEventListener('change', (e) => {
-                state.syncSpacing = e.target.checked;
-                if (state.syncSpacing) {
-                    setInnerGap(state.outerBorder, false);
+            el.outerBorderSlider.addEventListener('input', (e) => setOuterBorder(e.target.value, true));
+            el.outerBorderInput.addEventListener('input', (e) => {
+                if (e.target.value === '') return;
+                setOuterBorder(e.target.value, true);
+            });
+            el.outerBorderInput.addEventListener('blur', (e) => setOuterBorder(e.target.value, true));
+
+            function normalizeHexColor(raw) {
+                if (!raw) return null;
+                let cleaned = raw.trim().replace(/^#/, '');
+                if (/^[0-9A-Fa-f]{3}$/.test(cleaned)) {
+                    cleaned = cleaned.split('').map(c => c + c).join('');
                 }
-            });
+                if (/^[0-9A-Fa-f]{6}$/.test(cleaned)) {
+                    return '#' + cleaned.toUpperCase();
+                }
+                return null;
+            }
 
-            /**
-             * Mengatur warna tepian/latar (kode Hex atau 'transparent')
-             * dan menyinkronkan color picker, input teks Hex, preset, serta rekomendasi format PNG.
-             */
             function applyBackgroundColor(colorValue) {
                 if (colorValue === 'transparent') {
                     state.isTransparent = true;
@@ -1120,7 +2090,6 @@
                     el.transparentBadge.classList.add('inline-flex');
                     el.pngSuggestNote.classList.remove('hidden');
 
-                    // Otomatis sarankan & ubah format ekspor ke PNG agar transparansi terjaga
                     if (state.exportFormat === 'image/jpeg') {
                         state.exportFormat = 'image/png';
                         el.exportFormat.value = 'image/png';
@@ -1139,7 +2108,6 @@
                     el.pngSuggestNote.classList.add('hidden');
                 }
 
-                // Tandai tombol preset yang cocok
                 el.presetColorBtns.forEach(btn => {
                     const preset = btn.dataset.preset;
                     const isSelected = state.isTransparent
@@ -1150,22 +2118,9 @@
                     btn.classList.toggle('border-transparent', !isSelected);
                 });
 
-                renderCanvas();
+                updatePreview();
             }
 
-            function normalizeHexColor(raw) {
-                if (!raw) return null;
-                let cleaned = raw.trim().replace(/^#/, '');
-                if (/^[0-9A-Fa-f]{3}$/.test(cleaned)) {
-                    cleaned = cleaned.split('').map(c => c + c).join('');
-                }
-                if (/^[0-9A-Fa-f]{6}$/.test(cleaned)) {
-                    return '#' + cleaned.toUpperCase();
-                }
-                return null;
-            }
-
-            // Sinkronisasi dua arah: Color Picker <-> Input Hex
             el.bgColorPicker.addEventListener('input', (e) => {
                 applyBackgroundColor(e.target.value);
             });
@@ -1193,7 +2148,7 @@
                         btn.classList.toggle('border-transparent', !isSelected);
                     });
 
-                    renderCanvas();
+                    updatePreview();
                 }
             });
 
@@ -1206,37 +2161,234 @@
                 }
             });
 
-            // Tombol Preset Warna Cepat
             el.presetColorBtns.forEach(btn => {
                 btn.addEventListener('click', () => {
                     applyBackgroundColor(btn.dataset.preset);
                 });
             });
 
-            // -------------------- 10. KALKULASI & RENDERING KANVAS --------------------
+            // -------------------- 13. ENGINE KALKULASI & RENDER KANVAS --------------------
             /**
-             * Menghitung dimensi & koordinat penempatan setiap gambar, lalu menggambar ke kanvas.
+             * Menghitung dimensi & koordinat penempatan untuk mode Kolase Utama (1+4).
+             * Mendukung 'auto' (Auto-Pas Sesuai Rasio Gambar) maupun preset rasio tetap.
              */
-            function renderCanvas() {
-                const count = state.images.length;
+            function calculateFeaturedLayout() {
+                const preset = RATIO_PRESETS[state.canvasRatio] || RATIO_PRESETS['auto'];
+                const scale = state.resolutionScale;
 
-                if (count === 0) {
-                    el.previewCanvas.classList.add('hidden');
-                    el.emptyPreviewState.classList.remove('hidden');
-                    el.dimensionDisplay.textContent = '0 × 0 px';
-                    el.sizeWarningBanner.classList.add('hidden');
-                    ctx.clearRect(0, 0, el.previewCanvas.width, el.previewCanvas.height);
-                    return;
+                const totalWidth = Math.round(preset.width * scale);
+                const B = Math.round(state.outerBorder * scale);
+                const G = Math.round(state.innerGap * scale);
+
+                const innerW = Math.max(40, totalWidth - 2 * B);
+                const availColsW = Math.max(20, innerW - G);
+                const leftColW = Math.round(availColsW * (state.colSplitPct / 100));
+                const rightColW = availColsW - leftColW;
+
+                let heroH = 0;
+                let row1H = 0;
+                let row2H = 0;
+                let totalHeight = 0;
+
+                if (state.canvasRatio === 'auto') {
+                    // Hitung rasio alami gambar pada tiap baris agar seluruh gambar pas tanpa terpotong
+                    const img0 = state.images[0];
+                    const rMain = img0 ? (img0.height / img0.width) : (9 / 16);
+
+                    const rRow1List = [state.images[1], state.images[2]].filter(Boolean).map(it => it.height / it.width);
+                    const rRow1 = rRow1List.length > 0
+                        ? rRow1List.reduce((a, b) => a + b, 0) / rRow1List.length
+                        : rMain;
+
+                    const rRow2List = [state.images[3], state.images[4]].filter(Boolean).map(it => it.height / it.width);
+                    const rRow2 = rRow2List.length > 0
+                        ? rRow2List.reduce((a, b) => a + b, 0) / rRow2List.length
+                        : rRow1;
+
+                    const avgSubColW = availColsW / 2;
+                    const baseHeroH = innerW * rMain;
+                    const baseRow1H = avgSubColW * rRow1;
+                    const baseRow2H = avgSubColW * rRow2;
+
+                    heroH = Math.max(24, Math.round(baseHeroH * (state.heroHeightScale / 100)));
+                    row1H = Math.max(24, Math.round(baseRow1H * (state.row1HeightScale / 100)));
+                    row2H = Math.max(24, Math.round(baseRow2H * (state.row2HeightScale / 100)));
+
+                    totalHeight = 2 * B + heroH + row1H + row2H + 2 * G;
+                } else {
+                    totalHeight = Math.round(preset.height * scale);
+                    const availH = Math.max(60, totalHeight - 2 * B - 2 * G);
+
+                    const wHero = 2 * (state.heroHeightScale / 100);
+                    const wRow1 = 1 * (state.row1HeightScale / 100);
+                    const wRow2 = 1 * (state.row2HeightScale / 100);
+                    const wSum = wHero + wRow1 + wRow2;
+
+                    heroH = Math.max(20, Math.round(availH * (wHero / wSum)));
+                    row1H = Math.max(20, Math.round(availH * (wRow1 / wSum)));
+                    row2H = Math.max(20, availH - heroH - row1H);
                 }
 
-                el.emptyPreviewState.classList.add('hidden');
-                el.previewCanvas.classList.remove('hidden');
+                let heroY = B;
+                let row1Y = B + heroH + G;
+                let row2Y = row1Y + row1H + G;
+
+                if (state.heroPosition === 'bottom') {
+                    row1Y = B;
+                    row2Y = B + row1H + G;
+                    heroY = row2Y + row2H + G;
+                }
+
+                const slots = [
+                    { label: 'Slot 1: Utama',       x: B,                y: heroY, w: innerW,    h: heroH },
+                    { label: 'Slot 2: Kiri Atas',   x: B,                y: row1Y, w: leftColW,  h: row1H },
+                    { label: 'Slot 3: Kanan Atas',  x: B + leftColW + G, y: row1Y, w: rightColW, h: row1H },
+                    { label: 'Slot 4: Kiri Bawah',  x: B,                y: row2Y, w: leftColW,  h: row2H },
+                    { label: 'Slot 5: Kanan Bawah', x: B + leftColW + G, y: row2Y, w: rightColW, h: row2H }
+                ];
+
+                return { totalWidth, totalHeight, slots, scale };
+            }
+
+            /**
+             * Menggambar garis bantu untuk slot kosong pada kanvas pratinjau.
+             */
+            function drawEmptySlotGuide(targetCtx, slot, scale, isSelected) {
+                const isDarkBg = state.isTransparent
+                    ? document.documentElement.classList.contains('dark')
+                    : isHexColorDark(state.bgColor);
+
+                const strokeColor = isSelected
+                    ? '#10B981'
+                    : (isDarkBg ? 'rgba(148, 163, 184, 0.55)' : 'rgba(100, 116, 139, 0.55)');
+                const fillColor = isDarkBg ? 'rgba(30, 41, 59, 0.35)' : 'rgba(241, 245, 249, 0.65)';
+                const textColor = isDarkBg ? '#cbd5e1' : '#475569';
+
+                const inset = Math.max(2, Math.round(2 * scale));
+                const rx = slot.x + inset;
+                const ry = slot.y + inset;
+                const rw = Math.max(4, slot.w - inset * 2);
+                const rh = Math.max(4, slot.h - inset * 2);
+
+                targetCtx.save();
+                targetCtx.fillStyle = fillColor;
+                targetCtx.fillRect(rx, ry, rw, rh);
+
+                targetCtx.strokeStyle = strokeColor;
+                targetCtx.lineWidth = Math.max(2, Math.round(2.5 * scale));
+                targetCtx.setLineDash([Math.round(12 * scale), Math.round(8 * scale)]);
+                targetCtx.strokeRect(rx, ry, rw, rh);
+                targetCtx.setLineDash([]);
+
+                const fontSize = Math.max(14, Math.min(Math.round(22 * scale), Math.floor(Math.min(rw, rh) * 0.16)));
+                targetCtx.fillStyle = textColor;
+                targetCtx.font = `700 ${fontSize}px Inter, sans-serif`;
+                targetCtx.textAlign = 'center';
+                targetCtx.textBaseline = 'middle';
+                targetCtx.fillText(slot.label, slot.x + slot.w / 2, slot.y + slot.h / 2 - fontSize * 0.6);
+
+                const subFontSize = Math.max(11, Math.round(fontSize * 0.68));
+                targetCtx.font = `500 ${subFontSize}px Inter, sans-serif`;
+                targetCtx.fillStyle = isDarkBg ? '#94a3b8' : '#64748b';
+                targetCtx.fillText('Klik untuk pilih gambar', slot.x + slot.w / 2, slot.y + slot.h / 2 + fontSize * 0.75);
+
+                targetCtx.restore();
+            }
+
+            /**
+             * Merender seluruh kanvas baik untuk Pratinjau (isExport = false)
+             * maupun untuk Unduhan Resolusi Penuh (isExport = true).
+             */
+            function renderToCanvas(targetCanvas, isExport = false) {
+                const targetCtx = targetCanvas.getContext('2d');
+                const count = state.images.length;
+
+                if (state.mode === 'featured') {
+                    const layout = calculateFeaturedLayout();
+                    if (!isExport) {
+                        lastFeaturedLayout = layout;
+                    }
+
+                    const { totalWidth, totalHeight, slots, scale } = layout;
+
+                    targetCanvas.width = totalWidth;
+                    targetCanvas.height = totalHeight;
+                    targetCtx.clearRect(0, 0, totalWidth, totalHeight);
+
+                    if (!state.isTransparent) {
+                        targetCtx.fillStyle = state.bgColor;
+                        targetCtx.fillRect(0, 0, totalWidth, totalHeight);
+                    }
+
+                    targetCtx.imageSmoothingEnabled = true;
+                    targetCtx.imageSmoothingQuality = 'high';
+
+                    slots.forEach((slot, idx) => {
+                        const item = state.images[idx];
+                        const isSelected = !isExport && idx === state.selectedSlot;
+
+                        if (item) {
+                            targetCtx.save();
+                            targetCtx.beginPath();
+                            targetCtx.rect(slot.x, slot.y, slot.w, slot.h);
+                            targetCtx.clip();
+
+                            if (state.fitMode === 'cover') {
+                                // Mode Cover (Penuh & Pas): mengisi 100% area slot tanpa ruang kosong
+                                const baseScale = Math.max(slot.w / item.width, slot.h / item.height);
+                                const finalScale = baseScale * item.zoom;
+                                const drawW = item.width * finalScale;
+                                const drawH = item.height * finalScale;
+
+                                const maxOffsetX = Math.max(0, (drawW - slot.w) / 2);
+                                const maxOffsetY = Math.max(0, (drawH - slot.h) / 2);
+
+                                const drawX = slot.x + (slot.w - drawW) / 2 + (item.panX / 100) * maxOffsetX;
+                                const drawY = slot.y + (slot.h - drawH) / 2 + (item.panY / 100) * maxOffsetY;
+
+                                targetCtx.drawImage(item.img, drawX, drawY, drawW, drawH);
+                            } else {
+                                // Mode Contain (Tampilkan Utuh): seluruh gambar terlihat
+                                const fitScale = Math.min(slot.w / item.width, slot.h / item.height);
+                                const drawW = Math.max(1, Math.round(item.width * fitScale));
+                                const drawH = Math.max(1, Math.round(item.height * fitScale));
+                                const drawX = slot.x + Math.round((slot.w - drawW) / 2);
+                                const drawY = slot.y + Math.round((slot.h - drawH) / 2);
+
+                                targetCtx.drawImage(item.img, drawX, drawY, drawW, drawH);
+                            }
+
+                            // Indikator bingkai slot terpilih (hanya pada pratinjau)
+                            if (isSelected) {
+                                const borderW = Math.max(3, Math.round(4 * scale));
+                                targetCtx.strokeStyle = '#10B981';
+                                targetCtx.lineWidth = borderW;
+                                targetCtx.strokeRect(
+                                    slot.x + borderW / 2,
+                                    slot.y + borderW / 2,
+                                    slot.w - borderW,
+                                    slot.h - borderW
+                                );
+                            }
+
+                            targetCtx.restore();
+                        } else if (!isExport) {
+                            drawEmptySlotGuide(targetCtx, slot, scale, isSelected);
+                        }
+                    });
+
+                    return { totalWidth, totalHeight };
+                }
+
+                // Mode Standar (Vertikal, Horizontal, Grid Standar)
+                if (count === 0) {
+                    return { totalWidth: 0, totalHeight: 0 };
+                }
 
                 const B = state.outerBorder;
                 const G = state.innerGap;
                 const baseImg = state.images[0];
 
-                // Hitung dimensi terukur tiap gambar
                 const items = state.images.map(item => {
                     let w = item.width;
                     let h = item.height;
@@ -1271,7 +2423,6 @@
                         placements.push({ img: it.img, x: drawX, y: currentY, w: it.w, h: it.h });
                         currentY += it.h + G;
                     });
-
                 } else if (state.mode === 'horizontal') {
                     const contentWidth = items.reduce((sum, it) => sum + it.w, 0) + G * (count - 1);
                     const contentHeight = Math.max(...items.map(it => it.h));
@@ -1285,7 +2436,6 @@
                         placements.push({ img: it.img, x: currentX, y: drawY, w: it.w, h: it.h });
                         currentX += it.w + G;
                     });
-
                 } else if (state.mode === 'grid') {
                     const cols = state.gridCols;
                     const rows = Math.ceil(count / cols);
@@ -1300,7 +2450,6 @@
                         rowHeights[r] = Math.max(rowHeights[r], it.h);
                     });
 
-                    // Pastikan kolom kosong (jika jumlah gambar < jumlah kolom) tetap memiliki lebar sel
                     const fallbackColW = colWidths[0] || baseImg.width;
                     for (let c = 0; c < cols; c++) {
                         if (colWidths[c] === 0) colWidths[c] = fallbackColW;
@@ -1312,7 +2461,6 @@
                     totalWidth = contentWidth + B * 2;
                     totalHeight = contentHeight + B * 2;
 
-                    // Pre-kalkulasi offset X tiap kolom & Y tiap baris
                     const colOffsets = [];
                     let accX = B;
                     for (let c = 0; c < cols; c++) {
@@ -1336,43 +2484,62 @@
                     });
                 }
 
-                // Perbarui informasi dimensi akhir
-                el.dimensionDisplay.textContent = `${totalWidth.toLocaleString('id-ID')} × ${totalHeight.toLocaleString('id-ID')} px`;
+                targetCanvas.width = totalWidth;
+                targetCanvas.height = totalHeight;
+                targetCtx.clearRect(0, 0, totalWidth, totalHeight);
 
-                // Cek peringatan batas ukuran maksimum browser (>16.000 px)
-                const MAX_SAFE_DIM = 16000;
-                if (totalWidth > MAX_SAFE_DIM || totalHeight > MAX_SAFE_DIM) {
-                    el.sizeWarningBanner.classList.remove('hidden');
-                    el.sizeWarningText.textContent = `Dimensi akhir (${totalWidth.toLocaleString('id-ID')} × ${totalHeight.toLocaleString('id-ID')} px) melebihi 16.000 px dan mendekati batas maksimum kanvas browser. Aktifkan Auto-Resize atau kurangi resolusi gambar jika gagal ekspor.`;
-                } else {
-                    el.sizeWarningBanner.classList.add('hidden');
+                if (!state.isTransparent) {
+                    targetCtx.fillStyle = state.bgColor;
+                    targetCtx.fillRect(0, 0, totalWidth, totalHeight);
                 }
 
-                // Gambar ke elemen <canvas> dengan penanganan error memori
+                targetCtx.imageSmoothingEnabled = true;
+                targetCtx.imageSmoothingQuality = 'high';
+
+                placements.forEach(p => {
+                    targetCtx.drawImage(p.img, p.x, p.y, p.w, p.h);
+                });
+
+                return { totalWidth, totalHeight };
+            }
+
+            /**
+             * Memperbarui kanvas pratinjau dan indikator UI.
+             */
+            function updatePreview() {
+                const count = state.images.length;
+
+                if (count === 0 && state.mode !== 'featured') {
+                    el.previewCanvas.classList.add('hidden');
+                    el.emptyPreviewState.classList.remove('hidden');
+                    el.dimensionDisplay.textContent = '0 x 0 px';
+                    el.sizeWarningBanner.classList.add('hidden');
+                    ctx.clearRect(0, 0, el.previewCanvas.width, el.previewCanvas.height);
+                    return;
+                }
+
+                el.emptyPreviewState.classList.add('hidden');
+                el.previewCanvas.classList.remove('hidden');
+
                 try {
-                    el.previewCanvas.width = totalWidth;
-                    el.previewCanvas.height = totalHeight;
+                    const { totalWidth, totalHeight } = renderToCanvas(el.previewCanvas, false);
 
-                    ctx.clearRect(0, 0, totalWidth, totalHeight);
+                    el.dimensionDisplay.textContent = `${totalWidth.toLocaleString('id-ID')} x ${totalHeight.toLocaleString('id-ID')} px`;
 
-                    if (!state.isTransparent) {
-                        ctx.fillStyle = state.bgColor;
-                        ctx.fillRect(0, 0, totalWidth, totalHeight);
+                    const MAX_SAFE_DIM = 16000;
+                    if (totalWidth > MAX_SAFE_DIM || totalHeight > MAX_SAFE_DIM) {
+                        el.sizeWarningBanner.classList.remove('hidden');
+                        el.sizeWarningText.textContent = `Dimensi akhir (${totalWidth.toLocaleString('id-ID')} x ${totalHeight.toLocaleString('id-ID')} px) melebihi 16.000 px dan mendekati batas maksimum kanvas browser.`;
+                    } else {
+                        el.sizeWarningBanner.classList.add('hidden');
                     }
-
-                    ctx.imageSmoothingEnabled = true;
-                    ctx.imageSmoothingQuality = 'high';
-
-                    placements.forEach(p => {
-                        ctx.drawImage(p.img, p.x, p.y, p.w, p.h);
-                    });
                 } catch (err) {
                     console.error('Kesalahan rendering kanvas:', err);
                     showToast('Memori browser tidak mencukupi untuk merender dimensi sebesar ini.', 'error');
                 }
             }
 
-            // -------------------- 11. PENGATURAN EKSPOR & UNDUH --------------------
+            // -------------------- 14. PENGATURAN EKSPOR & UNDUH --------------------
             function updateQualityControlState() {
                 const supportsQuality = state.exportFormat === 'image/jpeg' || state.exportFormat === 'image/webp';
                 if (supportsQuality) {
@@ -1387,7 +2554,7 @@
                 updateQualityControlState();
 
                 if (state.isTransparent && state.exportFormat === 'image/jpeg') {
-                    showToast('Format JPEG tidak mendukung transparansi. Area transparan akan diisi putih saat diunduh.', 'warning');
+                    showToast('Format JPG tidak mendukung transparansi. Area transparan akan diisi putih saat diunduh.', 'warning');
                 }
             });
 
@@ -1408,25 +2575,26 @@
                 };
                 const ext = extMap[format] || 'png';
 
-                // Ubah status tombol saat memproses Blob
                 const originalBtnHtml = el.downloadBtn.innerHTML;
                 el.downloadBtn.disabled = true;
-                el.downloadBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i><span>Memproses Gambar...</span>`;
+                el.downloadBtn.innerHTML = `<span>Memproses Gambar...</span>`;
 
                 setTimeout(() => {
                     try {
-                        let targetCanvas = el.previewCanvas;
+                        const exportCanvas = document.createElement('canvas');
+                        renderToCanvas(exportCanvas, true);
 
-                        // Jika latar transparan namun pengguna memaksa ekspor JPEG, beri latar putih agar tidak menjadi hitam pekat
+                        let targetCanvas = exportCanvas;
+
                         if (state.isTransparent && format === 'image/jpeg') {
-                            const tempCanvas = document.createElement('canvas');
-                            tempCanvas.width = el.previewCanvas.width;
-                            tempCanvas.height = el.previewCanvas.height;
-                            const tempCtx = tempCanvas.getContext('2d');
-                            tempCtx.fillStyle = '#FFFFFF';
-                            tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
-                            tempCtx.drawImage(el.previewCanvas, 0, 0);
-                            targetCanvas = tempCanvas;
+                            const solidCanvas = document.createElement('canvas');
+                            solidCanvas.width = exportCanvas.width;
+                            solidCanvas.height = exportCanvas.height;
+                            const solidCtx = solidCanvas.getContext('2d');
+                            solidCtx.fillStyle = '#FFFFFF';
+                            solidCtx.fillRect(0, 0, solidCanvas.width, solidCanvas.height);
+                            solidCtx.drawImage(exportCanvas, 0, 0);
+                            targetCanvas = solidCanvas;
                         }
 
                         targetCanvas.toBlob((blob) => {
@@ -1451,24 +2619,28 @@
                             const downloadUrl = URL.createObjectURL(blob);
                             const link = document.createElement('a');
                             link.href = downloadUrl;
-                            link.download = `utilitibox-merged-${stamp}.${ext}`;
+                            link.download = `utilitibox-collage-${stamp}.${ext}`;
                             document.body.appendChild(link);
                             link.click();
                             document.body.removeChild(link);
 
                             setTimeout(() => URL.revokeObjectURL(downloadUrl), 1500);
-                            showToast(`Gambar berhasil diunduh (${formatFileSize(blob.size)})!`, 'success');
+                            showToast(`Gambar berhasil diunduh (${formatFileSize(blob.size)}).`, 'success');
                         }, format, state.exportQuality);
-
                     } catch (err) {
-                        console.error('Gagal ekspor gambar:', err);
+                        console.error('Gagal mengekspor gambar:', err);
                         el.downloadBtn.disabled = false;
                         el.downloadBtn.innerHTML = originalBtnHtml;
                         showToast('Terjadi kesalahan saat mengekspor gambar.', 'error');
                     }
                 }, 40);
             });
+
+            // Inisialisasi tampilan awal
+            updateAreaScaleLabels();
+            updateSyncLockUI();
+            syncLayoutModeUI();
         });
     </script>
 </body>
-</html>
+                            </html>
